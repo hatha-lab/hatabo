@@ -2617,7 +2617,7 @@ body[data-kemo="excited"] .kmBody, body[data-kemo="laugh"] .kmBody { animation: 
     if (!r0 && KOMUGI_APP) r0 = 'mac';   // コムギのミニアプリは、いつもコムギ（馬越さんの窓口）で開く
     const peek = urlParam('test') === 'peek';   // 見るだけ（&test=peek）：自分の相棒やご縁を変えずに、紹介URLのアバターを確認する
     const asGuest = urlParam('test') === 'guest' || peek;
-    const agent = urlParam('agent') === 'service' ? 'service' : '';   // 公式LINEのリッチメニュー「ハタボに相談」＝サービス相談
+    const agent = ['service', 'seminar-biz', 'seminar-partner'].includes(urlParam('agent')) ? urlParam('agent') : '';   // 公式LINEのリッチメニュー「ハタボに相談」＝サービス相談
     // 紹介コードは、そのとき開いたURLのものだけ送る（前に開いた紹介URLを覚えて使うと、別のアバター（コムギなど）で出てしまう）。だれの紹介かはサーバーが最初の1回で覚えている
     const ref = String(r0 || '').replace(/[^\w-]/g, '').slice(0, 20);
     if (r0) store.set('jrRef', ref);
@@ -3007,7 +3007,7 @@ body[data-kemo="excited"] .kmBody, body[data-kemo="laugh"] .kmBody { animation: 
         { type: 'image', url: EMB, size: '48px', aspectMode: 'fit', flex: 0 },
         { type: 'box', layout: 'vertical', contents: [
           { type: 'text', text: 'ハタボ', color: '#FFFFFF', weight: 'bold', size: 'xl' },
-          { type: 'text', text: 'すべての人に、AIのある愛棒を。', color: '#C9D0DC', size: 'xxs' }] }] },
+          { type: 'text', text: 'すべての人に、AIの愛棒を。', color: '#C9D0DC', size: 'xxs' }] }] },
       body: { type: 'box', layout: 'vertical', spacing: 'md', paddingAll: '18px', contents: [
         { type: 'text', text: '話すだけで、動く愛棒。', weight: 'bold', size: 'md', color: '#16233F', wrap: true },
         { type: 'text', text: 'PCとスマホで話すだけ。調べもの・下書き・相談まで、いっしょに動くAIの愛棒だボー。', size: 'sm', color: '#5E6B85', wrap: true },
