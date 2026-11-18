@@ -1,0 +1,21 @@
+name: terakoyaから画面を写す
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: 写す
+        run: |
+          git clone --depth 1 https://github.com/hiromitsu81/terakoya /tmp/t
+          cp /tmp/t/butter/index.html /tmp/t/butter/award_mark.svg /tmp/t/butter/komugi.jpg .
+          mkdir -p line && cp /tmp/t/butter/line/emblem.png /tmp/t/butter/line/richmenu.jpg /tmp/t/butter/line/richmenu.json /tmp/t/butter/line/cards_flex.json line/
+          if [ -n "$(git status --porcelain)" ]; then
+            git config user.name "hatabo-sync"; git config user.email "info@hatha-lab.com"
+            git add -A && git commit -m "terakoyaの画面を写す" && git push
+          fi
