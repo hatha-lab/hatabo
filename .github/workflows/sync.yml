@@ -14,6 +14,21 @@ jobs:
         run: |
           git clone --depth 1 https://github.com/hiromitsu81/terakoya /tmp/t
           cp /tmp/t/butter/index.html /tmp/t/butter/award_mark.svg /tmp/t/butter/komugi.jpg /tmp/t/butter/sw.js /tmp/t/butter/manifest.webmanifest /tmp/t/butter/pwa-180.png /tmp/t/butter/pwa-192.png /tmp/t/butter/pwa-512.png /tmp/t/butter/manifest-office.webmanifest /tmp/t/butter/office-180.png /tmp/t/butter/office-192.png /tmp/t/butter/office-512.png /tmp/t/butter/feed_cm.mp4 /tmp/t/butter/feed_cm.jpg /tmp/t/butter/feed_emblem.jpg .
+          # 11/22：ハタボのサイトでは、LINEなどで送ったときのカード（タイトル・説明・画像）をハタボにする（寺小屋の「福まねき特戦隊」を出さない）
+          python3 - <<'PY'
+          import re
+          p = 'index.html'; s = open(p, encoding='utf-8').read()
+          head = ('<title>ハタボ｜すべての人に、AIの愛棒を</title>'
+                  '<meta name="description" content="話すだけで、調べもの・下書き・相談まで、いっしょに動くAIの愛棒。PCとスマホとLINEで使えます。">'
+                  '<meta property="og:type" content="website"><meta property="og:site_name" content="ハタボ">'
+                  '<meta property="og:title" content="ハタボ｜すべての人に、AIの愛棒を">'
+                  '<meta property="og:description" content="話すだけで、調べもの・下書き・相談まで、いっしょに動くAIの愛棒。">'
+                  '<meta property="og:url" content="https://app.hatha-lab.com/">'
+                  '<meta property="og:image" content="https://app.hatha-lab.com/feed_emblem.jpg">'
+                  '<meta name="twitter:card" content="summary">')
+          s = re.sub(r'<title>[^<]*</title>', lambda m: head, s, count=1)
+          open(p, 'w', encoding='utf-8').write(s)
+          PY
           mkdir -p line && cp /tmp/t/butter/line/emblem.png /tmp/t/butter/line/richmenu.jpg /tmp/t/butter/line/richmenu.json /tmp/t/butter/line/cards_flex.json line/
           if [ -n "$(git status --porcelain)" ]; then
             git config user.name "hatabo-sync"; git config user.email "info@hatha-lab.com"
