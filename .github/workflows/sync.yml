@@ -13,7 +13,7 @@ jobs:
       - name: 写す
         run: |
           git clone --depth 1 https://github.com/hiromitsu81/terakoya /tmp/t
-          cp /tmp/t/butter/index.html /tmp/t/butter/award_mark.svg /tmp/t/butter/komugi.jpg /tmp/t/butter/sw.js /tmp/t/butter/manifest.webmanifest .
+          cp /tmp/t/butter/index.html /tmp/t/butter/award_mark.svg /tmp/t/butter/komugi.jpg /tmp/t/butter/sw.js /tmp/t/butter/manifest.webmanifest /tmp/t/butter/pwa-180.png /tmp/t/butter/pwa-192.png /tmp/t/butter/pwa-512.png .
           mkdir -p line && cp /tmp/t/butter/line/emblem.png /tmp/t/butter/line/richmenu.jpg /tmp/t/butter/line/richmenu.json /tmp/t/butter/line/cards_flex.json line/
           if [ -n "$(git status --porcelain)" ]; then
             git config user.name "hatabo-sync"; git config user.email "info@hatha-lab.com"
