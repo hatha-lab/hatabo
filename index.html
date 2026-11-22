@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="ja">
 <head>
-<meta charset="utf-8"><meta name="hb-ver" content="11/21-2030">
+<meta charset="utf-8"><meta name="hb-ver" content="2026-11-22d">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex">
 <title>ハタボ｜すべての人に、AIの愛棒を</title><meta name="description" content="話すだけで、調べもの・下書き・相談まで、いっしょに動くAIの愛棒。PCとスマホとLINEで使えます。"><meta property="og:type" content="website"><meta property="og:site_name" content="ハタボ"><meta property="og:title" content="ハタボ｜すべての人に、AIの愛棒を"><meta property="og:description" content="話すだけで、調べもの・下書き・相談まで、いっしょに動くAIの愛棒。"><meta property="og:url" content="https://app.hatha-lab.com/"><meta property="og:image" content="https://app.hatha-lab.com/feed_emblem.jpg"><meta name="twitter:card" content="summary">
@@ -2223,6 +2223,50 @@ html:has(body.cl), body.cl { overscroll-behavior-x: none; }   /* 横のスワイ
 .cpf-b button { padding: 10px 4px; border: 0; border-radius: 12px; background: rgba(255,255,255,.1); color: #E8EBF0; font: 800 12.5px var(--display); cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .cpf-b .cpf-add { width: 44px; display: grid; place-items: center; } .cpf-add svg { width: 20px; height: 20px; }
 .cpf-b button:active { transform: scale(.97); }
+/* 11/22 プロフィールはインスタの形：上に自分、下に自分の投稿。左下に設定、右下に投稿の2つだけ */
+.cpf-flat { background: none !important; border: 0 !important; box-shadow: none !important; padding: 18px 4px 6px !important; }
+.cpf-grid-h { display: flex; align-items: center; gap: 8px; margin: 14px 4px 8px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,.1); font: 800 13px var(--display); color: #CBD3E3; }
+.cpf-grid-h svg { width: 18px; height: 18px; }
+.cpf-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; margin: 0 -12px; }
+.cpf-grid button { position: relative; aspect-ratio: 3 / 4; padding: 0; border: 0; background: #111A33; overflow: hidden; cursor: pointer; color: #E8EBF0; }
+.cpf-grid img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.cpf-grid span { position: absolute; inset: 0; display: grid; place-items: center; padding: 8px; font: 700 12px/1.5 var(--display); text-align: center; background: linear-gradient(135deg, #1B2B57, #3A2A5B); overflow: hidden; }
+.cpf-empty { margin: 18px 4px; padding: 26px 16px; text-align: center; border-radius: 18px; border: 1px dashed rgba(255,255,255,.2); color: #B9C3D8; font-size: 13.5px; line-height: 1.7; }
+.cpf-dock { position: fixed; z-index: 66; left: 16px; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom) - var(--pwgap, 0px)); display: flex; justify-content: space-between; pointer-events: none; }
+.cpf-dock button { pointer-events: auto; display: inline-flex; align-items: center; gap: 8px; height: 52px; padding: 0 20px 0 16px; border: 0; border-radius: 999px; font: 800 15px var(--display); cursor: pointer; box-shadow: 0 8px 22px rgba(0,0,0,.4); }
+.cpf-dock svg { width: 22px; height: 22px; }
+.cpf-dock .cpf-set { background: rgba(30,42,70,.95); color: #E8EBF0; border: 1px solid rgba(255,255,255,.14); }
+.cpf-dock .cpf-post { background: #F4F6FA; color: #0A1226; }
+.cpf-dock button:active { transform: scale(.96); }
+body.clprofv .clfab { display: none !important; }
+body.clprofv #hbpBody { padding-bottom: calc(96px + env(safe-area-inset-bottom)) !important; }
+.cpf-back { display: inline-flex; align-items: center; gap: 4px; margin: 4px 0 10px; padding: 8px 14px 8px 10px; border: 0; border-radius: 999px; background: rgba(255,255,255,.08); color: #E8EBF0; font: 800 13px var(--display); cursor: pointer; }
+/* 11/22 投稿はTikTokの形：1つずつ画面いっぱい、縦にめくる */
+#clFeed { scroll-snap-type: y mandatory; overscroll-behavior-y: contain; padding-bottom: 0 !important; --fpb: calc(128px + env(safe-area-inset-bottom)); }
+#clFeed .fp-info header { background: none !important; border: 0 !important; position: static; box-shadow: none; }
+#clFeed .cf-top { height: 0; padding: 0; border: 0; background: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
+#clFeed .cf-top b { position: absolute; left: 14px; top: 12px; text-shadow: 0 1px 6px rgba(0,0,0,.6); }
+#clFeed .cf-top .cf-new { position: absolute; right: 12px; top: 8px; }
+#clFeed .cf-list { max-width: none; height: 100%; }
+#clFeed .fp { position: relative; height: 100%; padding: 0; border: 0; overflow: hidden; scroll-snap-align: start; scroll-snap-stop: always; background: #050913; }
+#clFeed .fp-mw { position: absolute; inset: 0; display: grid; place-items: center; background: #050913; }
+#clFeed .fp-m, #clFeed video.fp-m { width: 100%; height: 100%; aspect-ratio: auto; object-fit: contain; background: #050913; }
+#clFeed .fp-txt { width: 100%; height: 100%; aspect-ratio: auto; font-size: 22px; }
+#clFeed .fp-mw::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 60%; background: linear-gradient(transparent, rgba(5,9,19,.85)); pointer-events: none; }
+#clFeed .fp-snd { left: 12px; right: auto; top: 54px; bottom: auto; z-index: 2; }
+#clFeed .fp-info { position: absolute; z-index: 2; left: 0; right: 76px; bottom: var(--fpb); }
+#clFeed .fp-info header { padding: 0 12px 4px; }
+#clFeed .fp-info .fp-h small { color: #CBD3E3; }
+#clFeed .fp-likes { margin: 0 12px; font-size: 12.5px; }
+#clFeed .fp-cap { margin: 2px 12px 0; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; text-shadow: 0 1px 4px rgba(0,0,0,.6); }
+#clFeed .fp-cap.open { display: block; -webkit-line-clamp: unset; }
+#clFeed .fp-more { position: absolute; z-index: 2; right: 8px; top: 50px; background: rgba(0,0,0,.35); }
+#clFeed .fp-act { position: absolute; z-index: 2; right: 6px; bottom: var(--fpb); flex-direction: column; gap: 10px; padding: 0; }
+#clFeed .fp-act button { flex-direction: column; height: auto; width: 64px; gap: 3px; padding: 6px 0; font-size: 11px; text-shadow: 0 1px 4px rgba(0,0,0,.7); }
+#clFeed .fp-act svg { width: 32px; height: 32px; filter: drop-shadow(0 1px 3px rgba(0,0,0,.6)); }
+#clFeed .fp-talk { margin: 0; padding: 8px 4px !important; border-radius: 14px; }
+#clFeed .fp-q { position: absolute; z-index: 4; left: 8px; right: 8px; bottom: var(--fpb); margin: 0; max-height: 62%; overflow-y: auto; background: rgba(14,22,44,.97); box-shadow: 0 -10px 30px rgba(0,0,0,.4); }
+#clFeed .cf-end { height: 40%; padding-bottom: var(--fpb); display: grid; place-items: center; scroll-snap-align: end; }
 
 /* ===== 11/22 スマホの直し（声の通話で決めたこと） ===== */
 /* 1回のタップで押せるように（ダブルタップの拡大待ちをなくす） */
@@ -2276,6 +2320,25 @@ body.cl .cltools [data-cl="ctx"].clfr { background: transparent !important; colo
 /* 11/22（4）：トーク一覧の行が多いとき（事務局）に、行がつぶれないように */
 #hbpTalks { grid-auto-rows: max-content; }
 #hbpTalks > .hbt { min-height: 52px; flex-shrink: 0; }
+
+/* 11/22 電話：友だちをえらぶ板・かかってきた知らせ・電話の画面 */
+#hbCallSheet{position:fixed;inset:0;z-index:2147482000;background:rgba(5,9,19,.55);display:flex;align-items:flex-end;justify-content:center}
+#hbCallSheet[hidden],#hbCallRing[hidden],#hbCallOv[hidden]{display:none!important}
+#hbCallSheet .hcs-c{width:100%;max-width:520px;max-height:75vh;overflow:auto;background:#0F1A36;color:#E8EBF0;border-radius:22px 22px 0 0;padding:16px 16px calc(18px + env(safe-area-inset-bottom));box-shadow:0 -12px 30px rgba(0,0,0,.4)}
+#hbCallSheet .hcs-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}#hbCallSheet .hcs-h b{font:800 17px var(--display)}
+#hbCallSheet .hcs-x{width:36px;height:36px;border:0;border-radius:50%;background:rgba(255,255,255,.1);color:#fff;font-size:18px}
+#hbCallSheet .hcs-p{display:flex;align-items:center;gap:12px;width:100%;padding:12px 10px;border:0;border-bottom:1px solid rgba(255,255,255,.08);background:none;color:#E8EBF0;font:700 15px var(--display);text-align:left;cursor:pointer}
+#hbCallSheet .hcs-p i{flex:none;width:40px;height:40px;border-radius:50%;background:#2F7A4E;display:grid;place-items:center;font-style:normal;font-weight:900}
+#hbCallSheet .hcs-p span{flex:1}#hbCallSheet .hcs-p svg{width:22px;height:22px;color:#7FD3A0}
+#hbCallSheet .hcs-m,#hbCallSheet .hcs-n{font-size:13px;color:#9AA6BE;line-height:1.7}
+#hbCallSheet .hcs-go{margin-top:6px;padding:10px 16px;border:0;border-radius:999px;background:#F4F6FA;color:#0A1226;font:800 13.5px var(--display)}
+#hbCallRing{position:fixed;left:10px;right:10px;top:calc(10px + env(safe-area-inset-top));z-index:2147482500;display:flex;align-items:center;gap:10px;padding:12px;border-radius:18px;background:#16233F;color:#fff;box-shadow:0 14px 32px rgba(0,0,0,.45);animation:hcrIn .3s ease}
+@keyframes hcrIn{from{transform:translateY(-120%)}to{transform:none}}
+#hbCallRing .hcr-i{width:42px;height:42px;border-radius:50%;background:#2F7A4E;display:grid;place-items:center}#hbCallRing .hcr-i svg{width:22px;height:22px}
+#hbCallRing .hcr-t{flex:1;min-width:0}#hbCallRing .hcr-t b{display:block;font:800 15px var(--display)}#hbCallRing .hcr-t span{font-size:12px;color:#B9C3D8}
+#hbCallRing button{border:0;border-radius:999px;padding:10px 14px;font:800 13.5px var(--display)}#hbCallRing .hcr-no{background:rgba(255,255,255,.12);color:#fff}#hbCallRing .hcr-ok{background:#62AD7F;color:#fff}
+#hbCallOv{position:fixed;inset:0;z-index:2147482400;background:#16233F}#hbCallOv iframe{width:100%;height:100%;border:0;display:block}
+#hbCallOv .hbcall-x{position:absolute;right:12px;top:calc(10px + env(safe-area-inset-top));padding:8px 14px;border:0;border-radius:999px;background:rgba(255,255,255,.14);color:#fff;font:700 12.5px var(--display)}
 </style>
 </head>
 <body>
@@ -4118,7 +4181,9 @@ body.cl .cltools [data-cl="ctx"].clfr { background: transparent !important; colo
       case 'reqs': HBP.reqs = m; if (!$('hbPage').hidden && HBP.page === 'reqs') hbpRender(); break;
       case 'gacha': HBP.gacha = m; if (!$('hbPage').hidden && HBP.page === 'gacha') hbpRender(); break;
       case 'feed': case 'feed_ok': case 'feed_err': case 'post_ans': case 'post_cap': try { clFeedMsg(m); } catch (e) { console.error('feed', e); } break;
-      case 'friends': HBP.friends = m; if (!$('hbPage').hidden && (HBP.page === 'friends' || HBP.page === 'social')) hbpRender(); break;
+      case 'friends': HBP.friends = m; if (m.err) toast(m.err); if (!$('hbPage').hidden && (HBP.page === 'friends' || HBP.page === 'social')) hbpRender(); if (window.hbCallSheetSync) window.hbCallSheetSync(); break;
+      case 'call_ready': if (m.err) toast(m.err); else if (window.hbCallOpen) window.hbCallOpen(m.url); break;
+      case 'call_in': if (window.hbCallRing) window.hbCallRing(m); break;
       case 'goen': HBP.goen = m; if (!$('hbPage').hidden && HBP.page === 'goen') hbpRender(); try { hbpChats(); } catch (e) {} break;
       case 'limit': if (m.why === 'voice') { HBP.limitHit = 'voice'; try { toast('今月の声の回数をこえたので、文字で返します。「トッピング」から声を足せます'); } catch (e) {} break; } HBP.limitHit = m.why || 'plan'; setTimeout(() => hbpOpen(m.why === 'trial_end' ? 'plan' : 'ticket'), m.why === 'trial_end' ? 6500 : 1800); break;   // おためしが終わったときは、アバターのひとことを聞いてからプランへ
       case 'mypage': clearTimeout(HBP.goT); if (m.driveMsg) toast(m.driveMsg); if (m.ticketOk || m.ticketNg) { HBP.tMsg = m.ticketOk || m.ticketNg; toast(HBP.tMsg); if (m.ticketOk) HBP.limitHit = ''; } HBP.data = m; try { store.set('hbpData', Object.assign({}, m, { notes: (m.notes || []).slice(0, 20), driveMsg: '', ticketOk: '', ticketNg: '' })); } catch (e) {} if (!$('hbPage').hidden) hbpRender(); break;
@@ -4592,6 +4657,7 @@ body.cl .cltools [data-cl="ctx"].clfr { background: transparent !important; colo
     if (d) { { const lim = Math.max(1, d.limit || 1), lp = d.unlimited ? 100 : Math.round(Math.max(0, lim - (d.today || 0)) / lim * 100); document.querySelectorAll('.hbacg i').forEach(x => { x.style.width = lp + '%'; x.parentNode.className = 'hbacg' + (lp < 20 ? ' low' : lp < 50 ? ' mid' : ''); }); }
       const f = d.funnel || {}, nm0 = String(d.name || (HBP.con && HBP.con.me && HBP.con.me.name) || '').trim(); $('hbpAcctName').textContent = nm0 ? nm0 + 'さん' : 'Myハタボ'; $('hbpAcctAv').textContent = (nm0 || 'ハ').slice(0, 1); $('hbpAcctLeft').textContent = d.unlimited ? '制限なし' : '残り ' + Math.max(0, (d.limit || 0) - (d.today || 0)) + '回'; $('hbpAcctSub').textContent = f.stage === 'trial' ? (f.lineupName || '') + ' ' + (f.grade || '') + '・お試し あと' + f.daysLeft + '日' : f.stage === 'contract' ? (f.lineupName || '') + ' ' + (f.grade || '') : (d.plan || 'アカウントと設定'); }
     $('hbPage').classList.toggle('p-my', p === 'my'); $('hbPage').classList.toggle('p-acct', p === 'acct');
+    document.body.classList.remove('clprofv'); if (!ACCT[p]) HBP.acctSet = false;
     if (p === 'person') $('hbpTitle').textContent = ((HBP.thr && HBP.thr.t && HBP.thr.t.vname) || 'トーク');
     if (p === 'uperson') { const r0 = ((HBP.admin && HBP.admin.rows) || []).find(x => x.code === HBP.ucode); $('hbpTitle').textContent = r0 ? (r0.name || r0.ownerName || 'アカウント') : 'アカウント'; }
     if (p === 'group') { const g0 = (HBP.myGroups || (HBP.con && HBP.con.groups) || []).find(x => x.gid === HBP.gid); $('hbpTitle').textContent = (g0 && g0.name) || 'グループ'; }
@@ -4771,6 +4837,13 @@ body.cl .cltools [data-cl="ctx"].clfr { background: transparent !important; colo
           ${A.code ? `<div class="big" style="letter-spacing:.2em">${esc(A.code)}</div>` : '<button type="button" class="hbbtn w" id="acCodeBtn">コードを出す</button>'}</div>`;
       const mb = $('acMerge'); if (mb) mb.onclick = () => { const c = ($('acCode').value || '').trim(); if (!c) return; if (!confirm('もう一方のアカウントを、このアカウントにまとめます。よろしいですか？')) return; jrSend({ type: 'acct_merge', code: c }); };
       const cb = $('acCodeBtn'); if (cb) cb.onclick = () => jrSend({ type: 'acct_code' });
+    } else if (p === 'acct' && CL && clMobile() && !HBP.acctSet) {   // 11/22 インスタの形：自分と自分の投稿だけ。左下に設定、右下に投稿
+      const nm0 = String(d.name || (HBP.con && HBP.con.me && HBP.con.me.name) || '').trim();
+      $('hbpTitle').textContent = 'プロフィール'; document.body.classList.add('clprofv');
+      body.innerHTML = clProfile(nm0, d).replace('class="hbc clprof"', 'class="hbc clprof cpf-flat"') + '<div id="cpfPosts">' + clProfGrid() + '</div>'
+        + '<div class="cpf-dock"><button type="button" class="cpf-set" data-pf="set"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>設定</button>'
+        + '<button type="button" class="cpf-post" data-pf="post"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><path d="M12 8v8M8 12h8"/></svg>投稿</button></div>';
+      if (FEED.items === null && J.ready) jrSend({ type: 'feed' });
     } else if (p === 'acct') {
       const f = d.funnel || {}, nm0 = String(d.name || (HBP.con && HBP.con.me && HBP.con.me.name) || '').trim(), left = Math.max(0, (d.limit || 0) - (d.today || 0));
       const R = [['plan', 'プラン・お支払い', f.stage === 'trial' ? (f.lineupName || '') + ' ' + (f.grade || '') + '・お試し あと' + f.daysLeft + '日' : f.stage === 'contract' ? (f.lineupName || '') + ' ' + (f.grade || '') : '7日間無料で試せます'], ['ticket', 'トッピング', '会話・声・1日使い放題を足す'], ['api', 'APIキー', 'ほかのAIやアプリからハタボにつなぐ'], ['custom', 'キャラ設定', '名前・話し方・あなたのこと・いつもの指示'], ['google', 'Google連携', 'メモと議事録をGoogleドライブに'], ['settings', '設定', 'グレード・表示・マイク']];
@@ -4778,7 +4851,8 @@ body.cl .cltools [data-cl="ctx"].clfr { background: transparent !important; colo
       R.push(['share', '紹介する', 'ハタボのカードを友だちに。ご縁がひろがります'], ['notes', 'メモ・議事録', '話して残したメモと議事録'], ['inbox', '伝言', 'ご縁の人のハタボと伝言（トーク一覧にも出ます）'], ['gacha', '愛棒ガチャ', 'はじめの1回むりょう・あとはポイント'], ['friends', '友だち', 'ガチャで出会った人・ご縁の人'], ['grow', '育てた' + nm, 'レベル・覚えたこと・引きつぎ'], ['aisai', 'AISAI・愛祭', 'オーナーズクラブ・ランク・アワード'], ['times', 'ハタボタイムズ', 'お知らせ・使い方']);
       if (J.perm === 'top' && OFFM()) R.unshift(['perms', '役割と権限', 'だれが管理画面に入れるか（最高管理者だけ）']);
       R.unshift(['console', OFFM() ? '管理画面（事務局）' : '管理画面', OFFM() ? '窓口に届いた会話・オーナー・愛棒・お金・事務局への声' : '会話・愛棒・窓口・お金・設定']);
-      body.innerHTML = (CL ? clProfile(nm0, d) : `<div class="hbc"><div class="hbacct"><i>${esc((nm0 || 'ハ').slice(0, 1))}</i><div><div class="k">MY PAGE</div><h3>${esc(nm0 ? nm0 + 'さん' : 'Myハタボ')}</h3><span class="hbtag">${esc(d.plan || '')}</span></div></div></div>`) + `
+      const setV = CL && clMobile(); if (setV) $('hbpTitle').textContent = '設定';
+      body.innerHTML = (setV ? '<button type="button" class="cpf-back" data-pf="prof">‹ プロフィール</button>' : CL ? clProfile(nm0, d) : `<div class="hbc"><div class="hbacct"><i>${esc((nm0 || 'ハ').slice(0, 1))}</i><div><div class="k">MY PAGE</div><h3>${esc(nm0 ? nm0 + 'さん' : 'Myハタボ')}</h3><span class="hbtag">${esc(d.plan || '')}</span></div></div></div>`) + `
         <div class="hbc"><div class="k">USAGE</div><h3>使った量</h3>${d.unlimited ? '<div class="big">制限なし</div>' : (() => { const lim = Math.max(1, d.limit || 1), lp = Math.round(left / lim * 100), mlim = lim * 30, mp = Math.min(100, Math.round((d.month || 0) / mlim * 100)); return `<div class="hbg"><div class="hbg-h"><b>きょうの残り</b><span><em>${left.toLocaleString('ja-JP')}</em> / ${lim.toLocaleString('ja-JP')} 回</span></div><div class="hbg-bar ${lp < 20 ? 'low' : lp < 50 ? 'mid' : ''}"><i style="width:${lp}%"></i></div></div><div class="hbg"><div class="hbg-h"><b>今月つかった</b><span><em>${Number(d.month || 0).toLocaleString('ja-JP')}</em> 回（目安 ${mlim.toLocaleString('ja-JP')} 回）</span></div><div class="hbg-bar m"><i style="width:${mp}%"></i></div></div>`; })()}
           <p>きょう ${Number(d.today || 0).toLocaleString('ja-JP')} 回 ・ 今月 ${Number(d.month || 0).toLocaleString('ja-JP')} 回 ・ 今月のAI代の目安 約${Number(Math.round(d.monthYen || 0)).toLocaleString('ja-JP')}円 ・ 追加チケット ${Number(d.tickets || 0).toLocaleString('ja-JP')} 枚</p></div>
         ${(() => { const row = ([k, t, d0]) => `<button type="button" class="hbrow" data-go="${k}"><div><b>${t}</b><span>${esc(d0)}</span></div><i>›</i></button>`;
@@ -5845,7 +5919,7 @@ body.cl .cltools [data-cl="ctx"].clfr { background: transparent !important; colo
   async function pushInit() {
     if (!('serviceWorker' in navigator) || pwaInLine()) return;
     try { const reg = await navigator.serviceWorker.register('sw.js'); const sub = reg.pushManager && await reg.pushManager.getSubscription(); PUSH.on = !!sub && window.Notification && Notification.permission === 'granted'; } catch (e) {}
-    navigator.serviceWorker.addEventListener('message', ev => { if (ev.data && ev.data.type === 'open') { if (ev.data.from) HBP.ibWith = String(ev.data.from); HBP.inboxShown = false; hbpOpen(ev.data.page || 'inbox'); } });
+    navigator.serviceWorker.addEventListener('message', ev => { if (ev.data && ev.data.type === 'call' && ev.data.url && window.hbCallOpen) return window.hbCallOpen(ev.data.url); if (ev.data && ev.data.type === 'open') { if (ev.data.from) HBP.ibWith = String(ev.data.from); HBP.inboxShown = false; hbpOpen(ev.data.page || 'inbox'); } });
   }
   async function pushOn() {
     if (PUSH.busy) return; PUSH.busy = true; PUSH.msg = '';
@@ -6799,6 +6873,7 @@ body.cl .cltools [data-cl="ctx"].clfr { background: transparent !important; colo
     document.querySelectorAll('[data-cl="ctx"]').forEach(b => { b.hidden = !c; if (!c) return; if (b.dataset.k !== c.k) { b.dataset.k = c.k; b.setAttribute('aria-label', c.l); b.title = c.l; if (b.classList.contains('clfr')) b.textContent = c.l.replace(/（.*）/, ''); else b.innerHTML = c.ic; } });
   }
   const CL_IC = {
+    phone: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg>',
     menu: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>',
     neu: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-6"/><path d="M17.5 3.5a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4z"/></svg>',
     more: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.9"/><circle cx="12" cy="12" r="1.9"/><circle cx="19" cy="12" r="1.9"/></svg>',
@@ -6976,11 +7051,14 @@ body.cl .cltools [data-cl="ctx"].clfr { background: transparent !important; colo
     const media = x.video ? '<video class="fp-m" src="' + esc(x.video) + '" poster="' + esc(x.poster || '') + '" muted loop playsinline preload="metadata"></video><button type="button" class="fp-snd" data-fp="snd" aria-label="音を出す">音を出す</button>'
       : src ? '<img class="fp-m" src="' + esc(src) + '" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.onerror=null;this.outerHTML=\'<div class=&quot;fp-m err&quot;></div>\'">' : '<div class="fp-txt">' + esc(x.text || '') + '</div>';
     const who = (x.aiName ? x.aiName : x.name + 'の愛棒');
-    return '<article class="fp" data-id="' + esc(x.id) + '"><header><span class="fp-avw">' + av + '</span><div class="fp-h"><b>' + esc(x.name) + '</b>' + tag + fr + '<small>' + (x.official ? 'HATHABO' : esc(who)) + (x.at ? '・' + clFeedAgo(x.at) : '') + (x.scope === 'friends' ? '・' + FI.lock + 'つながっている人だけ' : '') + '</small></div><button type="button" class="fp-more" data-fp="more" aria-label="メニュー">' + FI.more + '</button></header>'
+    const likeN = Number(x.likes || 0).toLocaleString('ja-JP');
+    return '<article class="fp" data-id="' + esc(x.id) + '">'
       + '<div class="fp-mw">' + media + '</div>'
-      + '<div class="fp-act"><button type="button" class="fp-like' + (x.liked ? ' on' : '') + '" data-fp="like" aria-label="いいね">' + FI.heart + '</button><button type="button" class="fp-ask" data-fp="ask">' + FI.ask + '<span>愛棒に聞く</span></button>' + (x.friend ? '<button type="button" class="fp-talk" data-fp="talk">愛棒と話す</button>' : '') + '</div>'
-      + '<p class="fp-likes">いいね ' + Number(x.likes || 0).toLocaleString('ja-JP') + '件</p>'
-      + (x.text && (src || x.video) ? '<p class="fp-cap"><b>' + esc(x.name) + '</b> ' + esc(x.text) + '</p>' : '')
+      + '<button type="button" class="fp-more" data-fp="more" aria-label="メニュー">' + FI.more + '</button>'
+      + '<div class="fp-info"><header><span class="fp-avw">' + av + '</span><div class="fp-h"><b>' + esc(x.name) + '</b>' + tag + fr + '<small>' + (x.official ? 'HATHABO' : esc(who)) + (x.at ? '・' + clFeedAgo(x.at) : '') + (x.scope === 'friends' ? '・' + FI.lock + 'つながっている人だけ' : '') + '</small></div></header>'
+      + '<p class="fp-likes">いいね ' + likeN + '件</p>'
+      + (x.text && (src || x.video) ? '<p class="fp-cap" data-fp="cap"><b>' + esc(x.name) + '</b> ' + esc(x.text) + '</p>' : '') + '</div>'
+      + '<div class="fp-act"><button type="button" class="fp-like' + (x.liked ? ' on' : '') + '" data-fp="like" aria-label="いいね">' + FI.heart + '<span>いいね</span></button><button type="button" class="fp-ask" data-fp="ask">' + FI.ask + '<span>愛棒に聞く</span></button>' + (x.friend ? '<button type="button" class="fp-talk" data-fp="talk">愛棒と話す</button>' : '') + '</div>'
       + '<div class="fp-q" hidden></div></article>';
   }
   function clFeedAll() {
@@ -7002,19 +7080,20 @@ body.cl .cltools [data-cl="ctx"].clfr { background: transparent !important; colo
       else if (v) v.pause();
     }), { threshold: [0, .6] }); document.querySelectorAll('#clFeed .fp').forEach(a => clFeedIO.observe(a)); } catch (e) {}
   }
-  window.clFeedOpen = () => clFeedOpen();
-  function clFeedOpen() {
+  window.clFeedOpen = id => clFeedOpen(id);
+  function clFeedOpen(id) {
     if (!CL) return;
     if (window.__clSetView0) window.__clSetView0('chat');
     let P = $('clFeed');
     if (!P) { P = document.createElement('section'); P.id = 'clFeed'; P.setAttribute('aria-label', '投稿'); P.innerHTML = '<div class="cf-top"><b>投稿</b><button type="button" class="cf-new" data-fp="new">' + FI.plus + '投稿</button></div><div class="cf-list"></div>'; ($('chatV') || document.body).append(P); }
     P.hidden = false; FEED.open = true; document.body.classList.add('clfeed'); clModeSync();
     clFeedRender(); if (J.ready) jrSend({ type: 'feed' });
+    if (id) { const a = P.querySelector('.fp[data-id="' + String(id).replace(/["\\]/g, '') + '"]'); if (a) P.scrollTop = a.offsetTop; } else P.scrollTop = 0;
   }
   function clFeedClose() { const P = $('clFeed'); if (P) { P.hidden = true; P.querySelectorAll('video').forEach(v => v.pause()); } if (FEED.open && J.ready) jrSend({ type: 'view_ctx' }); FEED.open = false; document.body.classList.remove('clfeed'); clModeSync(); }
   function clModeSync() { const f = FEED.open; document.querySelectorAll('.clmode [data-v], .hbtop-mode [data-mode]').forEach(b => { const v = b.dataset.v || b.dataset.mode; if (v === 'feed') b.classList.toggle('on', f); else if (f) b.classList.remove('on'); }); }
   function clFeedMsg(m) {
-    if (m.type === 'feed') { if (m.off) { FEED.items = FEED.items || []; } else FEED.items = m.items || []; if (FEED.open) clFeedRender(); return; }
+    if (m.type === 'feed') { if (m.off) { FEED.items = FEED.items || []; } else FEED.items = m.items || []; if (FEED.open) clFeedRender(); clProfGridSync(); return; }
     if (m.type === 'feed_ok') { toast('投稿しました'); clPostClose(); clFeedOpen(); return; }
     if (m.type === 'feed_err') { toast(m.why || m.detail || '投稿できませんでした'); const b = document.querySelector('#clPost .cp-go'); if (b) { b.disabled = false; b.textContent = '投稿する'; } return; }
     if (m.type === 'post_ans') { clFeedAns(m.id, m.q, m.a); return; }
@@ -7053,6 +7132,7 @@ body.cl .cltools [data-cl="ctx"].clfr { background: transparent !important; colo
       box.hidden = false; if (x.intro && !box.querySelector('.fq-a')) setTimeout(() => clFeedAns(x.id, '', x.intro), 250);   // 11/22：見本の愛棒は、開いたらまず短く自己紹介
       box.querySelector('form').onsubmit = ev => { ev.preventDefault(); const i = box.querySelector('input'), q = i.value.trim(); if (!q) return; i.value = ''; clFeedAsk(art, x, q); }; }
     else if (k === 'chip') clFeedAsk(art, x, b.textContent);
+    else if (k === 'cap') b.classList.toggle('open');
     else if (k === 'fr') { if (J.ready) jrSend({ type: 'friend_req', code: x.by }); x.asked = true; b.outerHTML = '<span class="fp-fr off">申請中</span>'; toast('友だち申請をしました。相手が承認すると、愛棒と話せます'); }
     else if (k === 'talk') { clFeedClose(); if (window.hbpVisit) window.hbpVisit(x.by); }
     else if (k === 'snd') { const v = art.querySelector('video'); if (v) { v.muted = !v.muted; b.textContent = v.muted ? '音を出す' : '音を消す'; if (!v.muted) v.play().catch(() => {}); } }
@@ -7093,11 +7173,15 @@ body.cl .cltools [data-cl="ctx"].clfr { background: transparent !important; colo
     /* 11/22：真ん中（トーク・愛棒のどちらでも）を中心に、指を左へ → 投稿、右へ → トーク一覧。投稿で右へ・トーク一覧で左へ → 真ん中にもどる。
        トークと愛棒の切りかえはスワイプでは動かさず、下のボタンだけ */
     let sx = 0, sy = 0, sok = false, sdrw = false;
-    document.addEventListener('touchstart', e => { const t = e.touches[0]; sx = t.clientX; sy = t.clientY; const pg = document.body.classList.contains('hbp-open'); sdrw = pg && $('hbPage').classList.contains('drawer') && !!HBP.fromChat; sok = (!pg || sdrw) && !(e.target.closest && e.target.closest('input, textarea, select, .cv-bot, .clask, #clPost, .fq-chips, .hbt, .clslot-bg, .clplus, video, .clsh, .clpop')); }, { passive: true });
+    const hScroll = el => { for (let x = el; x && x !== document.body; x = x.parentElement) { if (x.scrollWidth > x.clientWidth + 4) { const o = getComputedStyle(x).overflowX; if (o === 'auto' || o === 'scroll') return true; } } return false; };   // 横に動く表や帯の上では、画面を切りかえない
+    let spg = '';
+    document.addEventListener('touchstart', e => { const t = e.touches[0]; sx = t.clientX; sy = t.clientY; const pg = document.body.classList.contains('hbp-open'); sdrw = pg && $('hbPage').classList.contains('drawer') && !!HBP.fromChat; spg = pg && !$('hbPage').classList.contains('drawer') ? HBP.page : '';
+      sok = !(e.target.closest && e.target.closest('input, textarea, select, .cv-bot, .clask, #clPost, .fq-chips, .fp-q, .hbt, .clslot-bg, .clplus, video, .clsh, .clpop, .hbcar-tr, .hbban, .ctalk, .cmsgs')) && !hScroll(e.target) && (!pg || sdrw || !!spg); }, { passive: true });
     document.addEventListener('touchend', e => { if (!sok || !clMobile()) return; const t = e.changedTouches[0], dx = t.clientX - sx, dy = t.clientY - sy; if (Math.abs(dx) < 70 || Math.abs(dy) > Math.abs(dx) * .6) return;
       if (sdrw) { if (dx < 0) { hbpDrawer(false); HBP.fromChat = false; hbpClose(); } return; }   // トーク一覧で左へ：真ん中にもどる
-      if (dx < 0 && !FEED.open) clFeedOpen();
-      else if (dx > 0 && FEED.open) clFeedClose();
+      if (spg) { if (dx < 0) { FEED.back = spg; hbpClose(); clFeedOpen(); } else { hbpDrawer(true); } return; }   // 11/22：どのページでも、左へ → 投稿（右のカルーセル）、右へ → トーク一覧
+      if (dx < 0 && !FEED.open) { FEED.back = ''; clFeedOpen(); }
+      else if (dx > 0 && FEED.open) { const back = FEED.back; FEED.back = ''; clFeedClose(); if (back) hbpOpen(back); }
       else if (dx > 0 && !FEED.open) { hbpOpen('my'); setTimeout(() => { hbpDrawer(true); HBP.fromChat = true; }, 30); } }, { passive: true });
   }
 
@@ -7110,6 +7194,15 @@ body.cl .cltools [data-cl="ctx"].clfr { background: transparent !important; colo
       + '<div class="cpf-n"><button type="button" data-pf="aibo"><b data-pfn="aibo">—</b><span>愛棒</span></button><button type="button" data-pf="goen"><b data-pfn="goen">—</b><span>ご縁</span></button><button type="button" data-pf="kids"><b data-pfn="kids">—</b><span>紹介した人</span></button></div></div></div>'
       + '<div class="cpf-b"><button type="button" data-pf="edit">プロフィール編集</button><button type="button" data-pf="share">プロフィール共有</button><button type="button" class="cpf-add" data-pf="add" aria-label="友だち追加">' + CL_PI.fr + '</button></div></div>';
   }
+  function clProfGrid() {   /* 自分の投稿（インスタの3列）。押すと、その投稿から縦にめくれる */
+    const mine = (FEED.items || []).filter(x => x.mine);
+    const h = '<div class="cpf-grid-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>投稿 ' + mine.length + '</div>';
+    if (FEED.items === null) return h + '<p class="cpf-empty">よみこみ中…</p>';
+    if (!mine.length) return h + '<p class="cpf-empty">まだ投稿がありません。<br>右下の「投稿」から、写真と一言をのせてみましょう。相棒が一言を考えるのも手伝います。</p>';
+    return h + '<div class="cpf-grid">' + mine.map(x => { const src = x.img === true ? clFeedSrv() + '/feed/img/' + encodeURIComponent(x.id) : x.img || x.poster || '';
+      return '<button type="button" data-pf="tile" data-id="' + esc(x.id) + '" aria-label="' + esc(String(x.text || '投稿').slice(0, 30)) + '">' + (src ? '<img src="' + esc(src) + '" alt="" loading="lazy" referrerpolicy="no-referrer">' : '<span>' + esc(String(x.text || '').slice(0, 60)) + '</span>') + '</button>'; }).join('') + '</div>';
+  }
+  function clProfGridSync() { const g = $('cpfPosts'); if (g && document.body.classList.contains('clprofv')) g.innerHTML = clProfGrid(); }
   function clProfNums() {
     const a = document.querySelector('[data-pfn="aibo"]'); if (!a) return;
     const set = (k, v) => { const e = document.querySelector('[data-pfn="' + k + '"]'); if (e && v != null && e.textContent !== String(v)) e.textContent = v; };
@@ -7121,6 +7214,10 @@ body.cl .cltools [data-cl="ctx"].clfr { background: transparent !important; colo
     const b = e.target.closest && e.target.closest('[data-pf]'); if (!b) return; e.stopPropagation(); const k = b.dataset.pf;
     if (k === 'mood') { const v = prompt('今日の気分（20字まで）', store.get('hbMood', '') || ''); if (v != null) { store.set('hbMood', v.trim().slice(0, 20)); b.textContent = v.trim().slice(0, 20) || '今日の気分…'; } return; }
     if (k === 'icon' || k === 'edit') { hbpOpen('custom'); if (J.ready) jrSend({ type: 'custom_get' }); return; }
+    if (k === 'set') { HBP.acctSet = true; hbpRender(); try { $('hbpBody').scrollTop = 0; } catch (x) {} return; }
+    if (k === 'prof') { HBP.acctSet = false; hbpRender(); try { $('hbpBody').scrollTop = 0; } catch (x) {} return; }
+    if (k === 'post') { FEED.back = 'acct'; hbpClose(); return clPostOpen(); }
+    if (k === 'tile') { FEED.back = 'acct'; hbpClose(); return clFeedOpen(b.dataset.id); }
     if (k === 'share') return clMyQr();
     if (k === 'add') return shareHatabo();
     if (k === 'aibo') return clSlots();
@@ -7165,6 +7262,7 @@ body.cl .cltools [data-cl="ctx"].clfr { background: transparent !important; colo
     if (k === 'menu') { if (clPageOpen()) hbpDrawer(!$('hbPage').classList.contains('drawer')); else { hbpOpen('my'); setTimeout(() => { hbpDrawer(true); HBP.fromChat = true; }, 30); } }
     else if (k === 'new') hbNewMenu();
     else if (k === 'more') clMore(b);
+    else if (k === 'call') hbCallSheet();
     else if (k === 'ctx') { const c = clCtx(); if (c) { hbpDrawer(false); c.go(); } }
   });
   document.addEventListener('pointerdown', e => { if (e.target.closest && e.target.closest('.clb, .clpop button, #hbpSide button, #hbpSide .hbt, .clacct, #cvMic, #hbAskMic, .chatv .cv-in button, .hbask button')) clTick(); }, true);
@@ -7172,7 +7270,7 @@ body.cl .cltools [data-cl="ctx"].clfr { background: transparent !important; colo
   document.addEventListener('submit', e => { const f = e.target; if (f && (f.id === 'cvForm' || f.id === 'hbAsk' || f.id === 'hbGrpAsk')) setTimeout(() => f.classList.remove('has'), 0); }, true);
   function clInit() {
     if (!CL || document.body.dataset.clInit) return; document.body.dataset.clInit = '1';
-    const set = '<div class="clset"><button type="button" class="clb" data-cl="menu" aria-label="メニューと会話の一覧">' + CL_IC.menu + '<i class="clbadge" data-cl-badge hidden></i></button><span class="cltitle" data-cl-title>ハタボ</span><button type="button" class="clb clpx" data-px="cvSpk" aria-label="声のあり・なし">' + CL_IC.spk + '</button><button type="button" class="clb clpx" data-px="cvMicSw" aria-label="マイクのあり・なし">' + CL_IC.mic + '</button><button type="button" class="clb" data-clplus aria-label="新しいトーク・友だち追加">' + CL_IC.add + '</button><button type="button" class="clb" data-cl="ctx" hidden></button><button type="button" class="clb" data-cl="more" aria-label="この会話のメニュー" aria-haspopup="menu">' + CL_IC.more + '</button></div>';
+    const set = '<div class="clset"><button type="button" class="clb" data-cl="menu" aria-label="メニューと会話の一覧">' + CL_IC.menu + '<i class="clbadge" data-cl-badge hidden></i></button><span class="cltitle" data-cl-title>ハタボ</span><button type="button" class="clb clpx" data-px="cvSpk" aria-label="声のあり・なし">' + CL_IC.spk + '</button><button type="button" class="clb" data-cl="call" aria-label="友だちに電話">' + CL_IC.phone + '</button><button type="button" class="clb clpx" data-px="cvMicSw" aria-label="マイクのあり・なし">' + CL_IC.mic + '</button><button type="button" class="clb" data-clplus aria-label="新しいトーク・友だち追加">' + CL_IC.add + '</button><button type="button" class="clb" data-cl="ctx" hidden></button><button type="button" class="clb" data-cl="more" aria-label="この会話のメニュー" aria-haspopup="menu">' + CL_IC.more + '</button></div>';
     document.querySelectorAll('.hbp-top, .hbtop').forEach(el => el.insertAdjacentHTML('afterbegin', set));
     document.body.insertAdjacentHTML('beforeend', '<span class="cltools cltools-fix"><button type="button" data-px="cvScr"></button><button type="button" data-px="cvSpk"></button><button type="button" data-px="cvMicSw"></button><button type="button" class="clfr" data-cl="ctx" hidden></button><button type="button" class="clfr" data-clplus>＋ 友だち追加</button></span>');
     { const tt = $('hbTopTools'); if (tt) tt.insertAdjacentHTML('beforeend', '<button type="button" class="clfr" data-cl="ctx" hidden></button><button type="button" class="clfr" data-clplus>＋ 友だち追加</button>'); }
@@ -7195,6 +7293,42 @@ body.cl .cltools [data-cl="ctx"].clfr { background: transparent !important; colo
     }, 120);
     setInterval(clTickBars, 600); clTickBars();
   }
+  /* ===== 11/22 電話：上の帯の電話のマーク → 友だちをえらぶ → 電話の画面（アプリの中に重ねる）。かかってきたら上に知らせ ===== */
+  function hbCallOpen(url) {
+    if (!url) return;
+    let o = $('hbCallOv');
+    if (!o) { o = document.createElement('div'); o.id = 'hbCallOv'; o.innerHTML = '<iframe title="電話" allow="microphone; autoplay"></iframe><button type="button" class="hbcall-x" aria-label="電話の画面を閉じる">閉じる</button>'; document.body.append(o);
+      o.querySelector('.hbcall-x').onclick = () => { if (!confirm('電話の画面を閉じます。話している途中なら切れます。')) return; o.querySelector('iframe').src = 'about:blank'; o.hidden = true; }; }
+    o.querySelector('iframe').src = url; o.hidden = false; const r = $('hbCallRing'); if (r) r.hidden = true; const sh = $('hbCallSheet'); if (sh) sh.hidden = true;
+  }
+  window.hbCallOpen = hbCallOpen;
+  window.hbCallRing = m => {
+    let r = $('hbCallRing');
+    if (!r) { r = document.createElement('div'); r.id = 'hbCallRing'; r.setAttribute('role', 'alertdialog'); document.body.append(r); }
+    r.innerHTML = '<div class="hcr-i">' + CL_IC.phone + '</div><div class="hcr-t"><b></b><span>電話です</span></div><button type="button" class="hcr-no">あとで</button><button type="button" class="hcr-ok">出る</button>';
+    r.querySelector('b').textContent = (m.name || '友だち') + 'さんから';
+    r.querySelector('.hcr-ok').onclick = () => hbCallOpen(m.url);
+    r.querySelector('.hcr-no').onclick = () => { r.hidden = true; };
+    r.hidden = false; try { if (navigator.vibrate) navigator.vibrate([300, 150, 300, 150, 300]); } catch (e) {}
+    clearTimeout(r._t); r._t = setTimeout(() => { r.hidden = true; }, 45000);
+  };
+  function hbCallSheetBody() {
+    const F = HBP.friends, L = (F && F.list) || [];
+    if (!F) return '<p class="hcs-m">友だちをよみこみ中…</p>';
+    if (!L.length) return '<p class="hcs-m">まだ友だちがいません。友だち申請をして、相手が承認すると電話できます。</p><button type="button" class="hcs-go" data-hcs="friends">友だちのページへ</button>';
+    return L.map(x => '<button type="button" class="hcs-p" data-hcs-call="' + esc(x.code) + '"><i>' + esc(String(x.name || '?').slice(0, 1)) + '</i><span>' + esc(x.name || '友だち') + 'さん</span>' + CL_IC.phone + '</button>').join('');
+  }
+  function hbCallSheet() {
+    let sh = $('hbCallSheet');
+    if (!sh) { sh = document.createElement('div'); sh.id = 'hbCallSheet'; sh.setAttribute('role', 'dialog'); sh.setAttribute('aria-label', '電話する友だちをえらぶ'); document.body.append(sh);
+      sh.addEventListener('click', e => {
+        const c = e.target.closest('[data-hcs-call]'); if (c) { if (!J.ready) return toast('つながってから、もう一度押してください'); c.disabled = true; c.querySelector('span').textContent = '呼び出しの準備中…'; return jrSend({ type: 'call_start', code: c.dataset.hcsCall }); }
+        const g = e.target.closest('[data-hcs]'); if (g) { sh.hidden = true; hbpOpen('friends'); return; }
+        if (e.target === sh || e.target.closest('.hcs-x')) sh.hidden = true; }); }
+    sh.innerHTML = '<div class="hcs-c"><div class="hcs-h"><b>電話する</b><button type="button" class="hcs-x" aria-label="閉じる">×</button></div><div class="hcs-l">' + hbCallSheetBody() + '</div><p class="hcs-n">ハタボでつながっている友だちと、声で話せます。相手に通知がとどきます。</p></div>';
+    sh.hidden = false; if (J.ready) jrSend({ type: 'friends' });
+  }
+  window.hbCallSheetSync = () => { const sh = $('hbCallSheet'); if (sh && !sh.hidden) { const l = sh.querySelector('.hcs-l'); if (l) l.innerHTML = hbCallSheetBody(); } };
   clInit();
 
   /* ===== キャラのアイコン：選んだ画像をまん中で四角に切って小さくし、保存。アプリの中のキャラの絵をそのアイコンに ===== */

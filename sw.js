@@ -10,7 +10,8 @@ self.addEventListener('push', e => {
     icon: 'https://www.hatha-lab.com/icon-192.png',
     tag: d.tag || 'inbox',
     renotify: true,
-    data: { url: d.url || '', page: d.page || 'inbox', from: d.from || '' }
+    data: { url: d.url || '', page: d.page || 'inbox', from: d.from || '', callUrl: d.callUrl || '' },
+    requireInteraction: d.tag === 'call'
   })];
   const nav = self.navigator;
   if (typeof d.badge === 'number' && nav && nav.setAppBadge) jobs.push(d.badge > 0 ? nav.setAppBadge(d.badge) : nav.clearAppBadge());
@@ -20,6 +21,12 @@ self.addEventListener('notificationclick', e => {
   e.notification.close();
   const scope = self.registration.scope, d = e.notification.data || {};
   const url = String(d.url || '').startsWith(scope) ? d.url : scope + '?page=' + (d.page || 'inbox');
+  if (d.callUrl && String(d.callUrl).startsWith(scope)) {   // 電話：開いているハタボがあれば、その中で出る。なければ電話の画面を開く
+    return e.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(cs => {
+      for (const c of cs) if (c.url.startsWith(scope)) { c.postMessage({ type: 'call', url: d.callUrl }); return c.focus(); }
+      return self.clients.openWindow(d.callUrl);
+    }));
+  }
   e.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(cs => {
     for (const c of cs) if (c.url.startsWith(scope)) { c.postMessage({ type: 'open', page: d.page || 'inbox', from: d.from || '' }); return c.focus(); }
     return self.clients.openWindow(url);
