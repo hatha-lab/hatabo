@@ -3944,6 +3944,22 @@ body.cl .cltools [data-cl="ctx"].clfr { background: transparent !important; colo
       // パソコンのブラウザでは liff.init がそのままLINEのログインへ飛ぶので、その前に開く画面（page）とつなぐ番号（rid）をとっておく
       try { const pg0 = qpar('page').replace(/[^a-z]/g, ''), rd0 = qpar('rid').replace(/[^\w-]/g, ''); if (pg0) sessionStorage.setItem('hb.start', pg0); if (rd0) sessionStorage.setItem('hb.rid', rd0); } catch (e) {}
       try { const pc0 = qpar('pc').replace(/[^0-9a-f]/g, ''); if (pc0) sessionStorage.setItem('hb.pc', pc0); } catch (e) {}   // ホーム画面のハタボをつなぐ番号
+      /* 11/22：LINEの外のブラウザで、まだどちらでもログインしていないときは、LINEかGoogleかを選ぶ（事務局の入口はGoogleなら事務局へ） */
+      if (!/ Line\//i.test(navigator.userAgent) && !WT && !/[?&](code|liffClientId)=/.test(location.search)) {
+        let had = false; try { had = Object.keys(localStorage).some(k => k.indexOf('LIFF_STORE:' + LIFF_ID) === 0 && /accessToken|IDToken/.test(k)); } catch (e) {}
+        if (!had) await new Promise(ok => {
+          const off = qpar('page') === 'office' || qpar('page') === 'admin', km = KOMUGI_APP;
+          const d = document.createElement('div'); d.id = 'hbLoginPick'; d.setAttribute('role', 'dialog'); d.setAttribute('aria-modal', 'true');
+          d.style.cssText = 'position:fixed;inset:0;z-index:10000;display:grid;place-items:center;background:#05070D;padding:20px;visibility:visible';
+          const bt = 'display:flex;align-items:center;justify-content:center;gap:10px;width:100%;margin:10px 0;padding:14px;border-radius:14px;font:800 15px var(--display);cursor:pointer;border:1px solid rgba(255,255,255,.16)';
+          d.innerHTML = '<div style="width:min(360px,100%);text-align:center;color:#E8EBF0"><img src="' + (km ? 'komugi.jpg' : 'award_mark.svg') + '" alt="" width="72" height="72" style="width:72px;height:72px;border-radius:50%;background:#fff;object-fit:cover"><b style="display:block;margin:14px 0 4px;font:800 20px var(--display)">' + (off ? 'ハタボ事務局' : km ? 'コムギ' : 'ハタボ') + 'にログイン</b><p style="margin:0 0 18px;opacity:.7;font-size:12.5px">LINEとGoogleのどちらでも、同じアカウントに入れます（GoogleはLINEのMyハタボでつないだGmail）</p>'
+            + '<button type="button" data-lg="line" style="' + bt + ';background:#06C755;color:#fff;border-color:#06C755">LINEでログイン</button><button type="button" data-lg="google" style="' + bt + ';background:#fff;color:#1F1F1F">Googleでログイン</button></div>';
+          document.body.append(d);
+          d.addEventListener('click', e => { const b = e.target.closest('[data-lg]'); if (!b) return;
+            if (b.dataset.lg === 'google') { location.href = 'https://' + JR_DEFAULT + (off ? '/office' : '/google/login'); return; }
+            d.remove(); ok(); });
+        });
+      }
       await liff.init({ liffId: LIFF_ID, withLoginOnExternalBrowser: true });
       // 本番用では、ログインのあと戻る住所をLINEに登録したエンドポイントURLにまかせる（今のページの住所を渡すと、ずれて400になる）
       if (!liff.isLoggedIn()) {
@@ -4060,6 +4076,7 @@ body.cl .cltools [data-cl="ctx"].clfr { background: transparent !important; colo
       case 'groups_mine': HBP.myGroups = m.list || []; hbpChats(); break;
       case 'group_log': HBP.glog = HBP.glog || {}; HBP.glog[m.gid] = m; if (!$('hbPage').hidden && HBP.page === 'group' && HBP.gid === m.gid) hbpRender(); break;
       case 'chat_turns': if (window.hbCvLoad) window.hbCvLoad(m.turns || []); HBP.chats && (HBP.chats.cur = m.id); hbpChats(); break;
+      case 'acct': HBP.acct = Object.assign({}, HBP.acct || {}, m, m.error ? {} : { error: '' }); if (m.error) HBP.acct.error = m.error; if (HBP.page === 'merge') hbpRender(); break;
       case 'custom': HBP.custom = m; if (m.saved) { toast('キャラ設定を保存したよ'); window.__aiName = m.aiName || ''; avText(); const t = document.querySelector('#butterTag text'); if (t && avName()) t.textContent = avName(); } if (!$('hbPage').hidden && (HBP.page === 'custom' || HBP.page === 'voice' || HBP.page === 'my')) hbpRender(); break;
       case 'google': HBP.google = m; if (!$('hbPage').hidden && (HBP.page === 'notes' || HBP.page === 'google')) hbpRender(); break;
       case 'checkout': clearTimeout(HBP.goT); toast('お支払いのページを開きます'); try { if (window.liff && liff.openWindow) liff.openWindow({ url: m.url, external: true }); else location.href = m.url; } catch (e) { location.href = m.url; } HBP.paying = true; break;
@@ -4561,7 +4578,7 @@ body.cl .cltools [data-cl="ctx"].clfr { background: transparent !important; colo
   function hbpRender0() {
     if (HBP.page === 'my' && document.body.classList.contains('officemode')) HBP.page = 'ohome';   // 事務局の入口：ホームは事務局の概要
     const p = HBP.page, d = HBP.data, nm = avName() || 'ハタボ';
-    $('hbpTitle').textContent = { plugins: 'プラグイン', connectors: 'コネクタ', voice: '音声と音声入力', byok: '自分のClaudeで動かす', person: 'トーク', group: 'グループ', voice: 'ボイス', acct: 'アカウント', more: 'もっと', console: '管理画面', api: 'AIからつなぐ（API）', clones: '愛棒', admin: '事務局の管理画面', org: '法人と施設', ohome: '事務局のホーム', aids: 'AIDの一覧', uperson: 'アカウント', settings: '設定', google: 'Googleアカウント連携', social: '公開設定', custom: 'キャラ設定', ticket: '追加チケット', my: 'Myハタボ', notes: 'メモ・議事録', grow: '育てた' + nm, goen: 'ご縁のひろがり', inbox: '伝言', gacha: '愛棒ガチャ', friends: '友だち', plan: 'プラン・支払い', aisai: 'AISAI・愛祭', times: 'ハタボタイムズ', share: '紹介する' }[p] || 'Myハタボ';
+    $('hbpTitle').textContent = { merge: 'アカウントをまとめる', plugins: 'プラグイン', connectors: 'コネクタ', voice: '音声と音声入力', byok: '自分のClaudeで動かす', person: 'トーク', group: 'グループ', voice: 'ボイス', acct: 'アカウント', more: 'もっと', console: '管理画面', api: 'AIからつなぐ（API）', clones: '愛棒', admin: '事務局の管理画面', org: '法人と施設', ohome: '事務局のホーム', aids: 'AIDの一覧', uperson: 'アカウント', settings: '設定', google: 'Googleアカウント連携', social: '公開設定', custom: 'キャラ設定', ticket: '追加チケット', my: 'Myハタボ', notes: 'メモ・議事録', grow: '育てた' + nm, goen: 'ご縁のひろがり', inbox: '伝言', gacha: '愛棒ガチャ', friends: '友だち', plan: 'プラン・支払い', aisai: 'AISAI・愛祭', times: 'ハタボタイムズ', share: '紹介する' }[p] || 'Myハタボ';
     const tabOf = ({ my: 'my', clones: 'clones', goen: 'goen', person: '', group: '' })[p] ?? 'acct';
     const ACCT = { plugins: 1, connectors: 1, byok: 1, acct: 1, settings: 1, google: 1, plan: 1, api: 1, ticket: 1, voice: 1, custom: 1, more: 1, notes: 1, share: 1, gacha: 1, friends: 1, grow: 1, aisai: 1, times: 1, console: 1, inbox: 1 };
     if (d) { { const lim = Math.max(1, d.limit || 1), lp = d.unlimited ? 100 : Math.round(Math.max(0, lim - (d.today || 0)) / lim * 100); document.querySelectorAll('.hbacg i').forEach(x => { x.style.width = lp + '%'; x.parentNode.className = 'hbacg' + (lp < 20 ? ' low' : lp < 50 ? ' mid' : ''); }); }
@@ -4731,6 +4748,21 @@ body.cl .cltools [data-cl="ctx"].clfr { background: transparent !important; colo
       body.querySelectorAll('[data-vset]').forEach(b => b.onclick = () => { save({ voice: b.dataset.vset }); b.disabled = true; });
       body.querySelectorAll('[data-vpre]').forEach(b => b.onclick = () => { const v = (C.presets || {})[b.dataset.vpre] || {}; save({ preset: b.dataset.vpre, voice: v.voice, dialect: v.dialect, dlv: v.dlv, speed: v.speed, pause: v.pause, emo: v.emo, polite: v.polite }); });
       $('vSave').onclick = () => save({ dialect: $('vDia').value, speed: Number($('vSpd').value) });
+    } else if (p === 'merge') {   // 11/22：アカウントをまとめる
+      const A = HBP.acct; if (!A || !A.info) { body.innerHTML = '<div class="hbc"><p>よみこみ中です…</p></div>'; if (J.ready) jrSend({ type: 'acct_info' }); return; }
+      const I = A.info;
+      body.innerHTML = `<div class="hbc hbwide"><div class="k">ACCOUNT</div><h3>このアカウント</h3>
+          <p>ID ${esc(I.id)}（${esc(I.via)}）・キャラの名前 <b>${esc(I.aiName || 'ハタボ（まだ決めていない）')}</b>・ご縁 ${Number(I.goen || 0)}・つないだGmail ${I.emails && I.emails.length ? esc(I.emails.join('、')) : 'なし'}</p></div>
+        <div class="hbc hbwide"><div class="k">MERGE</div><h3>ほかのアカウントを、ここにまとめる</h3>
+          <p>LINE・Google・Claude（ハタボコネクト）で、アカウントが別々にできていることがあります。<b>残したいほう</b>でこの画面を開いて、もう一方で出したコードを入れてください。もう一方のアカウントで入っても、このアカウントとして動くようになります。キャラの名前がまだ決まっていなければ、もう一方のキャラ設定も移します。</p>
+          <input class="hbin" id="acCode" maxlength="12" placeholder="もう一方で出したコード（6文字）" autocomplete="off" style="text-transform:uppercase">
+          <button type="button" class="hbbtn" id="acMerge" style="margin-top:10px">まとめる</button>
+          ${A.error ? `<p style="color:#E5736B">${esc(A.error)}</p>` : ''}${A.merged ? `<p style="color:#7FD39E">まとめました（${esc(A.from)} → ${esc(A.to)}）${A.moved && A.moved.length ? '：' + esc(A.moved.join('・')) : ''}。開きなおすと、新しい設定になります。</p>` : ''}</div>
+        <div class="hbc hbwide"><div class="k">CODE</div><h3>このアカウントを、ほかにまとめる</h3>
+          <p>こちらを消すほうにするときは、コードを出して、残すほうのアカウントで入れてください（15分有効）。Claudeからは「ハタボのアカウントをまとめるコードを出して」と頼めば出ます。</p>
+          ${A.code ? `<div class="big" style="letter-spacing:.2em">${esc(A.code)}</div>` : '<button type="button" class="hbbtn w" id="acCodeBtn">コードを出す</button>'}</div>`;
+      const mb = $('acMerge'); if (mb) mb.onclick = () => { const c = ($('acCode').value || '').trim(); if (!c) return; if (!confirm('もう一方のアカウントを、このアカウントにまとめます。よろしいですか？')) return; jrSend({ type: 'acct_merge', code: c }); };
+      const cb = $('acCodeBtn'); if (cb) cb.onclick = () => jrSend({ type: 'acct_code' });
     } else if (p === 'acct') {
       const f = d.funnel || {}, nm0 = String(d.name || (HBP.con && HBP.con.me && HBP.con.me.name) || '').trim(), left = Math.max(0, (d.limit || 0) - (d.today || 0));
       const R = [['plan', 'プラン・お支払い', f.stage === 'trial' ? (f.lineupName || '') + ' ' + (f.grade || '') + '・お試し あと' + f.daysLeft + '日' : f.stage === 'contract' ? (f.lineupName || '') + ' ' + (f.grade || '') : '7日間無料で試せます'], ['ticket', '追加チケット', '回数をこえたときのチケット'], ['api', 'APIキー', 'ほかのAIやアプリからハタボにつなぐ'], ['custom', 'キャラ設定', '名前・話し方・あなたのこと・いつもの指示'], ['google', 'Google連携', 'メモと議事録をGoogleドライブに'], ['settings', '設定', 'グレード・表示・マイク']];
@@ -4743,7 +4775,8 @@ body.cl .cltools [data-cl="ctx"].clfr { background: transparent !important; colo
           <p>きょう ${Number(d.today || 0).toLocaleString('ja-JP')} 回 ・ 今月 ${Number(d.month || 0).toLocaleString('ja-JP')} 回 ・ 今月のAI代の目安 約${Number(Math.round(d.monthYen || 0)).toLocaleString('ja-JP')}円 ・ 追加チケット ${Number(d.tickets || 0).toLocaleString('ja-JP')} 枚</p></div>
         ${(() => { const row = ([k, t, d0]) => `<button type="button" class="hbrow" data-go="${k}"><div><b>${t}</b><span>${esc(d0)}</span></div><i>›</i></button>`;
           const by = Object.fromEntries(R.map(r => [r[0], r])), take = ks => ks.filter(k => by[k]).map(k => { const r = by[k]; delete by[k]; return r; });
-          const A = take(['console', 'perms', 'plan', 'ticket']), B = [['connectors', 'コネクタ', 'Google・自分のClaude・LINEグループ・お支払いのつながり']].concat(take(['voice']).map(r => ['voice', '音声と音声入力', '声・方言・話す速さ・マイク・声を出す'])).concat(take(['byok', 'api', 'custom', 'settings']));
+          by.merge = ['merge', 'アカウントをまとめる', 'LINE・Google・Claudeで、アカウントが2つに分かれていたら1つに'];
+      const A = take(['console', 'perms', 'plan', 'ticket', 'merge']), B = [['connectors', 'コネクタ', 'Google・自分のClaude・LINEグループ・お支払いのつながり']].concat(take(['voice']).map(r => ['voice', '音声と音声入力', '声・方言・話す速さ・マイク・声を出す'])).concat(take(['byok', 'api', 'custom', 'settings']));
           take(['google']); const C = Object.values(by);
           return `<div class="hbc hbwide acctrows"><div class="k">ACCOUNT</div><h3>アカウント</h3><div class="hbrows">${A.map(row).join('')}</div></div>
             <div class="hbc hbwide acctrows"><div class="k">APP</div><h3>アプリ</h3><div class="hbrows">${B.map(row).join('')}<label class="hbrow hbsw"><div><b>触覚フィードバック</b><span>話すボタンを押したとき、ブルッと震える（対応しているスマホだけ）</span></div><input type="checkbox" id="hbHap" ${store.get('hbHaptic', true) ? 'checked' : ''}></label></div></div>
