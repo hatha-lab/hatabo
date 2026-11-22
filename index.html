@@ -4120,7 +4120,7 @@ body.cl .cltools [data-cl="ctx"].clfr { background: transparent !important; colo
       case 'feed': case 'feed_ok': case 'feed_err': case 'post_ans': case 'post_cap': try { clFeedMsg(m); } catch (e) { console.error('feed', e); } break;
       case 'friends': HBP.friends = m; if (!$('hbPage').hidden && (HBP.page === 'friends' || HBP.page === 'social')) hbpRender(); break;
       case 'goen': HBP.goen = m; if (!$('hbPage').hidden && HBP.page === 'goen') hbpRender(); try { hbpChats(); } catch (e) {} break;
-      case 'limit': HBP.limitHit = m.why || 'plan'; setTimeout(() => hbpOpen(m.why === 'trial_end' ? 'plan' : 'ticket'), m.why === 'trial_end' ? 6500 : 1800); break;   // おためしが終わったときは、アバターのひとことを聞いてからプランへ
+      case 'limit': if (m.why === 'voice') { HBP.limitHit = 'voice'; try { toast('今月の声の回数をこえたので、文字で返します。「トッピング」から声を足せます'); } catch (e) {} break; } HBP.limitHit = m.why || 'plan'; setTimeout(() => hbpOpen(m.why === 'trial_end' ? 'plan' : 'ticket'), m.why === 'trial_end' ? 6500 : 1800); break;   // おためしが終わったときは、アバターのひとことを聞いてからプランへ
       case 'mypage': clearTimeout(HBP.goT); if (m.driveMsg) toast(m.driveMsg); if (m.ticketOk || m.ticketNg) { HBP.tMsg = m.ticketOk || m.ticketNg; toast(HBP.tMsg); if (m.ticketOk) HBP.limitHit = ''; } HBP.data = m; try { store.set('hbpData', Object.assign({}, m, { notes: (m.notes || []).slice(0, 20), driveMsg: '', ticketOk: '', ticketNg: '' })); } catch (e) {} if (!$('hbPage').hidden) hbpRender(); break;
       case 'note_saved': toast({ minutes: '議事録を残したよ', memo: 'メモしたよ', doc: '書いた文章を残したよ', dengon: '伝言をとどけたよ' }[m.kind] || '残したよ'); if (!$('hbPage').hidden) jrSend({ type: 'mypage' }); break;
       case 'ready':
@@ -4288,6 +4288,7 @@ body.cl .cltools [data-cl="ctx"].clfr { background: transparent !important; colo
       return;
     }
     const m = J.queue.shift();
+    if (m && m.nov) { J.kara = ''; jrPump(); jrDrain(); return; }   // 声のない返事（今月の声の回数をこえた）：文字だけ
     J.playing = true;
     let buf = null;
     try { const bin = atob(m.mp3), u8 = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i); buf = await a.decodeAudioData(u8.buffer); } catch (e) { jrDiag('声のデータを読めませんでした'); }
@@ -4642,9 +4643,9 @@ body.cl .cltools [data-cl="ctx"].clfr { background: transparent !important; colo
       body.querySelectorAll('[data-copy]').forEach(b => b.onclick = async () => { const n = list.find(x => x.id === b.dataset.copy); try { await navigator.clipboard.writeText(n.title + '\n\n' + n.text); toast('コピーしたよ'); } catch (e) { toast('コピーできなかった'); } });
       body.querySelectorAll('[data-del]').forEach(b => b.onclick = () => { if (confirmDel(b)) jrSend({ type: 'note_del', id: b.dataset.del }); });
     } else if (p === 'settings') {
-      const rows = [['custom', 'キャラ設定', '名前・呼び方・声と方言・話し方・長さ・いつもの指示'], ['google', 'Googleアカウント連携', KOMUGI_APP ? 'コムギとの会話・議事録・メモを、自分のGoogleドライブへ' : '議事録やメモをGoogleドライブへ'], ['social', '公開設定', 'ガチャに出る・LINE ID・Instagram'], ...(J.mac ? [['docs', '資料フォルダ', 'ドライブの資料をコムギに読ませる・紹介先で使うかを選ぶ']] : J.bridge ? [['docs', '共有された資料', '馬越さんが共有した資料。自分のドライブにも入れられます']] : []), ...(OFFM() ? [['console', '管理画面', '会話・愛棒・窓口・お金・設定。旧い一覧は「オーナー」から'], ['reqs', '事務局への声', '要望・不具合・問い合わせの一覧と採用']] : []), ['plan', 'プラン・支払い', 'お試し・お支払い'], ['ticket', '追加チケット', '回数をこえたときのチケット'], ['share', '紹介する', 'ハタボのカードを友だちに'], ['times', 'ハタボタイムズ', 'お知らせ・使い方'], ['oa', '公式LINEのトークへ', 'トークをピン留めしておくと、いつでもすぐ開けます'], ['pc', 'PCで使う', 'PCのブラウザでも、同じハタボと話せます']];
+      const rows = [['custom', 'キャラ設定', '名前・呼び方・声と方言・話し方・長さ・いつもの指示'], ['google', 'Googleアカウント連携', KOMUGI_APP ? 'コムギとの会話・議事録・メモを、自分のGoogleドライブへ' : '議事録やメモをGoogleドライブへ'], ['social', '公開設定', 'ガチャに出る・LINE ID・Instagram'], ...(J.mac ? [['docs', '資料フォルダ', 'ドライブの資料をコムギに読ませる・紹介先で使うかを選ぶ']] : J.bridge ? [['docs', '共有された資料', '馬越さんが共有した資料。自分のドライブにも入れられます']] : []), ...(OFFM() ? [['console', '管理画面', '会話・愛棒・窓口・お金・設定。旧い一覧は「オーナー」から'], ['reqs', '事務局への声', '要望・不具合・問い合わせの一覧と採用']] : []), ['plan', 'プラン・支払い', 'お試し・お支払い'], ['ticket', 'トッピング', '会話・声・1日使い放題を足す'], ['share', '紹介する', 'ハタボのカードを友だちに'], ['times', 'ハタボタイムズ', 'お知らせ・使い方'], ['oa', '公式LINEのトークへ', 'トークをピン留めしておくと、いつでもすぐ開けます'], ['pc', 'PCで使う', 'PCのブラウザでも、同じハタボと話せます']];
       const curG = store.get('jrPlan2', J.canPlan ? 'super' : 'std');
-      const GR = [['std', 'X', 'ふだん使い。速くて手軽'], ['high', 'G', '賢いモデルで、少しくわしく'], ['super', 'Z', 'Claudeと同じ精度で、最後まで']];
+      const GR = [['std', 'X', 'ふだん使い。速くて手軽'], ['high', 'G', 'しっかり。ふだんの中心'], ['super', 'Z', 'いちばん賢い']];
       const gradeCard = `<div class="hbc"><div class="k">GRADE</div><h3>グレード</h3>${J.canPlan ? `<p>いまのグレードを切りかえられます。お試しのあいだは、3つを使いくらべてみてね。</p><div class="hbgr">${GR.map(([k, n, d0]) => `<button type="button" class="hbgrb${k === curG ? ' on' : ''}" data-grade="${k}"><b>${n}</b><span>${d0}</span></button>`).join('')}</div>` : `<p>いまのグレード：<b>${PLAN_NAME[curG] || 'X'}</b>。グレードを上げるときは「プラン・支払い」からどうぞ。</p>`}</div>`;
       body.innerHTML = `<div class="hbc"><div class="k">SETTINGS</div><h3>設定</h3><p>あなたの愛棒の設定は、ここにまとまっています。公式LINEのメニューの「設定」からも開けます。</p></div>${gradeCard}
         <div class="hbc">${rows.map(([k, t, d0]) => `<button type="button" class="hbrow" ${k === 'oa' ? 'onclick="goOaTalkW()"' : k === 'pc' ? 'onclick="pcLinkW()"' : `data-go="${k}"`}><div><b>${t}</b><span>${d0}</span></div><i>›</i></button>`).join('')}</div>`;
@@ -4772,7 +4773,7 @@ body.cl .cltools [data-cl="ctx"].clfr { background: transparent !important; colo
       const cb = $('acCodeBtn'); if (cb) cb.onclick = () => jrSend({ type: 'acct_code' });
     } else if (p === 'acct') {
       const f = d.funnel || {}, nm0 = String(d.name || (HBP.con && HBP.con.me && HBP.con.me.name) || '').trim(), left = Math.max(0, (d.limit || 0) - (d.today || 0));
-      const R = [['plan', 'プラン・お支払い', f.stage === 'trial' ? (f.lineupName || '') + ' ' + (f.grade || '') + '・お試し あと' + f.daysLeft + '日' : f.stage === 'contract' ? (f.lineupName || '') + ' ' + (f.grade || '') : '7日間無料で試せます'], ['ticket', '追加チケット', '回数をこえたときのチケット'], ['api', 'APIキー', 'ほかのAIやアプリからハタボにつなぐ'], ['custom', 'キャラ設定', '名前・話し方・あなたのこと・いつもの指示'], ['google', 'Google連携', 'メモと議事録をGoogleドライブに'], ['settings', '設定', 'グレード・表示・マイク']];
+      const R = [['plan', 'プラン・お支払い', f.stage === 'trial' ? (f.lineupName || '') + ' ' + (f.grade || '') + '・お試し あと' + f.daysLeft + '日' : f.stage === 'contract' ? (f.lineupName || '') + ' ' + (f.grade || '') : '7日間無料で試せます'], ['ticket', 'トッピング', '会話・声・1日使い放題を足す'], ['api', 'APIキー', 'ほかのAIやアプリからハタボにつなぐ'], ['custom', 'キャラ設定', '名前・話し方・あなたのこと・いつもの指示'], ['google', 'Google連携', 'メモと議事録をGoogleドライブに'], ['settings', '設定', 'グレード・表示・マイク']];
       R.unshift(['voice', 'ボイス', '声を聞きくらべて選ぶ・方言・話す速さ'], ['byok', '自分のClaudeで動かす', HBP.byok && HBP.byok.set ? 'キーを入れています（…' + HBP.byok.tail + '）' : '自分のClaudeのAPIキーを入れると、そのキーで動きます']);
       R.push(['share', '紹介する', 'ハタボのカードを友だちに。ご縁がひろがります'], ['notes', 'メモ・議事録', '話して残したメモと議事録'], ['inbox', '伝言', 'ご縁の人のハタボと伝言（トーク一覧にも出ます）'], ['gacha', '愛棒ガチャ', 'はじめの1回むりょう・あとはポイント'], ['friends', '友だち', 'ガチャで出会った人・ご縁の人'], ['grow', '育てた' + nm, 'レベル・覚えたこと・引きつぎ'], ['aisai', 'AISAI・愛祭', 'オーナーズクラブ・ランク・アワード'], ['times', 'ハタボタイムズ', 'お知らせ・使い方']);
       if (J.perm === 'top' && OFFM()) R.unshift(['perms', '役割と権限', 'だれが管理画面に入れるか（最高管理者だけ）']);
@@ -4918,7 +4919,7 @@ body.cl .cltools [data-cl="ctx"].clfr { background: transparent !important; colo
       const addM = (corp, fac) => ed ? `<form class="orgAddM" data-c="${esc(corp)}" data-f="${esc(fac || '')}" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px"><select class="hbin" name="code" style="flex:1 1 160px"><option value="">（アカウントから選ぶ）</option>${ppl.map(r => `<option value="${esc(r.code)}">${esc(r.name || r.code)}</option>`).join('')}</select><input class="hbin" name="name" placeholder="または名前" style="flex:1 1 120px"><select class="hbin" name="role">${RL.map(r => `<option${r === '担当' ? ' selected' : ''}>${r}</option>`).join('')}</select><button class="hbmini" type="submit">入れる</button></form>` : '';
       body.innerHTML = `<div class="hbc"><div class="k">ORGANIZATION</div><h3>法人と施設</h3><p class="hbmuted" style="font-size:12.5px">会社（法人）の下に、施設（宿・物件・お店・管理室）がぶら下がります。契約は法人で1つ、使う場所は施設ごと。人には施設ごとに役割（最高管理者・事務局・担当・閲覧）を付けます。いまは入れ物と見え方の見本で、やすくんの土台ができたら、そちらへ移します。</p>
           ${ed && !OG.some(c => c.sample === 'we') ? '<button type="button" class="hbbtn" id="orgSeed">WeCorporationのサンプルを作る</button>' : ''}
-          ${ed ? `<form id="orgAddC" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px"><input class="hbin" name="name" placeholder="法人の名前" style="flex:2 1 200px" required><input class="hbin" name="plan" placeholder="プラン（例：ハタボーラ）" style="flex:1 1 140px"><button class="hbmini" type="submit">法人を足す</button></form>` : ''}</div>
+          ${ed ? `<form id="orgAddC" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px"><input class="hbin" name="name" placeholder="法人の名前" style="flex:2 1 200px" required><input class="hbin" name="plan" placeholder="プラン（例：ハタボ ワークス）" style="flex:1 1 140px"><button class="hbmini" type="submit">法人を足す</button></form>` : ''}</div>
         ${OG.map(c => `<div class="hbc${sel.corp === c.id && !sel.fac ? ' orgsel' : ''}" id="org_${esc(c.id)}"><div class="k">CORP${c.sample ? '・SAMPLE' : ''}</div><h3>${esc(c.name)}</h3><p class="hbmuted" style="font-size:12.5px">${esc(c.plan || '')}${c.note ? '・' + esc(c.note) : ''}${c.entry ? '・入口の窓口：?ref=' + esc(c.entry) : ''}</p>
           <b style="display:block;margin-top:8px;font-size:13px">法人の人（全部の施設を見る）</b>${memL(c.members, c.id)}${addM(c.id)}
           <div class="orggrid">${(c.facilities || []).map(f => `<div class="orgfac${sel.fac === f.id ? ' orgsel' : ''}" id="fac_${esc(f.id)}"><span class="hbtag">${esc(KN[f.kind] || '施設')}</span> <b>${esc(f.name)}</b>${ed ? ` <button type="button" class="hbmini" data-odf="${esc(c.id)}|${esc(f.id)}">消す</button>` : ''}${f.note ? `<p class="hbmuted" style="font-size:12px;margin:4px 0">${esc(f.note)}</p>` : ''}${memL(f.members, c.id, f.id)}${addM(c.id, f.id)}</div>`).join('')}</div>
@@ -5049,15 +5050,23 @@ body.cl .cltools [data-cl="ctx"].clfr { background: transparent !important; colo
         preset: pre, voice: $('cuVoice').value, dialect: $('cuDia').value, dlv: Number($('cuDlv').value), speed: Number($('cuSpd').value), pause: Number($('cuPau').value), emo: Number($('cuEmo').value), polite: Number($('cuPol').value) } }); };
       const rn = document.getElementById('cuRename'); if (rn) rn.onclick = () => { const nm = prompt('新しい名前（12文字まで）'); if (nm) jrSend({ type: 'rename_req', name: nm }); };
     } else if (p === 'ticket') {
-      const packs = d.ticketPacks || [];
+      const packs = d.ticketPacks || [], vpacks = d.voicePacks || [], dp = d.dayPass || {}, yen = v => Number(v || 0).toLocaleString('ja-JP');
+      const buy = (id, pt) => `<div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end"><button type="button" class="hbtag gold" data-tk="${id}" data-pay="pt" style="border:0;cursor:pointer">ポイントで</button><button type="button" class="hbtag" data-tk="${id}" data-pay="yen" style="border:0;cursor:pointer">お金で</button></div>`;
       body.innerHTML = `
-        ${HBP.limitHit ? `<div class="hbc" style="border-color:#C9A24A"><div class="k">LIMIT</div><h3>${HBP.limitHit === 'trial' ? 'お試しの今日の回数' : 'プランの今日の回数'}をこえました</h3><p>追加チケットがあれば、続けて話せます。チケット1枚で1回話せます。明日になると回数はもどります。</p></div>` : ''}
-        <div class="hbc"><div class="k">TICKET</div><h3>追加チケット</h3><div class="big">${Number(d.tickets || 0).toLocaleString('ja-JP')}<small>枚 のこり</small></div>
-          <p>プランの回数をこえたときだけ使われます。期限はありません。</p>
+        ${HBP.limitHit ? `<div class="hbc" style="border-color:#C9A24A"><div class="k">LIMIT</div><h3>${HBP.limitHit === 'voice' ? '今月の声の回数' : HBP.limitHit === 'trial' ? 'お試しの今日の回数' : 'プランの今日の回数'}をこえました</h3><p>${HBP.limitHit === 'voice' ? 'いまは文字で返しています。声のトッピングを足すと、また声で話します。来月になると無料の回数がもどります。' : '会話のトッピングか1日使い放題を足すと、続けて話せます。明日になると回数はもどります。'}</p></div>` : ''}
+        <div class="hbc"><div class="k">TOPPING</div><h3>トッピング</h3><p>足りない分だけ、あとから足せます。会話と声は、どのプランでも同じ値段です。人どうしの伝言・投稿・友だちのやりとりは無料で、数えません。</p>
+          <div class="hbsum"><span>会話のトッピング</span><b>${yen(d.tickets)}回</b></div>
+          <div class="hbsum"><span>声のトッピング</span><b>${yen(d.voiceTickets)}回</b></div>
+          ${d.voiceLeft != null ? `<div class="hbsum"><span>今月の声（無料）の残り</span><b>${yen(d.voiceLeft)}／${yen(d.voiceFree)}回</b></div>` : '<p style="font-size:12px">お試しのあいだは、声も回数の中で使えます。</p>'}
           ${HBP.tMsg ? `<p style="color:#16233F;font-weight:800">${esc(HBP.tMsg)}</p>` : ''}</div>
-        <div class="hbc"><div class="k">BUY</div>${packs.map(k => `<div class="hbplan"><div><b>${k.n}回分</b><span>${k.yen.toLocaleString('ja-JP')}円 ／ ありがとうポイントなら ${k.pt.toLocaleString('ja-JP')}pt</span></div>
-          <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end"><button type="button" class="hbtag gold" data-tk="${k.id}" data-pay="pt" style="border:0;cursor:pointer">ポイントで</button><button type="button" class="hbtag" data-tk="${k.id}" data-pay="yen" style="border:0;cursor:pointer">お金で</button></div></div>`).join('')}
-          <p style="font-size:11.5px">いまのありがとうポイント：${Number(d.pts || 0).toLocaleString('ja-JP')}pt。お金での購入（Apple Pay・Google Pay・PayPay）は準備中のため、申し込みのあとハタラボからご案内します。</p></div>`;
+        <div class="hbc"><div class="k">TALK</div><h3>会話を足す</h3>${packs.map(k => `<div class="hbplan"><div><b>${k.n}回分</b><span>${yen(k.yen)}円 ／ ありがとうポイントなら ${yen(k.pt)}pt</span></div>${buy(k.id)}</div>`).join('')}
+          <p style="font-size:11.5px">1日の回数をこえたときだけ使われます。期限はありません。</p></div>
+        <div class="hbc"><div class="k">VOICE</div><h3>声を足す</h3>${vpacks.map(k => `<div class="hbplan"><div><b>声 ${k.n}回分</b><span>${yen(k.yen)}円 ／ ${yen(k.pt)}pt</span></div>${buy(k.id)}</div>`).join('')}
+          <p style="font-size:11.5px">毎月の無料の回数をこえたときだけ使われます。ふだんの会話の声は速さ重視、声をつくるときは表現力重視の声のしくみを、ハタボが最初から組みこんでいます。</p></div>
+        <div class="hbc"><div class="k">DAY PASS</div><h3>1日使い放題</h3><div class="hbplan"><div><b>きょう1日（${esc(dp.grade || 'X')}）</b><span>${yen(dp.yen)}円 ／ ${yen(dp.yen)}pt ・ 安全のため1日${yen(dp.cap || 100)}回まで</span></div>${dp.on ? '<span class="hbtag">きょうは使い放題</span>' : buy('day')}</div>
+          <p style="font-size:11.5px">1日使い放題だけは、モデルで値段がちがいます（モデルごとにAIの費用がちがうため）。</p></div>
+        <div class="hbc"><div class="k">MAKE</div><h3>声をつくる</h3><p>「やさしいおばあちゃんの声」のように言葉で頼んだり、本人の同意のうえで本人の声をうつしたりして、愛棒だけの声をつくれるようにします。<b>これから</b>（トッピングで足す形）。</p></div>
+        <p style="font-size:11.5px;padding:0 4px">いまのありがとうポイント：${yen(d.pts)}pt。お金での購入（Apple Pay・Google Pay・PayPay）は準備中のため、申し込みのあとハタラボからご案内します。</p>`;
       HBP.tMsg = '';
       body.querySelectorAll('[data-tk]').forEach(b => b.onclick = () => { jrSend({ type: 'ticket', pack: b.dataset.tk, pay: b.dataset.pay }); b.disabled = true; });
     } else if (p === 'gacha') {
@@ -5185,8 +5194,8 @@ body.cl .cltools [data-cl="ctx"].clfr { background: transparent !important; colo
         const L = LU[sel.lineup] || {}, gs = L.grades || {};
         if (!gs[sel.grade]) sel.grade = Object.keys(gs)[0] || 'X';
         const yen = v => { const m = String(v).match(/([\d,]+)円/); return m ? Number(m[1].replace(/,/g, '')) : 0; }, mo = yen(gs[sel.grade]);
-        return `<div class="hbc"><div class="k">1 ラインナップ</div><div class="hbpick">${Object.entries(LU).map(([k, v]) => `<button type="button" data-lu="${k}" class="${sel.lineup === k ? 'on' : ''}"><b>${esc(v.name)}</b><span>${esc(v.who)}</span></button>`).join('')}</div>
-          <div class="k" style="margin-top:14px">2 グレード</div><div class="hbpick g">${['X', 'G', 'Z'].map(g => gs[g] ? `<button type="button" data-gr="${g}" class="${sel.grade === g ? 'on' : ''}"><b>${g}</b><span>${{ X: '標準', G: '上位', Z: 'いちばん上' }[g]}</span><em>${esc(gs[g])}</em></button>` : `<button type="button" disabled><b>${g}</b><span>いまはなし</span></button>`).join('')}</div>
+        return `<div class="hbc"><div class="k">1 ラインナップ</div><div class="hbpick">${Object.entries(LU).map(([k, v]) => `<button type="button" data-lu="${k}" class="${sel.lineup === k ? 'on' : ''}"><b>${esc(v.name)}</b><span>${esc(v.who)}${v.line ? '・' + esc(v.line) : ''}</span></button>`).join('')}</div>
+          <div class="k" style="margin-top:14px">2 モデル</div><div class="hbpick g">${['X', 'G', 'Z'].map(g => gs[g] ? `<button type="button" data-gr="${g}" class="${sel.grade === g ? 'on' : ''}"><b>${g}</b><span>${{ X: 'ふだん使い', G: 'しっかり', Z: 'いちばん賢い' }[g]}</span><em>${esc(gs[g])}</em></button>` : `<button type="button" disabled><b>${g}</b><span>いまはなし</span></button>`).join('')}</div>
           <div class="k" style="margin-top:14px">3 お支払い</div><div class="hbpick g2"><button type="button" data-pay="m" class="${sel.pay === 'm' ? 'on' : ''}"><b>月払い</b><span>いつでも見直せる</span></button><button type="button" data-pay="y" class="${sel.pay === 'y' ? 'on' : ''}"><b>年払い</b><span>2か月分おトク</span></button></div>
           <div class="hbsum"><span>${esc(L.name || '')} ${sel.grade}</span><b>${mo ? (sel.pay === 'y' ? (mo * 10).toLocaleString('ja-JP') + '円／年' : mo.toLocaleString('ja-JP') + '円／月') : esc(gs[sel.grade] || '')}</b></div>
           ${!st || st === 'expired' || st === 'cancel' ? `<div class="k" style="margin-top:14px">4 ${!st ? '申し込み' : '契約'}のこと</div>
@@ -5199,8 +5208,8 @@ body.cl .cltools [data-cl="ctx"].clfr { background: transparent !important; colo
           <p style="font-size:11.5px">${d.payReady ? 'お支払いはStripeの安全なページで登録します（カード・Apple Pay・Google Pay）。' : 'お支払いの登録（Apple Pay・Google Pay・PayPay）は準備中です。申し込みのあと、ハタラボ（HATHA LAB）からご案内します。'}</p></div>`;
       };
       let html = `<div class="hbc"><div class="k">PLAN</div><h3>紹介 → お試し → 契約</h3>${stepper}${siteLink}`;
-      if (!st) html += `<p>まず7日間、いちばん上の<b>Z</b>で無料で試せます（初日${d.trialFirst || 30}回、2日目から1日${d.trialDaily || 15}回まで）。先に、8日目からのプランを選んでおきます。7日以内にやめれば0円です。</p>${d.referred || !d.payReady ? '' : '<p style="font-size:12.5px">紹介がない方は、先にお支払いを登録してからお試しがはじまります（7日のあいだは0円・やめれば請求されません）。紹介コードがあれば、登録なしではじめられます。</p>'}</div>` + form(d.referred || !d.payReady ? '7日間無料ではじめる' : 'お支払いを登録して、7日間の無料お試しをはじめる');
-      else if (st === 'trial') html += `<div class="big" style="margin-top:10px">あと${f.daysLeft}<small>日 お試し中（Z）</small></div><p>8日目（${new Date(f.trialUntil).toLocaleDateString('ja-JP')}のあと）から <b>${cur}</b> に切りかわります。</p>
+      if (!st) html += `<p>まず7日間、無料で試せます（モデルGの賢さで、初日${d.trialFirst || 30}回、2日目から1日${d.trialDaily || 15}回まで。Zは契約してから）。先に、8日目からのプランを選んでおきます。7日以内にやめれば0円です。</p>${d.referred || !d.payReady ? '' : '<p style="font-size:12.5px">紹介がない方は、先にお支払いを登録してからお試しがはじまります（7日のあいだは0円・やめれば請求されません）。紹介コードがあれば、登録なしではじめられます。</p>'}</div>` + form(d.referred || !d.payReady ? '7日間無料ではじめる' : 'お支払いを登録して、7日間の無料お試しをはじめる');
+      else if (st === 'trial') html += `<div class="big" style="margin-top:10px">あと${f.daysLeft}<small>日 お試し中</small></div><p>8日目（${new Date(f.trialUntil).toLocaleDateString('ja-JP')}のあと）から <b>${cur}</b> に切りかわります。</p>
           ${d.payReady && !f.paid ? '<button type="button" class="hbbtn" id="hbpPay">お支払いを登録する（' + new Date(f.trialUntil).toLocaleDateString('ja-JP') + 'までは0円）</button>' : f.paid ? '<p>お支払いの登録は済んでいます。</p>' : ''}<button type="button" class="hbbtn w" id="hbpChange">プランを変える</button><button type="button" class="hbbtn w" id="hbpCancel" style="border-color:#C9CFDA;color:#5E6B85">お試しをやめる（0円）</button></div>` + (HBP.edit ? form('このプランに変える') : '');
       else if (st === 'contract') html += `<div class="big" style="font-size:24px;margin-top:10px">${cur}</div><p>育てた${esc(nm)}は、プランやグレードを変えてもそのまま引きつぎます。変えると次の更新日から新しい料金です。</p>
           ${f.payFail ? '<p style="color:#B3261E"><b>お支払いができていません。</b>カードを確かめてください。</p>' : ''}<button type="button" class="hbbtn w" id="hbpChange">プラン・グレードを変える</button>${d.payReady && f.canPortal ? '<button type="button" class="hbbtn w" id="hbpPortal">お支払い方法・領収書</button>' : ''}<button type="button" class="hbbtn w" data-ask="解約について相談したい" style="border-color:#C9CFDA;color:#5E6B85">解約の相談</button></div>` + (HBP.edit ? form('このプランに変える') : '');
@@ -5508,7 +5517,7 @@ body.cl .cltools [data-cl="ctx"].clfr { background: transparent !important; colo
   const HB_SLIDES = [
     { k: 'NEW', t: '声が選べるようになりました', d: '男性3つ・女性3つの声を、試し聞きしてから選べます。方言や話す速さも。', go: 'voice', b: 'ボイスを開く', c: 'a' },
     { k: 'LINE', t: 'LINEグループにハタボを', d: 'グループの話をまとめたり、返事の下書きを作ったり。グループもトーク一覧に並びます。', go: 'more', b: 'くわしく', c: 'b' },
-    { k: 'TRIAL', t: '7日間、いちばん上のZで無料', d: 'どのプランを選んでも、お試しの7日間はZで使えます。', go: 'plan', b: 'プランを見る', c: 'c' },
+    { k: 'TRIAL', t: '7日間、無料で試せる', d: 'どのプランを選んでも、お試しの7日間はモデルGの賢さで使えます。', go: 'plan', b: 'プランを見る', c: 'c' },
     { k: 'GOEN', t: 'ご縁をひろげよう', d: 'ハタボを紹介すると、ご縁マップに広がりが見えます。', go: 'share', b: '紹介する', c: 'd' },
   ];
   const HB_PICKS = [
