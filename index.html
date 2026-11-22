@@ -20,6 +20,8 @@ try { let sv = ''; try { sv = JSON.parse(localStorage.getItem('butter.liffId') |
 </script>
 <style>
 html.hbapp body:not(.av-hatabo):not(.av-komugi) { visibility: hidden; }
+/* 11/22：ハタボのスマホ（幅900より下）では、古い下のタブ（ホーム・愛棒・話す・ご縁・アカウント）を最初から一瞬も出さない */
+@media (max-width: 899px) { html.hbapp .hbbot, html.hbapp .hbp-strip, html.hbapp #cvStrip, html.hbapp .hbhomefab, html.hbapp .cvfab, html.hbapp .hbpage > .hbp-tabs { display: none !important; } }
 html.hbapp { background: #F6F8FC; }
 html.kmapp { background: #0A0810; }
 /* 台所のタイル壁の前に、バターちゃんと柴犬の子犬チーちゃん。話しかけないとバターちゃんは溶けていく */
@@ -1686,7 +1688,9 @@ body.cv-listen .hbvt-orb::before, body.cv-listen .hbvt-orb::after, body.cv-speak
 .hbplus-sh[hidden] { display: none; }
 .hbplus-scrim { position: absolute; inset: 0; background: rgba(0,0,0,.5); opacity: 0; transition: opacity .18s; }
 .hbplus-card { position: absolute; left: 0; right: 0; bottom: 0; max-height: 82vh; overflow: auto; background: #141925; color: #E9EDF4; border-radius: 22px 22px 0 0; padding: 8px 14px calc(18px + env(safe-area-inset-bottom)); transform: translateY(100%); transition: transform .2s ease; box-shadow: 0 -10px 40px rgba(0,0,0,.5); }
-.hbplus-sh.in .hbplus-scrim { opacity: 1; } .hbplus-sh.in .hbplus-card { transform: none; }
+.hbplus-sh.in .hbplus-scrim { opacity: 1; } .hbplus-sh.in .hbplus-card { transform: none; visibility: visible; transition: transform .2s ease, visibility 0s; }
+.hbplus-sh:not(.in) .hbplus-card { visibility: hidden; transition: transform .2s ease, visibility 0s .2s; }   /* 11/22：閉じているときは、空の板を見せない */
+.hbplus-sh:not(.in) .hbplus-scrim { pointer-events: none; }
 .hbplus-grip { display: block; width: 40px; height: 5px; border-radius: 3px; background: rgba(255,255,255,.25); margin: 4px auto 10px; }
 .hbplus-g { background: rgba(255,255,255,.05); border-radius: 16px; margin: 0 0 10px; overflow: hidden; }
 .hbplus-r { display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 14px; border: 0; background: transparent; color: inherit; text-align: left; cursor: pointer; font: inherit; }
@@ -2269,6 +2273,9 @@ body.cl .hbtop-tools .clfr[data-cl="ctx"] { background: transparent !important; 
 /* パソコン：グループなどページの入力欄でも、話すボタンはまん中（わたしの愛棒と同じ） */
 @media (min-width: 900px) { body.cl.pcweb:not(.pcnarrow) .clask .hbask { position: relative; } body.cl.pcweb:not(.pcnarrow) .clask .hbask-mic { position: absolute; left: 50%; bottom: 8px; transform: translateX(-50%); width: 52px !important; height: 52px !important; } body.cl.pcweb:not(.pcnarrow) .clask .hbask-mic img { width: 42px !important; height: 42px !important; } }
 body.cl .cltools [data-cl="ctx"].clfr { background: transparent !important; color: #E8EBF0 !important; border-color: rgba(255,255,255,.22) !important; }
+/* 11/22（4）：トーク一覧の行が多いとき（事務局）に、行がつぶれないように */
+#hbpTalks { grid-auto-rows: max-content; }
+#hbpTalks > .hbt { min-height: 52px; flex-shrink: 0; }
 </style>
 </head>
 <body>
@@ -4118,7 +4125,7 @@ body.cl .cltools [data-cl="ctx"].clfr { background: transparent !important; colo
       case 'note_saved': toast({ minutes: '議事録を残したよ', memo: 'メモしたよ', doc: '書いた文章を残したよ', dengon: '伝言をとどけたよ' }[m.kind] || '残したよ'); if (!$('hbPage').hidden) jrSend({ type: 'mypage' }); break;
       case 'ready':
         document.body.classList.remove('connecting');
-        J.ready = true; J.tries = 0; J.greeted = true; try { window.hbCharPick && window.hbCharPick(m.ownChars); } catch (e) {} window.__aiName = m.visit ? '' : m.aiName || ''; try { clApplyIcon(m.visit ? '' : m.aiIcon || ''); } catch (e) {} setTimeout(() => { try { avText(); const t = document.querySelector('#butterTag text'); if (t && avName()) t.textContent = avName(); } catch (e) {} try { hbpChats(); } catch (e) {} }, 0); document.body.classList.toggle('svc', !!m.service); { const vb = $('visitBar'); if (m.visit) { vb.hidden = false; $('visitName').textContent = m.visit.name + 'さんの愛棒と話しています'; } else { vb.hidden = true; if (J.visit) { J.visit = ''; toast('つながっていない人の愛棒には入れませんでした'); } } } J.profile = m.profile || null; { const q = J.q || []; J.q = []; if (!q.some(x => x.type === 'mypage') && !$('hbPage').hidden) q.unshift({ type: 'mypage' }); q.forEach(x => J.ws.send(JSON.stringify(x))); } 
+        J.ready = true; J.tries = 0; J.greeted = true; try { window.hbCharPick && window.hbCharPick(m.ownChars); } catch (e) {} J.gachaDone = !!m.gachaDone; if (m.gachaDone) { store.set('hbGuideMet', 1); if (!store.get('hbPcTour', 0)) store.set('hbPcTour', 2); }   /* 11/22：はじめのガチャを引いたアカウントは、どの端末でも「ようこそ」を出さない */ window.__aiName = m.visit ? '' : m.aiName || ''; try { clApplyIcon(m.visit ? '' : m.aiIcon || ''); } catch (e) {} setTimeout(() => { try { avText(); const t = document.querySelector('#butterTag text'); if (t && avName()) t.textContent = avName(); } catch (e) {} try { hbpChats(); } catch (e) {} }, 0); document.body.classList.toggle('svc', !!m.service); { const vb = $('visitBar'); if (m.visit) { vb.hidden = false; $('visitName').textContent = m.visit.name + 'さんの愛棒と話しています'; } else { vb.hidden = true; if (J.visit) { J.visit = ''; toast('つながっていない人の愛棒には入れませんでした'); } } } J.profile = m.profile || null; { const q = J.q || []; J.q = []; if (!q.some(x => x.type === 'mypage') && !$('hbPage').hidden) q.unshift({ type: 'mypage' }); q.forEach(x => J.ws.send(JSON.stringify(x))); } 
         J.perm = m.perm || ''; J.noOwner = !!m.noOwner; if (J.noOwner && document.body.classList.contains('pcweb')) setTimeout(() => toast('このGmailは、まだLINEのMyハタボとつながっていません。LINEのMyハタボの「Googleアカウント連携」でつなぐと、トークやご縁が出ます'), 1500); setTimeout(() => document.dispatchEvent(new Event('jrready')), 50); J.guest = !!m.guest; J.plain = !!m.plain; document.body.classList.toggle('plain', J.plain); if (J.plain || J.guest) setTimeout(() => { const b = document.querySelector('.vsw button[data-v="chat"]'); if (b) b.click(); }, 0);   /* 窓口は、いつもトーク画面から（キャラの画面は切りかえで見られる） */ J.mac = !!m.mac; J.bridge = !!m.bridge; J.office = !!(m.office || m.perm); J.srv = m.srv || ''; if (m.shopView && !J.shopNoted) { J.shopNoted = true; addBubble('おしらせ', 'この会話はお店の方も見られます。', 'her'); } J.avatar = KOMUGI_APP ? 'komugi' : m.avatar || ''; document.body.classList.toggle('av-komugi', J.avatar === 'komugi'); if (HATABO_APP && !J.avatar) J.avatar = 'hatabo'; document.body.classList.toggle('av-hatabo', J.avatar === 'hatabo'); { const t = document.querySelector('#butterTag text'), nm = { komugi: 'コムギ', hatabo: 'ハタボ' }[J.avatar]; if (t && nm) t.textContent = nm; } J.myRef = m.myRef || ''; J.me = String(m.me || '').replace(/（テスト）$/, ''); if (J.office && !HBP.admin) jrSend({ type: 'admin' });   // 事務局：トーク一覧に全員を出すため、つながったら一覧を読む
         document.body.classList.toggle('familyok', !J.guest);
         document.body.classList.toggle('guestmode', J.guest);
@@ -4980,9 +4987,11 @@ body.cl .cltools [data-cl="ctx"].clfr { background: transparent !important; colo
           ${(U.merged || []).length ? `<p class="hbmuted" style="font-size:12px">コムギとハタボでLINEのIDが変わるなど、同じ人の別のIDを1つにまとめています。</p>${U.merged.map(mm => `<div class="hbrow"><div><b>${esc(mm.code)}（${esc((mm.chars || []).map(c => CHN[c] || c).join('・'))}）</b><span>${mm.auto ? '自動でまとめています（馬越さんのID）' : 'まとめたID'}</span></div>${!mm.auto && canEdit ? `<button type="button" class="hbmini" data-usplit="${esc(mm.code)}">分ける</button>` : ''}</div>`).join('')}` : ''}
           ${(U.dups || []).length ? `<p class="hbmuted" style="font-size:12px;margin-top:10px">同じ名前のIDがあります。同じ人なら、まとめると1行になります。</p>${U.dups.map(dd => `<div class="hbrow"><div><button type="button" class="adname" data-auser="${esc(dd.code)}">${esc(dd.name || '（名前なし）')}</button><span>${esc((dd.chars || []).map(c => CHN[c] || c).join('・'))}・${esc(dd.code)}・${esc(ST[dd.status] || '')}・はじめた日 ${dt(dd.at)}</span></div>${canEdit ? `<button type="button" class="hbmini" data-umerge="${esc(dd.code)}">この人とまとめる</button>` : ''}</div>`).join('')}` : ''}</div>` : ''}
         ${U && (U.kids || []).length ? `<div class="hbc"><div class="k">GOEN</div><h3>この人からつながった人・愛棒</h3>${U.kids.map(k => `<div class="hbrow"><div>${k.kind === 'person' ? `<button type="button" class="adname" data-auser="${esc(k.code)}">${esc(k.name || '（名前なし）')}</button>` : `<b>${esc(k.name || '愛棒')}</b>`}<span>${k.kind === 'clone' ? '役割つきの愛棒' : k.kind === 'group' ? 'グループ' : esc(ST[k.status] || '')}</span></div></div>`).join('')}</div>` : ''}
+        ${canEdit ? '<div class="hbc"><div class="k">TEST</div><h3>はじめての状態に戻す</h3><p class="hbmuted" style="font-size:12px">検証用。はじめのガチャ・ポイント・カードを、はじめての状態に戻します。端末の記録（案内を見たかなど）は、シークレットウィンドウで開くと戻ります。</p><button type="button" class="hbbtn w" id="uReset">はじめての状態に戻す</button></div>' : ''}
         <div class="hbc"><button type="button" class="hbbtn w" data-go="admin">事務局の管理画面（一覧）へ</button></div>`;
       body.querySelectorAll('[data-umerge]').forEach(b => b.onclick = () => { b.disabled = true; jrSend({ type: 'admin_set', code: b.dataset.umerge, sameAs: r.code }); });   // 相手のIDを、この人にまとめる
       body.querySelectorAll('[data-usplit]').forEach(b => b.onclick = () => { b.disabled = true; jrSend({ type: 'admin_set', code: b.dataset.usplit, sameAs: '' }); });
+      { const rb = document.getElementById('uReset'); if (rb) rb.onclick = () => { if (!confirm((r.name || 'この人') + 'を、はじめての状態に戻します（ガチャ・ポイント・カード）。よろしいですか？')) return; rb.disabled = true; jrSend({ type: 'admin_set', code: r.code, resetFirst: true }); }; }
       body.querySelectorAll('[data-ust]').forEach(b => b.onclick = () => { if (b.classList.contains('on')) return; b.disabled = true; jrSend({ type: 'admin_set', code: r.code, stage: b.dataset.ust }); });
       const un = body.querySelector('#upNote'); if (un && canEdit) un.onchange = () => jrSend({ type: 'admin_set', code: r.code, roleNote: un.value });
       body.querySelectorAll('[data-auser]').forEach(b => b.onclick = () => hbpOpenUser(b.dataset.auser));
@@ -5237,11 +5246,12 @@ body.cl .cltools [data-cl="ctx"].clfr { background: transparent !important; colo
     const fr = HBS.friend;
     return `<div class="hbc"><div class="k">SET UP</div><h3>${esc(avName() || 'ハタボ')}を、いつもの場所に</h3>
       <div class="hbplan"><div><b>1. 公式LINEを友だち追加</b><span>トークからいつでも話せて、メニューも出ます</span></div>${fr ? '<span class="hbtag">追加ずみ</span>' : '<a class="hbtag gold" href="https://line.me/R/ti/p/${OA_ID}" style="text-decoration:none">追加する</a>'}</div>
-      <div class="hbplan"><div><b>2. ホーム画面に置く</b><span>スマホのアプリのように、1回で開けます</span></div>${can ? '<button type="button" class="hbtag gold" id="hbpHome" style="border:0;cursor:pointer">置く</button>' : '<span class="hbtag hbmuted">準備中</span>'}</div>
+      <div class="hbplan"><div><b>2. ホーム画面に置く</b><span>スマホのアプリのように、1回で開けます</span></div>${can ? '<button type="button" class="hbtag gold" id="hbpHome" style="border:0;cursor:pointer">置く</button>' : PWA_PHONE ? '<span class="hbtag">置いてあります</span>' : '<button type="button" class="hbtag gold" id="hbpHome2" style="border:0;cursor:pointer">置く</button>'}</div>
       <div class="hbplan"><div><b>3. トークをいちばん上にピン留め</b><span>LINEのトーク一覧で「ハタボ」を長押し →「ピン留め」</span></div><button type="button" class="hbtag gold" id="hbpPin" style="border:0;cursor:pointer">開く</button></div>
       <p style="font-size:11.5px">ピン留めはLINEの決まりで、アプリからは代わりにできません。「開く」でハタボのトークにもどるので、トーク一覧の「ハタボ」を長押しして「ピン留め」してください。</p></div>`;
   }
   function hbpWire() {
+    const h2 = document.getElementById('hbpHome2'); if (h2) h2.onclick = () => { if (window.clAddAsk) window.clAddAsk(true); else if (typeof pwaAddGuide === 'function') pwaAddGuide(); };   // 11/22：LINEの近道が使えないときは、ホーム画面に置く案内（ブラウザで開いて追加）
     const h = document.getElementById('hbpHome'); if (h) h.onclick = async () => { try { await liff.createShortcutOnHomeScreen({ url: MINI_URL }); } catch (e) { toast('この端末ではまだ置けないみたい'); } };
     const p = document.getElementById('hbpPin'); if (p) p.onclick = () => { try { localStorage.setItem('pinDone', '1'); } catch (e) {} goOaTalk(); };
   }
@@ -5575,7 +5585,8 @@ body.cl .cltools [data-cl="ctx"].clfr { background: transparent !important; colo
     }
     const body = () => $('hbPlusBody');
     function open() { body().innerHTML = main(); sh.hidden = false; requestAnimationFrame(() => sh.classList.add('in')); try { if (window.hbBuzz) window.hbBuzz(); } catch (e) {} }
-    function close() { sh.classList.remove('in'); setTimeout(() => { sh.hidden = true; }, 180); }
+    function close() { sh.classList.remove('in'); setTimeout(() => { if (!sh.classList.contains('in')) sh.hidden = true; }, 200); }
+    window.addEventListener('pageshow', () => { if (!sh.classList.contains('in')) sh.hidden = true; });   // 11/22：もどったときに空の板が残らないように
     const inputNow = () => { const h = $('hbAskIn'); if (h && !$('hbPage').hidden && document.body.classList.contains('hbp-open') && h.offsetParent) return h; return $('cvInput'); };
     function toTalk() { if (document.body.classList.contains('hbp-open')) { hbpClose(); } if (window.hbSetView) window.hbSetView('chat'); }
     function fill(t) { const el = inputNow(); if (!el) return; el.value = t; el.focus(); try { el.setSelectionRange(t.length, t.length); } catch (e) {} }
@@ -5911,7 +5922,7 @@ body.cl .cltools [data-cl="ctx"].clfr { background: transparent !important; colo
   else if (HB_START === 'oauth') document.addEventListener('jrready', () => { if (OAUTH_RID) jrSend({ type: 'oauth_info', rid: OAUTH_RID }); }, { once: true });
   else   if (HB_START === 'office' || HB_START === 'admin') {   // 事務局の入口（/office）：開くとすぐ、全員の一覧（事務局の管理画面）
     document.body.classList.add('officemode'); try { document.title = 'HATHABO 事務局'; const ic = document.querySelector('link[rel="icon"]'); if (ic) ic.href = ic.href.replace(/%23F4F6F9/g, '%23FFF1B8').replace(/%23C9CED6/g, '%23E7C25A').replace(/%238E95A1/g, '%23B8892A').replace(/%235E6572/g, '%237A5614'); } catch (e) {}   // 事務局は金、Myハタボは銀のファビコン J.focusKey = 'chief'; J.focusName = 'ハタボ事務局長'; hbpOpen('ohome');
-    document.addEventListener('jrready', () => { if (!J.office) { document.body.classList.remove('officemode'); J.focusKey = ''; J.focusName = ''; toast('このアカウントは事務局ではありません。Myハタボを開きました'); hbpOpen('my'); } else if (!HBP.admin) jrSend({ type: 'admin' }); }, { once: true });
+    document.addEventListener('jrready', () => { if (!J.office) { document.body.classList.remove('officemode'); J.focusKey = ''; J.focusName = ''; toast('このアカウントは事務局ではありません。Myハタボを開きました'); hbpOpen('my'); } else { if (!HBP.admin) jrSend({ type: 'admin' }); setTimeout(() => { if ($('hbPage').hidden || document.body.classList.contains('hbshell')) hbpOpen('my'); }, 50); } }, { once: true });   // 11/22：事務局に入ったら、まず事務局のホーム（左のメニューも出る）
   }
   else if (HB_START === 'login') hbpOpen('my');   // ふつうのログイン（サイトのMyハタボから）：自分のMyハタボ
   else if (HB_START && HB_START !== 'talk') hbpOpen(HB_START);
@@ -6151,8 +6162,7 @@ body.cl .cltools [data-cl="ctx"].clfr { background: transparent !important; colo
   if (HATABO_APP && LIFF && !STAGE) { setTimeout(() => { const so = $('startOverlay'); if (so && !so.hidden) $('startBtn').click(); }, 300); document.addEventListener('pointerdown', () => { try { AC(); } catch (e) {} }, { once: true, capture: true }); }
   { const tb = $('hbpTabs'); if (tb && !tb.querySelector('.hbp-help')) { const hb = document.createElement('button'); hb.type = 'button'; hb.className = 'hbp-help'; hb.style.display = 'none'; hb.innerHTML = '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.3a2.5 2.5 0 1 1 3.4 2.3c-.6.3-1 .8-1 1.5v.6M12 17h.01"/></svg><span>使い方</span>'; hb.onclick = e => { e.stopPropagation(); hbTour(); }; const ac = tb.querySelector('.hbp-acct'); tb.insertBefore(hb, ac || null); } }   // 左のメニューに「使い方」
   { const tourOnce = () => { let sk = ''; try { sk = sessionStorage.getItem('hb.tourSkip') || ''; } catch (e) {} if (!PWA_PHONE && !document.body.classList.contains('pwapair') && (document.body.classList.contains('pcweb') || HATABO_APP) && !store.get('hbPcTour', 0) && !store.get('hbGuideMet', 0) && !sk && !document.getElementById('hbFirst')) hbFirstRun(); /* パソコンもスマホも、はじめて開いたら */ };
-    document.addEventListener('jrready', () => setTimeout(tourOnce, 600), { once: true });
-    setTimeout(tourOnce, 4000);   // サーバーとつながるのを待たずに、開いて少ししたら出す
+    document.addEventListener('jrready', () => setTimeout(() => { if (!J.gachaDone && !document.getElementById('pwSheet') && !(document.getElementById('clSheet') && !document.getElementById('clSheet').hidden)) tourOnce(); }, 600), { once: true });   // 11/22：サーバーの答え（はじめてかどうか）を待ってから。ほかの案内が出ているときは重ねない
     document.addEventListener('click', e => { if (e.target.closest && e.target.closest('#hbTourBtn')) { e.preventDefault(); hbTour(); } }, true); }   // 「使い方の案内」は、どの画面から押しても開く
   window.hbpPreview = (d, pg, gn, ib, ex) => { HBP.data = d; if (gn) HBP.goen = gn; if (ib) { HBP.inbox = ib; HBP.inboxShown = true; } if (ex && ex.J) { Object.assign(J, ex.J); delete ex.J; } if (ex) Object.assign(HBP, ex); hbpOpen(pg); };   // 画面の確認用
   $('trioBtn').addEventListener('click', () => jrSend({ type: 'trio', on: !J.trio }));
@@ -6935,10 +6945,10 @@ body.cl .cltools [data-cl="ctx"].clfr { background: transparent !important; colo
       qa: [['エンブレムの意味は？', '六つの光は、人と人のご縁がいろんな方向に広がるしるしです。'], ['グッズはある？', 'いまは準備中です。決まったら、ここでお知らせします。']] }
   ];
   const FEED_SAMPLE = [
-    { id: 's-1', sample: true, name: 'みさき', aiName: 'モカ', img: 'https://picsum.photos/id/1060/900/900', text: '今日のモーニング。駅前の新しいカフェ、ラテがすごくおいしかった☕', likes: 23, qa: [['どこのお店？', '駅前に先月できたカフェです。くわしい場所は、本人に聞いてみてね。'], ['おすすめは？', 'ラテがいちばんのおすすめだそうです。']] },
-    { id: 's-2', sample: true, name: 'けんた', aiName: 'ポチ', img: 'https://picsum.photos/id/1025/900/900', text: 'うちの子です。毛布にくるまって、ずっと寝てる🐶', likes: 87, qa: [['何歳？', '3歳のパグです。'], ['名前は？', 'そこは本人に聞いてみてね。']] },
-    { id: 's-3', sample: true, name: 'ゆうこ', aiName: 'ソラ', img: 'https://picsum.photos/id/1015/900/900', text: '週末は山へ。川の音を聞きながら、のんびり歩いてきました。', likes: 41, qa: [['どこの山？', '本人が出していいと決めたのは「週末に山へ行った」ことまでです。場所は本人に聞いてみてね。']] },
-    { id: 's-4', sample: true, name: 'パティスリー花', aiName: 'ハナ', shop: true, img: 'https://picsum.photos/id/1080/900/900', text: '新メニュー「いちごのタルト」はじめました。数量限定です🍓', likes: 56, qa: [['値段は？', '1つ580円です。'], ['予約できる？', '前の日までなら予約できます。愛棒に「予約したい」と伝えてね。']] }
+    { id: 's-1', sample: true, intro: 'モカです☕ みさきさんの愛棒で、カフェめぐりの記録係をしています。このお店のこと、出していい範囲でお話ししますね。', miss: 'うーん、それはみさきさんが出していいと決めたことに入っていないんです。本人に聞いてみてくださいね。', voice: { pitch: 1.35, rate: 0.95 }, name: 'みさき', aiName: 'モカ', img: 'https://picsum.photos/id/1060/900/900', text: '今日のモーニング。駅前の新しいカフェ、ラテがすごくおいしかった☕', likes: 23, qa: [['どこのお店？', '駅前に先月できたカフェです。くわしい場所は、本人に聞いてみてね。'], ['おすすめは？', 'ラテがいちばんのおすすめだそうです。']] },
+    { id: 's-2', sample: true, intro: 'ポチだよ！ けんたの愛棒。うちのパグのことなら、なんでも聞いて！', miss: 'それはけんたに聞いてみて！ ぼくが言っていいのは、ここまでなんだ。', voice: { pitch: 1.6, rate: 1.15 }, name: 'けんた', aiName: 'ポチ', img: 'https://picsum.photos/id/1025/900/900', text: 'うちの子です。毛布にくるまって、ずっと寝てる🐶', likes: 87, qa: [['何歳？', '3歳のパグです。'], ['名前は？', 'そこは本人に聞いてみてね。']] },
+    { id: 's-3', sample: true, intro: 'ソラです。ゆうこさんの山歩きの相棒です。場所はひみつですが、景色のことならお話しできます。', miss: 'ごめんなさい、そこはゆうこさんが決めた範囲の外なんです。本人に聞いてみてください。', voice: { pitch: 0.85, rate: 0.9 }, name: 'ゆうこ', aiName: 'ソラ', img: 'https://picsum.photos/id/1015/900/900', text: '週末は山へ。川の音を聞きながら、のんびり歩いてきました。', likes: 41, qa: [['どこの山？', '本人が出していいと決めたのは「週末に山へ行った」ことまでです。場所は本人に聞いてみてね。']] },
+    { id: 's-4', sample: true, intro: 'いらっしゃいませ。パティスリー花の愛棒、ハナです。商品やご予約のこと、お気軽にどうぞ。', miss: '申し訳ありません、そちらはお店に直接お問い合わせください。ご予約でしたら、わたしがおうかがいします。', voice: { pitch: 1.1, rate: 1.0 }, name: 'パティスリー花', aiName: 'ハナ', shop: true, img: 'https://picsum.photos/id/1080/900/900', text: '新メニュー「いちごのタルト」はじめました。数量限定です🍓', likes: 56, qa: [['値段は？', '1つ580円です。'], ['予約できる？', '前の日までなら予約できます。愛棒に「予約したい」と伝えてね。']] }
   ];
   function clFeedSrv() { return (/^(localhost|127\.)/.test(SRV) ? 'http://' : 'https://') + SRV; }
   function clFeedAgo(t) { if (!t) return ''; const m = Math.round((Date.now() - t) / 60000); return m < 1 ? 'いま' : m < 60 ? m + '分前' : m < 1440 ? Math.round(m / 60) + '時間前' : Math.round(m / 1440) + '日前'; }
@@ -7001,16 +7011,19 @@ body.cl .cltools [data-cl="ctx"].clfr { background: transparent !important; colo
     if (m.type === 'post_ans') { clFeedAns(m.id, m.q, m.a); return; }
     if (m.type === 'post_cap') { const box = document.querySelector('#clPost .cp-caps'); if (box) box.innerHTML = (m.list || []).length ? m.list.map(t => '<button type="button" data-cp2="' + esc(t) + '">' + esc(t) + '</button>').join('') : '<small>思いつきませんでした。自分の言葉でどうぞ</small>'; }
   }
+  /* 11/22：見本の愛棒は、それぞれの声（高さ・速さ）で読む。音を消しているときは読まない */
+  function clFeedSay(x, a) { try { if (!x || !x.voice || store.get('hbMute', false) || !window.speechSynthesis) return; speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(String(a).replace(/[☕🐶🍓]/g, '')); u.lang = 'ja-JP'; u.pitch = x.voice.pitch; u.rate = x.voice.rate; speechSynthesis.speak(u); } catch (e) {} }
   function clFeedAns(id, q, a) {
     const art = document.querySelector('#clFeed .fp[data-id="' + id + '"]'), x = clFeedFind(id); if (!art || !x) return;
     const box = art.querySelector('.fp-q'), log = box.querySelector('.fq-log'); if (!log) return;
     log.querySelector('.fq-wait') && log.querySelector('.fq-wait').remove();
     log.insertAdjacentHTML('beforeend', '<div class="fq-a"><b>' + esc(x.aiName || x.name + 'の愛棒') + '</b><span></span></div>'); log.lastElementChild.querySelector('span').textContent = a;
+    if (x.sample) clFeedSay(x, a);
   }
   function clFeedAsk(art, x, q) {
     const box = art.querySelector('.fp-q'), log = box.querySelector('.fq-log');
     const me = document.createElement('div'); me.className = 'fq-me'; me.textContent = q; const wt = document.createElement('div'); wt.className = 'fq-wait'; wt.textContent = '…'; log.append(me, wt);
-    if (x.official || x.sample) { const hit = (x.qa || []).find(([k]) => q.includes(k.replace(/[？?]$/, '')) || k.includes(q.replace(/[？?]$/, ''))); setTimeout(() => clFeedAns(x.id, q, hit ? hit[1] : x.official ? 'くわしくは、あなたのハタボに聞いてみてね。下の入力欄から話しかけられます。' : 'それは、本人が出していいと決めたことに入っていないので、答えられません。本人に聞いてみてね。'), 500); return; }
+    if (x.official || x.sample) { const hit = (x.qa || []).find(([k]) => q.includes(k.replace(/[？?]$/, '')) || k.includes(q.replace(/[？?]$/, ''))); setTimeout(() => clFeedAns(x.id, q, hit ? hit[1] : x.miss ? x.miss : x.official ? 'くわしくは、あなたのハタボに聞いてみてね。下の入力欄から話しかけられます。' : 'それは、本人が出していいと決めたことに入っていないので、答えられません。本人に聞いてみてね。'), 500); return; }
     if (J.ready) jrSend({ type: 'post_ask', id: x.id, q }); else setTimeout(() => clFeedAns(x.id, q, 'つながってから、もう一度聞いてください。'), 300);
   }
   document.addEventListener('click', e => {
@@ -7028,7 +7041,8 @@ body.cl .cltools [data-cl="ctx"].clfr { background: transparent !important; colo
     else if (k === 'ask') { const box = art.querySelector('.fp-q'); if (!box.hidden) { box.hidden = true; return; }
       const chips = (x.qa || []).map(([q]) => q).concat(x.official || x.sample ? [] : ['これはどこ？', 'おすすめは？']).slice(0, 3);
       box.innerHTML = '<p class="fq-h">' + esc(x.aiName || x.name + 'の愛棒') + 'に、この投稿のことを聞けます' + (x.friend || x.official || x.sample ? '' : '（つながる前は、投稿のことだけ）') + '</p><div class="fq-log"></div><div class="fq-chips">' + chips.map(q => '<button type="button" data-fp="chip">' + esc(q) + '</button>').join('') + '</div><form class="fq-in"><input type="text" maxlength="200" placeholder="この投稿について聞く" aria-label="この投稿について聞く"><button type="submit">送る</button></form>';
-      box.hidden = false; box.querySelector('form').onsubmit = ev => { ev.preventDefault(); const i = box.querySelector('input'), q = i.value.trim(); if (!q) return; i.value = ''; clFeedAsk(art, x, q); }; }
+      box.hidden = false; if (x.intro && !box.querySelector('.fq-a')) setTimeout(() => clFeedAns(x.id, '', x.intro), 250);   // 11/22：見本の愛棒は、開いたらまず短く自己紹介
+      box.querySelector('form').onsubmit = ev => { ev.preventDefault(); const i = box.querySelector('input'), q = i.value.trim(); if (!q) return; i.value = ''; clFeedAsk(art, x, q); }; }
     else if (k === 'chip') clFeedAsk(art, x, b.textContent);
     else if (k === 'fr') { if (J.ready) jrSend({ type: 'friend_req', code: x.by }); x.asked = true; b.outerHTML = '<span class="fp-fr off">申請中</span>'; toast('友だち申請をしました。相手が承認すると、愛棒と話せます'); }
     else if (k === 'talk') { clFeedClose(); if (window.hbpVisit) window.hbpVisit(x.by); }
@@ -7195,10 +7209,11 @@ body.cl .cltools [data-cl="ctx"].clfr { background: transparent !important; colo
   document.addEventListener('click', e => { if (e.target.id === 'cuIconDel') { clApplyIcon(''); jrSend({ type: 'icon_set', icon: '' }); toast('アイコンを消しました'); } });
 
   /* ===== ホーム画面に置く案内：ミニアプリからはウェブアプリへ、ブラウザではホーム画面へ（1日1回・3回まで） ===== */
+  window.clAddAsk = f => clAddAsk(f);
   function clAddAsk(force) {
     if (!force && (!HATABO_APP || KOMUGI_APP || PWA_PHONE || !matchMedia('(pointer: coarse)').matches)) return;
     const st = store.get('clAddAsk', { n: 0, at: 0 }) || { n: 0, at: 0 };
-    if (!force && (st.n >= 3 || Date.now() - st.at < 86400000 || document.getElementById('pwSheet'))) return;
+    if (!force && (st.n >= 3 || Date.now() - st.at < 86400000 || document.getElementById('pwSheet') || document.getElementById('hbFirst') || !J.gachaDone)) return;   // 11/22：はじめての案内（ガチャ）が先。重ねない
     if (!force) store.set('clAddAsk', { n: st.n + 1, at: Date.now() });
     if (force && !pwaInLine() && !pwaIOS() && !pwaBip && !matchMedia('(pointer: coarse)').matches) { toast('ホーム画面に置けるのはスマホです。スマホで「追加リンク」を開いてください'); return; }
     const inLine = pwaInLine();
