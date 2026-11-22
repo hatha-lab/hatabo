@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="ja">
 <head>
-<meta charset="utf-8"><meta name="hb-ver" content="2026-11-22e">
+<meta charset="utf-8"><meta name="hb-ver" content="2026-11-22f">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex">
 <title>ハタボ｜すべての人に、AIの愛棒を</title><meta name="description" content="話すだけで、調べもの・下書き・相談まで、いっしょに動くAIの愛棒。PCとスマホとLINEで使えます。"><meta property="og:type" content="website"><meta property="og:site_name" content="ハタボ"><meta property="og:title" content="ハタボ｜すべての人に、AIの愛棒を"><meta property="og:description" content="話すだけで、調べもの・下書き・相談まで、いっしょに動くAIの愛棒。"><meta property="og:url" content="https://app.hatha-lab.com/"><meta property="og:image" content="https://app.hatha-lab.com/feed_emblem.jpg"><meta name="twitter:card" content="summary">
@@ -4954,12 +4954,12 @@ body.cl .cltools [data-cl="ctx"].clfr { background: transparent !important; colo
       if (A.denied) { body.innerHTML = '<div class="hbc"><p>事務局だけが見られる画面です。</p></div>'; return; }
       const dt = t => t ? new Date(t).toLocaleDateString('ja-JP') : '';
       const K = { person: '人', clone: '役割つき愛棒', group: 'グループ' }, ST = { ref: '紹介中', trial: 'お試し', contract: '契約', member: 'メンバー', expired: '期限切れ', cancel: '解約' }, CHN = { hatabo: 'ハタボ', komugi: 'コムギ', junior: 'ジュニア' };
-      const q = (HBP.adminQ || '').trim(), kf = HBP.adminK || '', sf = HBP.adminS || '', cf = HBP.adminC || '';
-      const rows = (A.rows || []).filter(r => (!kf || r.kind === kf || (kf === 'pay' && r.payFail)) && (!sf || r.status === sf) && (!cf || (r.chars || []).includes(cf)) && (!q || [r.name, r.ownerName, r.code, r.role, r.lineup, (r.chars || []).map(c => CHN[c]).join(' '), r.parentName].join(' ').includes(q)));
+      const nq = t => String(t || '').normalize('NFKC').toLowerCase().replace(/\s+/g, ''), q = nq(HBP.adminQ), kf = HBP.adminK || '', sf = HBP.adminS || '', cf = HBP.adminC || '';
+      const rows = (A.rows || []).filter(r => (!kf || r.kind === kf || (kf === 'pay' && r.payFail)) && (!sf || r.status === sf) && (!cf || (r.chars || []).includes(cf)) && (!q || [r.name, r.ownerName, r.code, r.role, r.lineup, (r.chars || []).map(c => CHN[c]).join(' '), r.parentName].join(' ').normalize('NFKC').toLowerCase().replace(/\s+/g, '').includes(q)));
       const s = A.sum || {};
       body.classList.add('wide');
       body.innerHTML = `<div class="hbc"><div class="k">OFFICE</div><h3>事務局の管理画面</h3><p class="hbmuted">人 ${n(s.people)}・紹介中 ${n(s.ref)}・お試し ${n(s.trial)}・契約 ${n(s.contract)}・メンバー ${n(s.member)}・支払いの失敗 ${n(s.payFail)}・役割つきの愛棒 ${n(s.clones)}・グループ ${n(s.groups)}・今月のAPI ${n(s.api)}回（${n(s.apiYen)}円）</p>
-          <div class="hbrow2"><input class="hbin" id="adQ" placeholder="名前・コード・役割でさがす" value="${esc(q)}"><select class="hbin" id="adK"><option value="">ぜんぶ</option><option value="person" ${kf === 'person' ? 'selected' : ''}>人</option><option value="clone" ${kf === 'clone' ? 'selected' : ''}>役割つきの愛棒</option><option value="group" ${kf === 'group' ? 'selected' : ''}>グループ</option><option value="pay" ${kf === 'pay' ? 'selected' : ''}>支払いの失敗</option></select><select class="hbin" id="adS"><option value="">状態：ぜんぶ</option>${Object.entries(ST).map(([k, l]) => `<option value="${k}" ${sf === k ? 'selected' : ''}>${l}</option>`).join('')}</select><select class="hbin" id="adC"><option value="">キャラ：ぜんぶ</option>${Object.entries(CHN).map(([k, l]) => `<option value="${k}" ${cf === k ? 'selected' : ''}>${l}</option>`).join('')}</select><button type="button" class="hbbtn w" data-go="aids">AIDの一覧</button><button type="button" class="hbbtn w" id="adR">読みなおす</button></div></div>
+          <div class="hbrow2"><input class="hbin" id="adQ" type="search" placeholder="名前・コード・役割でさがす" value="${esc(HBP.adminQ || '')}"><select class="hbin" id="adK"><option value="">ぜんぶ</option><option value="person" ${kf === 'person' ? 'selected' : ''}>人</option><option value="clone" ${kf === 'clone' ? 'selected' : ''}>役割つきの愛棒</option><option value="group" ${kf === 'group' ? 'selected' : ''}>グループ</option><option value="pay" ${kf === 'pay' ? 'selected' : ''}>支払いの失敗</option></select><select class="hbin" id="adS"><option value="">状態：ぜんぶ</option>${Object.entries(ST).map(([k, l]) => `<option value="${k}" ${sf === k ? 'selected' : ''}>${l}</option>`).join('')}</select><select class="hbin" id="adC"><option value="">キャラ：ぜんぶ</option>${Object.entries(CHN).map(([k, l]) => `<option value="${k}" ${cf === k ? 'selected' : ''}>${l}</option>`).join('')}</select><button type="button" class="hbbtn w" data-go="aids">AIDの一覧</button><button type="button" class="hbbtn w" id="adR">読みなおす</button></div></div>
         <div class="hbc adtbl"><table><thead><tr><th>名前</th><th>種類</th><th>状態</th><th>ランク・pt</th><th>ご縁・開いた</th><th>役割（URLごと）</th><th>メモ</th><th>はじめた日</th><th></th></tr></thead><tbody>${rows.slice(0, 300).map(r => `<tr>
           <td>${r.kind === 'person' ? `<button type="button" class="adname" data-auser="${esc(r.code)}"><b>${esc(r.name || r.ownerName || '（名前なし）')}</b></button>` : `<b>${esc(r.name || r.ownerName || '（名前なし）')}</b>`} ${(r.chars || []).map(c => `<i class="hbch ${esc(c)}" title="${esc(CHN[c] || c)}">${esc((CHN[c] || c).slice(0, 1))}</i>`).join('')}<br><small class="hbmuted">${esc(r.code)}${r.kind === 'clone' && r.ownerName ? '・' + esc(r.ownerName) + 'さんの愛棒' : ''}</small></td>
           <td>${K[r.kind] || esc(r.kind)}${r.kind === 'clone' ? (r.active ? '' : '（止）') : ''}</td>
@@ -4986,7 +4986,8 @@ body.cl .cltools [data-cl="ctx"].clfr { background: transparent !important; colo
           b.disabled = true; b.textContent = 'まとめています…'; jrSend({ type: 'id_merge', to: k, from: others.map(r => r.code) }); });
         body.querySelectorAll('#idDup [data-auser]').forEach(x => x.onclick = e => { e.preventDefault(); hbpOpenUser(x.dataset.auser); });
       }
-      const qi = body.querySelector('#adQ'); qi.oninput = () => { HBP.adminQ = qi.value; clearTimeout(HBP.adT); HBP.adT = setTimeout(() => { hbpRender(); const x = $('adQ'); if (x) { x.focus(); x.setSelectionRange(x.value.length, x.value.length); } }, 350); };
+      const qi = body.querySelector('#adQ'), qgo = () => { HBP.adminQ = qi.value; clearTimeout(HBP.adT); HBP.adT = setTimeout(() => { hbpRender(); const x = $('adQ'); if (x) { x.focus(); x.setSelectionRange(x.value.length, x.value.length); } }, 400); };   // 11/22：日本語入力の変換中は描き直さない（変換が切れて、入れた文字が消えていた）
+      qi.addEventListener('input', e => { if (e.isComposing || qi._ime) return; qgo(); }); qi.addEventListener('compositionstart', () => { qi._ime = 1; }); qi.addEventListener('compositionend', () => { qi._ime = 0; qgo(); }); qi.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.isComposing) { clearTimeout(HBP.adT); HBP.adminQ = qi.value; hbpRender(); } });
       body.querySelector('#adK').onchange = e => { HBP.adminK = e.target.value; hbpRender(); };
       body.querySelector('#adS').onchange = e => { HBP.adminS = e.target.value; hbpRender(); };
       body.querySelector('#adC').onchange = e => { HBP.adminC = e.target.value; hbpRender(); };
@@ -5057,7 +5058,8 @@ body.cl .cltools [data-cl="ctx"].clfr { background: transparent !important; colo
       body.innerHTML = `<div class="hbc"><div class="k">AID</div><h3>AIDの一覧</h3><p class="hbmuted">AIDは「人 × キャラ」の番号です。同じ人でも、ハタボとコムギは別のAIDで、会話や設定が分かれています。いま ${n(list.length)} 件。</p>
           <div class="hbrow2"><input class="hbin" id="aiQ" placeholder="名前・AIDでさがす" value="${esc(q)}"><select class="hbin" id="aiC"><option value="">キャラ：ぜんぶ</option>${Object.entries(CHN).map(([k, l]) => `<option value="${k}" ${cf === k ? 'selected' : ''}>${l}</option>`).join('')}</select><button type="button" class="hbbtn w" data-go="admin">人の一覧へ</button></div></div>
         <div class="hbc adtbl"><table><thead><tr><th>AID</th><th>キャラ</th><th>持ち主</th><th>状態</th><th>はじめた日</th></tr></thead><tbody>${list.slice(0, 400).map(x => `<tr><td><b>${esc(x.aid)}</b></td><td><i class="hbch ${esc(x.c)}">${esc((CHN[x.c] || x.c).slice(0, 1))}</i> ${esc(CHN[x.c] || x.c)}</td><td><button type="button" class="adname" data-auser="${esc(x.r.code)}">${esc(x.r.name || x.r.ownerName || '（名前なし）')}</button></td><td><i class="hbst ${esc(x.r.status)}">${esc(ST[x.r.status] || '')}</i></td><td>${dt(x.r.at)}</td></tr>`).join('') || '<tr><td colspan="5">まだありません</td></tr>'}</tbody></table></div>`;
-      const qi = body.querySelector('#aiQ'); qi.oninput = () => { HBP.aidQ = qi.value; clearTimeout(HBP.aiT); HBP.aiT = setTimeout(() => { hbpRender(); const x = $('aiQ'); if (x) { x.focus(); x.setSelectionRange(x.value.length, x.value.length); } }, 350); };
+      const qi = body.querySelector('#aiQ'), qgo = () => { HBP.aidQ = qi.value; clearTimeout(HBP.aiT); HBP.aiT = setTimeout(() => { hbpRender(); const x = $('aiQ'); if (x) { x.focus(); x.setSelectionRange(x.value.length, x.value.length); } }, 400); };
+      qi.addEventListener('input', e => { if (e.isComposing || qi._ime) return; qgo(); }); qi.addEventListener('compositionstart', () => { qi._ime = 1; }); qi.addEventListener('compositionend', () => { qi._ime = 0; qgo(); });
       body.querySelector('#aiC').onchange = e => { HBP.aidC = e.target.value; hbpRender(); };
       body.querySelectorAll('[data-auser]').forEach(b => b.onclick = () => hbpOpenUser(b.dataset.auser));
     } else if (p === 'uperson') {   // 事務局：人ごとの詳しいページ
@@ -5858,6 +5860,10 @@ body.cl .cltools [data-cl="ctx"].clfr { background: transparent !important; colo
   document.addEventListener('jrready', () => { if ($('hbPage') && (!$('hbPage').hidden || document.body.classList.contains('hbshell'))) hbpFetchAll(); });
   function hbpDrawer(on) { if (!on) HBP.fromChat = false; $('hbPage').classList.toggle('drawer', !!on); $('hbpScrim').hidden = !on; if (on && J.ready) jrSend({ type: 'chats' }); }
   $('hbpMenu').addEventListener('click', () => hbpDrawer(!$('hbPage').classList.contains('drawer')));
+  // 11/22：事務局では、左上のエンブレムと、トーク一覧の事務局長のエンブレムを押すと、事務局のホーム
+  const hbOfficeHome = () => { hbpDrawer(false); hbpOpen('my'); if (J.ready) jrSend({ type: 'admin' }); };
+  document.querySelector('#hbPage .hbp-brand').addEventListener('click', e => { if (document.body.classList.contains('officemode')) { e.stopImmediatePropagation(); hbOfficeHome(); } }, true);
+  $('hbpTalks').addEventListener('click', e => { const av = e.target.closest && e.target.closest('.hbt-av'), row = av && av.closest('.hbt'); if (!row || !document.body.classList.contains('officemode') || !/^me:/.test(row.dataset.tk || '')) return; e.stopImmediatePropagation(); e.preventDefault(); hbOfficeHome(); }, true);
   document.querySelector('#hbPage .hbp-brand').addEventListener('click', () => { if (window.innerWidth < 900) hbpDrawer(!$('hbPage').classList.contains('drawer')); else { const h = document.querySelector('#hbpTabs > button[data-p="my"]'); if (h) h.click(); } });   // パソコン：いちばん上のマークを押すとホーム
   $('hbpScrim').addEventListener('click', () => hbpDrawer(false));
   // 右上の表示モード：トーク（文字で話す）／キャラ（キャラを大きく。プロジェクターでのプレゼンや交流会）
@@ -6879,7 +6885,7 @@ body.cl .cltools [data-cl="ctx"].clfr { background: transparent !important; colo
     if (pg === 'group') return { k: 'group', l: '記録・議事録', ic: CL_IC_NOTE, go: () => { HBP.noteThr = ''; HBP.filter = 'all'; hbpOpen('notes'); if (J.ready) jrSend({ type: 'mypage' }); } };
     if (pg && pg !== 'custom') return null;
     if (J.visit) return { k: 'goen', l: 'この人とのやりとり', ic: CL_IC_MSG, go: () => { HBP.ibWith = ''; hbpOpen('inbox'); if (J.ready) jrSend({ type: 'inbox' }); } };
-    if (document.body.classList.contains('officemode') && (J.focusKey === 'chief' || !J.focusKey)) return { k: 'office', l: '事務局のホーム', ic: CL_IC_GEAR, go: () => hbpOpen('my') };
+    if (document.body.classList.contains('officemode') && (J.focusKey === 'chief' || !J.focusKey)) return null;   // 11/22：事務局のホームは、左上のエンブレムと事務局長のエンブレムから
     if (!J.focusKey) return { k: 'me', l: 'キャラ設定（名前・アイコン・話し方）', ic: CL_IC_GEAR, go: () => { HBP.custom = null; hbpOpen('custom'); } };
     return null;
   }
