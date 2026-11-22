@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="ja">
 <head>
-<meta charset="utf-8"><meta name="hb-ver" content="2026-11-22d">
+<meta charset="utf-8"><meta name="hb-ver" content="2026-11-22e">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex">
 <title>ハタボ｜すべての人に、AIの愛棒を</title><meta name="description" content="話すだけで、調べもの・下書き・相談まで、いっしょに動くAIの愛棒。PCとスマホとLINEで使えます。"><meta property="og:type" content="website"><meta property="og:site_name" content="ハタボ"><meta property="og:title" content="ハタボ｜すべての人に、AIの愛棒を"><meta property="og:description" content="話すだけで、調べもの・下書き・相談まで、いっしょに動くAIの愛棒。"><meta property="og:url" content="https://app.hatha-lab.com/"><meta property="og:image" content="https://app.hatha-lab.com/feed_emblem.jpg"><meta name="twitter:card" content="summary">
@@ -4971,6 +4971,21 @@ body.cl .cltools [data-cl="ctx"].clfr { background: transparent !important; colo
           <td>${dt(r.at)}</td>
           <td><button type="button" class="hbbtn w" data-ahelp="${esc(r.code)}" title="愛祭や愛棒会の協力を1回記録">愛祭＋1</button>${r.kind === 'clone' ? `<button type="button" class="hbbtn w" data-aact="${esc(r.code)}" data-on="${r.active ? 0 : 1}">${r.active ? '止める' : '再開'}</button>` : ''}</td></tr>`).join('')}</tbody></table>${rows.length > 300 ? '<p class="hbmuted">はじめの300件だけ出しています。さがすで絞ってください。</p>' : ''}</div>
         <div class="hbc"><div class="k">LOG</div><h3>変更の記録</h3>${(A.audit || []).map(x => `<p class="hbmuted">${new Date(x.at).toLocaleString('ja-JP')}　${esc(x.by)}：${esc(x.code)} ${esc(x.what)}</p>`).join('') || '<p class="hbmuted">まだありません。</p>'}</div>`;
+      { // 11/22：IDが分かれている人の候補（同じLINEのID・本人のまとめ・同じメール・同じ名前）。最高管理者が1組ずつ確かめて、裏側でまとめる
+        const D = A.dupes, top = A.perm === 'top', dd = t => t ? new Date(t).toLocaleDateString('ja-JP') : '—';
+        const card = `<div class="hbc" id="idDup"><div class="k">SAME PERSON</div><h3>IDが分かれている人の候補</h3>
+          <p class="hbmuted" style="font-size:12.5px">LINE・Google・コムギなど、入り口ごとにIDが分かれてしまった人です。「たしか」は同じLINEのIDやメールなど、まちがいのない手がかり。「名前だけ」は別の人のこともあるので、よく確かめてください。まとめると、友だち・申請・カード・伝言・投稿・ポイントが残すほうに移り、もう一方のログインでも残すほうとして動きます。</p>
+          ${D === undefined ? '<button type="button" class="hbbtn" id="idDupGo">候補を出す</button>' : !D.length ? '<p>候補はありません。</p>' : D.map((g, gi) => `<div class="hbc" style="margin:10px 0 0;border-color:${g.sure ? '#C9A24A' : 'var(--hbline, #ddd)'}"><b>${esc(g.reason)}</b> <span class="hbtag ${g.sure ? 'gold' : 'hbmuted'}">${g.sure ? 'たしか' : '名前だけ'}</span>
+            ${g.rows.map(r => `<label class="hbrow" style="gap:10px;align-items:center"><input type="radio" name="keep${gi}" value="${esc(r.code)}" ${r.code === g.keep ? 'checked' : ''} ${top ? '' : 'disabled'}><div style="flex:1"><b>${esc(r.name || '（名前なし）')}</b> <span class="hbmuted">${esc(r.code)}・${esc(r.via)} ${esc(r.tail)}</span><span>はじめた日 ${dd(r.at)}・最後 ${dd(r.lastAt)}${r.stage ? '・' + esc(r.stage) : ''}・友だち ${r.friends}${r.asks ? '・申請 ' + r.asks : ''}</span></div><button type="button" class="adname" data-auser="${esc(r.code)}">見る</button></label>`).join('')}
+            ${top ? `<button type="button" class="hbbtn w" data-idm="${gi}" style="margin-top:8px">えらんだIDに、ほかをまとめる</button>` : '<p class="hbmuted" style="font-size:12px">まとめられるのは最高管理者だけです。</p>'}</div>`).join('')}</div>`;
+        const first = body.querySelector('.hbc'); if (first) first.insertAdjacentHTML('afterend', card);
+        const go = body.querySelector('#idDupGo'); if (go) go.onclick = () => { go.disabled = true; go.textContent = 'さがしています…'; jrSend({ type: 'admin_dupes' }); };
+        body.querySelectorAll('[data-idm]').forEach(b => b.onclick = () => { const g = D[+b.dataset.idm], k = (body.querySelector('input[name="keep' + b.dataset.idm + '"]:checked') || {}).value; if (!g || !k) return;
+          const others = g.rows.filter(r => r.code !== k), kr = g.rows.find(r => r.code === k);
+          if (!confirm('「' + (kr.name || k) + '（' + k + '）」に、' + others.map(r => (r.name || r.code) + '（' + r.code + '）').join('、') + ' をまとめます。\n友だち・伝言・投稿・ポイントが移り、もとにはもどせません。よろしいですか？')) return;
+          b.disabled = true; b.textContent = 'まとめています…'; jrSend({ type: 'id_merge', to: k, from: others.map(r => r.code) }); });
+        body.querySelectorAll('#idDup [data-auser]').forEach(x => x.onclick = e => { e.preventDefault(); hbpOpenUser(x.dataset.auser); });
+      }
       const qi = body.querySelector('#adQ'); qi.oninput = () => { HBP.adminQ = qi.value; clearTimeout(HBP.adT); HBP.adT = setTimeout(() => { hbpRender(); const x = $('adQ'); if (x) { x.focus(); x.setSelectionRange(x.value.length, x.value.length); } }, 350); };
       body.querySelector('#adK').onchange = e => { HBP.adminK = e.target.value; hbpRender(); };
       body.querySelector('#adS').onchange = e => { HBP.adminS = e.target.value; hbpRender(); };
