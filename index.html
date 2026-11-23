@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="ja">
 <head>
-<meta charset="utf-8"><meta name="hb-ver" content="2026-11-22f">
+<meta charset="utf-8"><meta name="hb-ver" content="2026-11-23a">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex">
 <title>ハタボ｜すべての人に、AIの愛棒を</title><meta name="description" content="話すだけで、調べもの・下書き・相談まで、いっしょに動くAIの愛棒。PCとスマホとLINEで使えます。"><meta property="og:type" content="website"><meta property="og:site_name" content="ハタボ"><meta property="og:title" content="ハタボ｜すべての人に、AIの愛棒を"><meta property="og:description" content="話すだけで、調べもの・下書き・相談まで、いっしょに動くAIの愛棒。"><meta property="og:url" content="https://app.hatha-lab.com/"><meta property="og:image" content="https://app.hatha-lab.com/feed_emblem.jpg"><meta name="twitter:card" content="summary">
@@ -2358,6 +2358,40 @@ body.cl .cltools [data-cl="ctx"].clfr { background: transparent !important; colo
 @media (max-width: 480px) { .oh-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; } .oh-card { padding: 12px; } .oh-card b { font-size: 26px; } }   /* 事務局のホーム：スマホでも数字を2列で、ひと目で見られるように */
 .hbmem { padding: 10px 0; border-bottom: 1px solid rgba(127,140,160,.2); } .hbmem > div { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; } .hbmem em { font: 800 15px var(--display); font-style: normal; white-space: nowrap; } .hbmem p { margin: 4px 0 0; font-size: 12.5px; line-height: 1.6; opacity: .85; }   /* 会員：名前と月額を1行、できることを下に（せまい画面で数字が折れないように） */
 .hbpage .hbptbl + p a, .hbpage p > a[href^="https://www.hatha-lab.com/"] { display: inline-block; padding: 12px 2px; }   /* 規約などの文字のリンクも、押せる高さに */
+  /* 11/23：電話のボタンに相手の名前 */
+  .clcall { width: auto; min-width: 44px; gap: 4px; padding: 0 8px; }
+  .clcall[hidden] { display: none !important; }
+  .clcall .clcall-n { font-style: normal; font-size: 12px; max-width: 6em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .clcall .clcall-n:empty { display: none; }
+/* 11/23：右上のボタンは画面ごとの表（CL_BAR）。表にないボタンは出さない。押せる大きさは44px */
+body.cl .clset [data-k][data-off] { display: none !important; }
+body.cl .clset .clb { min-width: 44px; min-height: 44px; position: relative; }
+body.cl .clset .clword { font: 800 14px var(--display, sans-serif); letter-spacing: .04em; }
+body.cl .clset .clbadge { position: absolute; }
+body.cl .clset [data-cl="notice"] .clbadge { top: 4px; right: 2px; }
+#hbpKind [data-tkf="solo"] .clkbadge { display: inline-block; min-width: 18px; height: 18px; margin-left: 5px; padding: 0 5px; border-radius: 9px; background: #E5484D; color: #fff; font: 800 11px/18px var(--display, sans-serif); font-style: normal; text-align: center; vertical-align: 1px; }
+/* 11/23：ホームの「新しい友だち」 */
+.clnf { margin: 0 0 14px; padding: 12px; border-radius: 16px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); display: grid; gap: 4px; }
+.clnf-h { display: flex; justify-content: space-between; align-items: baseline; padding: 0 4px 4px; } .clnf-h b { font: 800 15px var(--display, sans-serif); } .clnf-h span { font-size: 12px; opacity: .7; }
+.clnf-p { display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 6px 8px; border: 0; border-radius: 12px; background: transparent; color: inherit; text-align: left; cursor: pointer; }
+.clnf-p:active { background: rgba(255,255,255,.08); }
+.clnf-p i { flex: none; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: #2C4C8E; color: #fff; font: 800 16px var(--display, sans-serif); font-style: normal; overflow: hidden; } .clnf-p i img { width: 100%; height: 100%; object-fit: cover; }
+.clnf-p span { flex: 1; min-width: 0; display: grid; } .clnf-p b { font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .clnf-p small { font-size: 12px; opacity: .7; }
+.clnf-p em { font: 800 10px var(--display, sans-serif); font-style: normal; color: #fff; background: #E5484D; border-radius: 999px; padding: 3px 7px; }
+.clnf-more { min-height: 44px; border: 0; background: transparent; color: #8FB0F0; font: 700 13px var(--display, sans-serif); cursor: pointer; }
+/* 11/23：声で話しているときの字幕（愛棒の画面のいちばん新しい返事）：すけた灰色の帯。下の文字も透けて読める。2〜3行で、古い行は上へ流す。タップは下へ通す */
+body.cl:is(.av-hatabo, .av-komugi):not(.chatview):not(.hbp-open):not(.plain):not(.stagemode) .bubbles > .her:not(:has(~ .her)) { display: flex !important; flex-direction: column; justify-content: flex-end; position: fixed; z-index: 58; left: 16px; right: 16px; bottom: calc(env(safe-area-inset-bottom) + 132px); max-height: calc(1.6em * 3 + 20px); overflow: hidden; margin: 0; padding: 10px 14px; max-width: none; border: 0 !important; border-radius: 14px; background: rgba(40,40,48,.6) !important; -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); color: #fff !important; font-size: 15px; line-height: 1.6; box-shadow: none !important; pointer-events: none; -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 10px); mask-image: linear-gradient(to bottom, transparent 0, #000 10px); }
+body.cl:is(.av-hatabo, .av-komugi):not(.chatview):not(.hbp-open):not(.plain):not(.stagemode) .bubbles > .her .who { display: none; }
+body.cl:is(.av-hatabo, .av-komugi):not(.chatview):not(.hbp-open):not(.plain):not(.stagemode) .bubbles > .her :is(a, button) { pointer-events: auto; }
+/* いま話している相手の札（上）も、すけた灰色にして、下の吹き出しが読めるように。タップは下へ通す */
+#clNow { background: rgba(40,40,48,.55) !important; -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); pointer-events: none; }
+/* 11/23：トーク画面の左のすき間：ハタボのアプリ（body.cl）では左のアイコンの帯（#cvStrip）を出さないので、帯の分のすき間を、どの幅でも作らない（PCのせまい窓・つながる前も） */
+@media (max-width: 899px) { body.cl.chatview.hasStrip #cvList { padding-left: 14px !important; } body.cl.chatview .chatv .cv-m.her { margin-left: 0 !important; padding-left: 0 !important; } }
+/* 11/23：＋の板：iPhoneのLINEでは、キーボードが閉じる途中の「見えている高さ」と、板の置き場所（レイアウトの高さ）がずれて、下に黒い板だけが見えることがあった。
+   見えている高さ（visualViewport）にそろえて置く。まわり（html）の色もアプリの紺にして、すき間が黒く出ないように */
+.hbplus-sh { top: var(--vvt, 0px); bottom: auto; height: var(--vvh, 100%); }
+html:has(> body.cl.av-hatabo), body.cl.av-hatabo { background-color: #0A1226; } html:has(> body.cl.av-komugi), body.cl.av-komugi { background-color: #0A0810; }
+@media (max-width: 899px) { body.cl:is(:not(.pcweb),.pcnarrow) .chatv .cv-bot { padding-bottom: calc(6px + max(0px, env(safe-area-inset-bottom) - 14px)) !important; } }
 </style>
 </head>
 <body>
@@ -4174,6 +4208,7 @@ body.cl .cltools [data-cl="ctx"].clfr { background: transparent !important; colo
       case 'pwa_pair': pwaPairMsg(m); break;
       case 'push_key': PUSH.key = m.key || ''; if (!$('hbPage').hidden && HBP.page === 'inbox') hbpRender(); break;
       case 'push': PUSH.on = !!m.on; PUSH.msg = m.ok ? (m.test ? 'テストの通知を送りました。' : '') : m.why === 'login' ? 'ログインしてから、もう一度押してください。' : m.test ? '通知が届きませんでした。いちど「通知をオフにする」を押して、オンにしなおしてください。' : '通知の登録ができませんでした。'; if (m.ok && !m.test && m.on) toast('通知をオンにしました'); if (!$('hbPage').hidden && HBP.page === 'inbox') hbpRender(); break;
+      case 'inbox_new': if (J.ready) jrSend({ type: 'inbox' }); break;   // 11/23：伝言が届いた → すぐ読みなおして、赤い数字を合わせる
       case 'inbox': { const sig = (m.items || []).map(x => x.id).join(','); if (!m.sent && HBP.ibWith && sig === HBP.ibSig && HBP.inbox) { HBP.inbox = m; pwaBadge((m.items || []).filter(x => !x.read).length); try { hbpChats(); } catch (e) {} break; } HBP.ibSig = sig; } HBP.inbox = m; pwaBadge((m.items || []).filter(x => !x.read).length); try { hbpChats(); } catch (e) {} if (m.sent) toast('伝言をとどけたよ'); if (!$('hbPage').hidden && HBP.page === 'inbox') { if (m.sent || !HBP.inboxShown) { HBP.inboxShown = true; hbpRender(); } } break;
       case 'chats': HBP.chats = m; hbpChats(); break;
       case 'byok': HBP.byok = m; if (m.saved) toast('キーを保存しました。次の返事から自分のClaudeで動きます'); if (m.removed) toast('キーを消しました'); if (!$('hbPage').hidden && (HBP.page === 'byok' || HBP.page === 'acct')) hbpRender(); break;
@@ -4215,7 +4250,7 @@ body.cl .cltools [data-cl="ctx"].clfr { background: transparent !important; colo
       case 'reqs': HBP.reqs = m; if (!$('hbPage').hidden && HBP.page === 'reqs') hbpRender(); break;
       case 'gacha': HBP.gacha = m; if (!$('hbPage').hidden && HBP.page === 'gacha') hbpRender(); break;
       case 'feed': case 'feed_ok': case 'feed_err': case 'post_ans': case 'post_cap': try { clFeedMsg(m); } catch (e) { console.error('feed', e); } break;
-      case 'friends': HBP.friends = m; if (m.err) toast(m.err); if (!$('hbPage').hidden && (HBP.page === 'friends' || HBP.page === 'social')) hbpRender(); if (window.hbCallSheetSync) window.hbCallSheetSync(); break;
+      case 'friends': HBP.friends = m; if (m.err) toast(m.err); try { clNewFrSync(); } catch (e) {} if (!$('hbPage').hidden && (HBP.page === 'friends' || HBP.page === 'social')) hbpRender(); if (window.hbCallSheetSync) window.hbCallSheetSync(); break;
       case 'call_ready': if (m.err) { toast(m.err); if (window.hbCallSheetSync) window.hbCallSheetSync(); } else if (window.hbCallOpen) window.hbCallOpen(m.url); break;   // 行き先は hbCallOpen で確かめる
       case 'call_in': if (window.hbCallRing) window.hbCallRing(m); break;
       case 'goen': HBP.goen = m; if (!$('hbPage').hidden && HBP.page === 'goen') hbpRender(); try { hbpChats(); } catch (e) {} break;
@@ -5656,6 +5691,27 @@ body.cl .cltools [data-cl="ctx"].clfr { background: transparent !important; colo
     const box = document.querySelector('.hbcharsvg'), g = document.getElementById('hataboAv'); if (!box || !g || box.firstChild) return;
     const c = g.cloneNode(true); c.removeAttribute('id'); c.querySelectorAll('[id]').forEach(x => x.removeAttribute('id')); c.style.display = 'inline'; c.style.transform = 'none'; box.append(c);
   }
+  /* 11/23：ホームの「新しい友だち」：友だちになった時刻（サーバーの since）が14日以内で、まだ押していない人。最大4人＋もっと見る。押すとその人との伝言へ */
+  const CL_NF_DAYS = 14, CL_NF_MAX = 4;
+  function clNewFrList() {
+    const seen = store.get('hbNfSeen', {}) || {}, t0 = Date.now() - CL_NF_DAYS * 864e5;
+    return (((HBP.friends && HBP.friends.list) || []).filter(f => f && f.code && Number(f.since) > t0 && !seen[f.code])).sort((a, b) => b.since - a.since);
+  }
+  function clNewFr() {
+    if (!HBP.friends) { if (J.ready && !HBP.nfAsk) { HBP.nfAsk = 1; setTimeout(() => jrSend({ type: 'friends' }), 0); } return ''; }
+    const L = clNewFrList(); if (!L.length) return '';
+    const all = !!HBP.nfAll, show = all ? L : L.slice(0, CL_NF_MAX), d = x => { const t = new Date(x); return (t.getMonth() + 1) + '/' + t.getDate(); };
+    return '<div class="clnf"><div class="clnf-h"><b>新しい友だち</b><span>' + L.length + '人</span></div>' + show.map(f => '<button type="button" class="clnf-p" data-nf="' + esc(f.code) + '"><i>' + (f.pic || f.icon ? '<img src="' + esc(f.pic || f.icon) + '" alt="" referrerpolicy="no-referrer">' : esc(String(f.name || '?').slice(0, 1))) + '</i><span><b>' + esc(f.name || '友だち') + 'さん</b><small>' + d(f.since) + 'につながりました</small></span><em>NEW</em></button>').join('')
+      + (L.length > CL_NF_MAX && !all ? '<button type="button" class="clnf-more" data-nf-more>もっと見る（あと' + (L.length - CL_NF_MAX) + '人）</button>' : '') + '</div>';
+  }
+  function clNewFrSync() { const e = $('clNewFr'); if (e && !$('hbPage').hidden && (HBP.page === 'my' || HBP.page === 'ohome')) { const h = clNewFr(); if (e.innerHTML !== h) e.innerHTML = h; } }
+  window.clNewFrSync = clNewFrSync;
+  document.addEventListener('click', e => {
+    if (e.target.closest && e.target.closest('[data-nf-more]')) { HBP.nfAll = true; return clNewFrSync(); }
+    const b = e.target.closest && e.target.closest('[data-nf]'); if (!b) return;
+    const seen = store.get('hbNfSeen', {}) || {}; seen[b.dataset.nf] = Date.now(); store.set('hbNfSeen', seen);   // 見たら「新しい」は消える
+    HBP.ibWith = b.dataset.nf; HBP.inboxShown = false; hbpOpen('inbox'); if (J.ready) jrSend({ type: 'inbox' });
+  });
   function hbpHero(d) {
     const nm0 = String((d && d.name) || (HBP.con && HBP.con.me && HBP.con.me.name) || '').trim(), km = document.body.classList.contains('av-komugi');
     const Q = [['メモ', 'メモして：', 'M5 4h10l4 4v12H5z M9 12h6 M9 16h4'], ['議事録', '議事録をとって。会議の名前は：', 'M4 5h16v14H4z M8 9h8 M8 13h8 M8 17h5'], ['調べもの', '調べて：', 'M11 4a7 7 0 1 0 0 14a7 7 0 1 0 0-14 M16 16l4 4'], ['予定', '予定を入れて：', 'M4 6h16v14H4z M4 10h16 M9 3v5 M15 3v5'], ['文章', '文章を書いて：', 'M4 20h16 M6 16l9-9 3 3-9 9H6z'], ['伝言', 'さんに伝えて：', 'M4 5h16v11H8l-4 4z']];
@@ -5672,7 +5728,7 @@ body.cl .cltools [data-cl="ctx"].clfr { background: transparent !important; colo
     const car = `<div class="hbcar"><div class="hbcar-h"><b>おすすめ・新しい機能</b><span><button type="button" data-cmv="-1" aria-label="前へ">‹</button><button type="button" data-cmv="1" aria-label="次へ">›</button></span></div><div class="hbcar-tr" id="hbCar">${HB_PICKS.map(([go, t, d0]) => `<button type="button" class="hbcar-c" data-go="${go}"><b>${esc(t)}</b><span>${esc(d0)}</span></button>`).join('')}</div></div>`;
     const inv = `<div class="hbinv"><button type="button" class="hbinv-m" data-go="share"><i aria-hidden="true">🎁</i><span><b>友だちを招待して、一緒に試そう</b><small>招待した友だちとは、最初からご縁でつながります。友だちにも、はじめのトッピングが付きます。</small></span><em>招待する ›</em></button><button type="button" class="hbinv-g" id="hbEggBtn"><i aria-hidden="true">🥚</i><span><b>愛棒ガチャ</b><small>卵から、あなたの愛棒が生まれる</small></span></button></div>`;
     const clh = `<div class="clhero"><div class="clmark"><img src="award_mark.svg" alt=""></div><h1>${esc(clGreet() + (nm0 ? '、' + nm0 + 'さん' : ''))}</h1><p>なんでも聞いてください</p><p class="clnote2">${clNote()}</p></div>`;
-    return `<div class="hbhero">${clh}${inv}${HATABO_APP ? '' : ban}${ask}${HATABO_APP ? '' : car}</div>`;
+    return `<div class="hbhero">${clh}<div id="clNewFr">${clNewFr()}</div>${inv}${HATABO_APP ? '' : ban}${ask}${HATABO_APP ? '' : car}</div>`;
   }
   document.addEventListener('click', e => { const b = e.target.closest('[data-cmv]'); if (!b) return; const c = $('hbCar'); if (c) c.scrollBy({ left: Number(b.dataset.cmv) * Math.max(240, c.clientWidth * 0.8), behavior: 'smooth' }); });
   function hbpTalk(text, mic) {   // ホームの入力欄から：トーク画面に出て、そのまま話す
@@ -5719,7 +5775,9 @@ body.cl .cltools [data-cl="ctx"].clfr { background: transparent !important; colo
         <button type="button" class="hbplus-r" data-px="clones"><i>${ico(I.who)}</i><div><b>愛棒の一覧を開く</b><span>お店や仕事の窓口の愛棒をつくる・選ぶ</span></div><em>›</em></button></div>`;
     }
     const body = () => $('hbPlusBody');
-    function open() { body().innerHTML = main(); sh.hidden = false; requestAnimationFrame(() => sh.classList.add('in')); try { if (window.hbBuzz) window.hbBuzz(); } catch (e) {} }
+    const vvSet = () => { const v = window.visualViewport; if (!v) return; sh.style.setProperty('--vvh', Math.round(v.height) + 'px'); sh.style.setProperty('--vvt', Math.round(v.offsetTop) + 'px'); };   // 11/23：見えている高さに板をそろえる
+    if (window.visualViewport) { window.visualViewport.addEventListener('resize', () => { if (!sh.hidden) vvSet(); }); window.visualViewport.addEventListener('scroll', () => { if (!sh.hidden) vvSet(); }); }
+    function open() { vvSet(); body().innerHTML = main(); sh.hidden = false; requestAnimationFrame(() => sh.classList.add('in')); try { if (window.hbBuzz) window.hbBuzz(); } catch (e) {} }
     function close() { sh.classList.remove('in'); setTimeout(() => { if (!sh.classList.contains('in')) sh.hidden = true; }, 200); }
     window.addEventListener('pageshow', () => { if (!sh.classList.contains('in')) sh.hidden = true; });   // 11/22：もどったときに空の板が残らないように
     const inputNow = () => { const h = $('hbAskIn'); if (h && !$('hbPage').hidden && document.body.classList.contains('hbp-open') && h.offsetParent) return h; return $('cvInput'); };
@@ -6938,7 +6996,12 @@ body.cl .cltools [data-cl="ctx"].clfr { background: transparent !important; colo
     add: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-6.5 7-6.5s7 2.5 7 6.5"/><path d="M19 8v6M16 11h6"/></svg>',
     spk: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9z"/><path class="on" d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/><path class="off" d="M17 9l5 6M22 9l-5 6"/></svg>',
     mic: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/><path class="off" d="M4 4l16 16"/></svg>',
-    edit: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg>'
+    edit: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg>',
+    plus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>',
+    bell: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2.2 2.2 0 0 0 4 0"/></svg>',
+    qr: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM18 18h3v3h-3z"/></svg>',
+    gear: CL_IC_GEAR,
+    yen: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8.5 7l3.5 5 3.5-5M12 12v6M9 13h6M9 15.5h6"/></svg>'
   };
   if (CL) document.body.classList.add('cl');
   /* 11/22：パソコンでも幅がせまいとき（900より下）は、スマホと同じ見た目（三本線・下の2つのボタン）。古い下のタブ（ホーム・愛棒・話す・ご縁・アカウント）は出さない */
@@ -6979,7 +7042,7 @@ body.cl .cltools [data-cl="ctx"].clfr { background: transparent !important; colo
   function clPlus(btn) {
     let pop = $('clPlus'); if (!pop) { pop = document.createElement('div'); pop.id = 'clPlus'; pop.className = 'clplus'; pop.setAttribute('role', 'menu'); pop.hidden = true; document.body.append(pop); }
     if (!pop.hidden) { pop.hidden = true; return; }
-    pop.innerHTML = '<div class="clplus-t"><button type="button" data-cp="talk">' + CL_PI.talk + '<span>新しい<br>トーク</span></button><button type="button" data-cp="aibo">' + CL_PI.aibo + '<span>愛棒を<br>迎える</span></button><button type="button" data-cp="fr">' + CL_PI.fr + '<span>友だち<br>追加</span></button></div>'
+    pop.innerHTML = '<div class="clplus-t"><button type="button" data-cp="aibo">' + CL_PI.aibo + '<span>愛棒を<br>迎える</span></button><button type="button" data-cp="fr">' + CL_PI.fr + '<span>友だち<br>追加</span></button></div>'
       + '<button type="button" class="clplus-r" data-cp="qr">' + CL_PI.qr + 'マイQRコード</button>'
       + (pwaStandalone() ? '' : '<button type="button" class="clplus-r" data-cp="home">' + CL_PI.home + 'ホーム画面に追加</button>')
       + '<button type="button" class="clplus-r" data-cp="addlink">' + CL_PI.link + 'ホーム画面に追加するリンクをコピー</button>'
@@ -7284,23 +7347,73 @@ body.cl .cltools [data-cl="ctx"].clfr { background: transparent !important; colo
   }
   document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('[data-px]'); if (!b || b.closest('#hbPlusSh')) return; const o = document.getElementById(b.dataset.px); if (o) o.click(); setTimeout(clTools, 60); });
   function clUnread() { return ((HBP.inbox && HBP.inbox.items) || []).filter(x => !x.read && !x.mine).length; }
+  /* 11/23：電話のボタンは、ご縁の人との個別のトークと、ハタボのグループにだけ出す（ホーム・わたしの愛棒・LINEグループには出さない）。だれにかかるか、名前をそえる */
+  function clCallTarget() {
+    if (!clPageOpen()) return null;
+    if (HBP.page === 'inbox' && HBP.ibWith && HBP.ibWith !== '_goen') { const nm = clTitle(); return { list: [{ code: HBP.ibWith, name: nm && nm !== '伝言' ? nm.replace(/さん$/, '') : '' }], label: (nm && nm !== '伝言' ? nm.replace(/さん$/, '') + 'さん' : '相手') + 'に電話' }; }
+    if (HBP.page === 'group') {
+      const g = (HBP.myGroups || (HBP.con && HBP.con.groups) || []).find(x => x.gid === HBP.gid);
+      if (!g || !(g.hb === true || g.kind === 'hatabo')) return null;   // LINEグループには出さない。ハタボのグループ（hb・kind:'hatabo'）だけ
+      const mem = (g.people || []).filter(p => p && p.code && p.code !== J.myRef);
+      return mem.length ? { list: mem.map(p => ({ code: p.code, name: p.name || '' })), label: (g.name || 'グループ') + 'の人に電話' } : null;
+    }
+    return null;
+  }
+  function clCallSync() {
+    const t = clCallTarget();
+    document.querySelectorAll('[data-cl="call"]').forEach(b => { b.hidden = !t; if (!t) return; if (b.getAttribute('aria-label') !== t.label) { b.setAttribute('aria-label', t.label); b.title = t.label; } const n = b.querySelector('.clcall-n'), v = t.list.length === 1 ? (t.list[0].name || '') : ''; if (n && n.textContent !== v) n.textContent = v; });
+  }
+  /* 11/23：右上のボタンの表（ここだけで決める）。電話は、相手がわかるときだけ出る（clCallTarget）。左上の三本線と題は、どの画面にも出る
+     ・home      ホーム（Myハタボ）           ：友だち追加の＋・招待とQR・お知らせ
+     ・aibo      相棒の一覧（愛棒の画面・愛棒のページ・トーク一覧）：友だち追加の＋
+     ・talk      個別のトーク（わたしのハタボ・ご縁の人との伝言・相手の愛棒）：電話（名前つき）・トークの＋
+     ・hbgroup   ハタボのグループ              ：電話・トークの＋
+     ・linegroup LINEのグループ                ：トークの＋
+     ・mypage    マイページ（プロフィール）     ：設定・ID・料金
+     ・page      そのほかのページ（設定の中・ご縁マップ・伝言の一覧など）：なし */
+  const CL_BAR = { home: ['friend', 'invite', 'notice'], aibo: ['friend'], talk: ['call', 'tplus'], hbgroup: ['call', 'tplus'], linegroup: ['tplus'], mypage: ['set', 'id', 'fee'], page: [] };
+  function clScreen() {
+    const P = $('hbPage');
+    if (P && P.classList.contains('drawer') && !P.hidden) return 'aibo';
+    if (!clPageOpen()) { if (document.body.classList.contains('clfeed')) return 'page'; return document.body.classList.contains('chatview') ? 'talk' : 'aibo'; }
+    const pg = HBP.page;
+    if (pg === 'my' || pg === 'ohome') return 'home';
+    if (pg === 'clones' || pg === 'gacha') return 'aibo';
+    if (pg === 'acct') return HBP.acctSet ? 'page' : 'mypage';
+    if (pg === 'inbox') return HBP.ibWith && HBP.ibWith !== '_goen' ? 'talk' : 'page';
+    if (pg === 'person' || pg === 'uperson') return 'talk';
+    if (pg === 'group') { const g = (HBP.myGroups || (HBP.con && HBP.con.groups) || []).find(x => x.gid === HBP.gid); return g && (g.hb === true || g.kind === 'hatabo') ? 'hbgroup' : 'linegroup'; }
+    return 'page';
+  }
+  function clBarSync() {
+    const sc = clScreen(), on = CL_BAR[sc] || [];
+    document.querySelectorAll('.clset').forEach(st => { if (st.dataset.sc !== sc) st.dataset.sc = sc; st.querySelectorAll('[data-k]').forEach(b => { const off = !on.includes(b.dataset.k); if (b.hasAttribute('data-off') !== off) b.toggleAttribute('data-off', off); }); });
+  }
+  window.clScreen = clScreen;
   function clTickBars() {
+    clCallSync(); clBarSync();
     const t = clTitle(), n = clUnread(); clTools(); clProfNums(); { const ci = $('cvInput'), ph = (window.__aiName || 'ハタボ') + 'に話しかける'; if (ci && ci.placeholder !== ph && /に話しかける$/.test(ci.placeholder)) ci.placeholder = ph; }
     document.querySelectorAll('[data-cl-title]').forEach(e => { if (e.textContent !== t) e.textContent = t; });
     document.querySelectorAll('[data-cl-badge]').forEach(e => { const v = n > 99 ? '99+' : String(n); if (e.textContent !== v) e.textContent = v; e.hidden = !n; });
+    document.querySelectorAll('#hbpKind [data-tkf="solo"]').forEach(b => { let i = b.querySelector('.clkbadge'); if (!n) { if (i) i.remove(); return; } if (!i) { i = document.createElement('i'); i.className = 'clkbadge'; b.append(i); } const v = n > 99 ? '99+' : String(n); if (i.textContent !== v) i.textContent = v; });   // 11/23：トーク一覧の「個別」（伝言の入口）にも赤い数字
     const a = document.querySelector('.clacct'); if (a) { const nm = ($('hbpAcctName') || {}).textContent || 'Myハタボ', av = ($('hbpAcctAv') || {}).textContent || 'ハ'; const b = a.querySelector('b'), i = a.querySelector('i'); if (b && b.textContent !== nm) b.textContent = nm; if (i && i.textContent !== av) i.textContent = av; }
   }
     function clTick() {   // 11/22：押したときのピコピコ音はなくした。Androidの小さな振動だけ
     if (document.body.classList.contains('cv-listen')) return;
     try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {}
   }
+  /* 11/23：「トークの＋」：トークの画面だけに出す。新しいトーク・共有（右上の共有をここへ）・ピン留め・名前とメモ・このトークの設定・声とマイク */
   function clMore(btn) {
     let pop = $('clPop'); if (!pop) { pop = document.createElement('div'); pop.id = 'clPop'; pop.className = 'clpop'; pop.setAttribute('role', 'menu'); pop.hidden = true; document.body.append(pop); }
     if (!pop.hidden) { pop.hidden = true; return; }
-    const key = clKey(), pins = store.get('hbPins', []) || [], C = HBP.chats || {}, canName = !clPageOpen() && !J.focusKey && !!C.cur;
-    pop.innerHTML = (key ? '<button type="button" role="menuitem" data-clm="pin">' + CL_IC.pin + (pins.includes(key) ? 'ピン留めをはずす' : 'ピン留め') + '</button>' : '')
+    const key = clKey(), pins = store.get('hbPins', []) || [], C = HBP.chats || {}, canName = !clPageOpen() && !J.focusKey && !!C.cur, c = clCtx(), spk = $('cvSpk'), mic = $('cvMicSw');
+    pop.innerHTML = '<button type="button" role="menuitem" data-clm="new">' + CL_IC.neu + '新しいトーク</button>'
       + '<button type="button" role="menuitem" data-clm="share">' + CL_IC.share + '共有</button>'
-      + (canName ? '<button type="button" role="menuitem" data-clm="name">' + CL_IC.edit + '名前の変更</button><button type="button" role="menuitem" data-clm="notes">' + CL_IC.edit + 'この会話のメモ・議事録</button>' : '');
+      + (key ? '<button type="button" role="menuitem" data-clm="pin">' + CL_IC.pin + (pins.includes(key) ? 'ピン留めをはずす' : 'ピン留め') + '</button>' : '')
+      + (canName ? '<button type="button" role="menuitem" data-clm="name">' + CL_IC.edit + '名前の変更</button><button type="button" role="menuitem" data-clm="notes">' + CL_IC.edit + 'この会話のメモ・議事録</button>' : '')
+      + (c ? '<button type="button" role="menuitem" data-clm="ctx">' + c.ic + esc(c.l) + '</button>' : '')
+      + (spk && !spk.hidden ? '<button type="button" role="menuitem" data-clm="spk">' + CL_IC.spk + '声：' + esc(spk.textContent.trim()) + '（押すと切りかえ）</button>' : '')
+      + (mic && !mic.hidden ? '<button type="button" role="menuitem" data-clm="mic">' + CL_IC.mic + esc(mic.textContent.trim()) + '（押すと切りかえ）</button>' : '');
     const r = btn.getBoundingClientRect(); pop.style.top = Math.round(r.bottom + 6) + 'px';
     pop.hidden = false;
   }
@@ -7309,16 +7422,24 @@ body.cl .cltools [data-cl="ctx"].clfr { background: transparent !important; colo
     if (m) { pop.hidden = true; const k = m.dataset.clm;
       if (k === 'pin') hbpPin(clKey());
       else if (k === 'share') shareHatabo();
+      else if (k === 'new') hbNewMenu();
+      else if (k === 'ctx') { const c = clCtx(); if (c) { hbpDrawer(false); c.go(); } }
+      else if (k === 'spk' || k === 'mic') { const o = $(k === 'spk' ? 'cvSpk' : 'cvMicSw'); if (o) o.click(); setTimeout(clTools, 60); }
       else if (k === 'notes') { HBP.noteThr = (HBP.chats || {}).cur || ''; HBP.filter = 'all'; hbpOpen('notes'); if (J.ready) jrSend({ type: 'mypage' }); }
       else if (k === 'name') { const C = HBP.chats || {}, t = (C.list || []).find(x => x.id === C.cur), v = prompt('この会話の名前', (t && t.title) || ''); if (v && v.trim() && J.ready) jrSend({ type: 'chat_rename', id: C.cur, title: v.trim().slice(0, 40) }); }
       return; }
-    if (pop && !pop.hidden && !(e.target.closest && e.target.closest('#clPop, [data-cl="more"]'))) pop.hidden = true;
+    if (pop && !pop.hidden && !(e.target.closest && e.target.closest('#clPop, [data-cl="more"], [data-cl="tplus"]'))) pop.hidden = true;
     const b = e.target.closest && e.target.closest('[data-cl]'); if (!b) return;
     const k = b.dataset.cl;
     if (k === 'menu') { if (clPageOpen()) hbpDrawer(!$('hbPage').classList.contains('drawer')); else { hbpOpen('my'); setTimeout(() => { hbpDrawer(true); HBP.fromChat = true; }, 30); } }
     else if (k === 'new') hbNewMenu();
-    else if (k === 'more') clMore(b);
-    else if (k === 'call') hbCallSheet();
+    else if (k === 'more' || k === 'tplus') clMore(b);
+    else if (k === 'invite') clMyQr();
+    else if (k === 'notice') { hbpDrawer(false); HBP.ibWith = ''; HBP.inboxShown = false; hbpOpen('inbox'); if (J.ready) jrSend({ type: 'inbox' }); }
+    else if (k === 'set') { HBP.acctSet = true; hbpRender(); try { $('hbpBody').scrollTop = 0; } catch (x) {} }
+    else if (k === 'id') { hbpOpen('merge'); if (J.ready) jrSend({ type: 'acct_info' }); }
+    else if (k === 'fee') hbpOpen('plan');
+    else if (k === 'call') { const t = clCallTarget(); if (t) hbCallSheet(t); }
     else if (k === 'ctx') { const c = clCtx(); if (c) { hbpDrawer(false); c.go(); } }
   });
   document.addEventListener('pointerdown', e => { if (e.target.closest && e.target.closest('.clb, .clpop button, #hbpSide button, #hbpSide .hbt, .clacct, #cvMic, #hbAskMic, .chatv .cv-in button, .hbask button')) clTick(); }, true);
@@ -7326,7 +7447,16 @@ body.cl .cltools [data-cl="ctx"].clfr { background: transparent !important; colo
   document.addEventListener('submit', e => { const f = e.target; if (f && (f.id === 'cvForm' || f.id === 'hbAsk' || f.id === 'hbGrpAsk')) setTimeout(() => f.classList.remove('has'), 0); }, true);
   function clInit() {
     if (!CL || document.body.dataset.clInit) return; document.body.dataset.clInit = '1';
-    const set = '<div class="clset"><button type="button" class="clb" data-cl="menu" aria-label="メニューと会話の一覧">' + CL_IC.menu + '<i class="clbadge" data-cl-badge hidden></i></button><span class="cltitle" data-cl-title>ハタボ</span><button type="button" class="clb clpx" data-px="cvSpk" aria-label="声のあり・なし">' + CL_IC.spk + '</button><button type="button" class="clb" data-cl="call" aria-label="友だちに電話">' + CL_IC.phone + '</button><button type="button" class="clb clpx" data-px="cvMicSw" aria-label="マイクのあり・なし">' + CL_IC.mic + '</button><button type="button" class="clb" data-clplus aria-label="新しいトーク・友だち追加">' + CL_IC.add + '</button><button type="button" class="clb" data-cl="ctx" hidden></button><button type="button" class="clb" data-cl="more" aria-label="この会話のメニュー" aria-haspopup="menu">' + CL_IC.more + '</button></div>';
+    /* 11/23：右上のボタンは CL_BAR の表だけで出し分ける（data-k がその名前）。声・マイク・ピン留め・共有などは「トークの＋」の中へ */
+    const set = '<div class="clset"><button type="button" class="clb" data-cl="menu" aria-label="メニューと会話の一覧">' + CL_IC.menu + '<i class="clbadge" data-cl-badge hidden></i></button><span class="cltitle" data-cl-title>ハタボ</span>'
+      + '<button type="button" class="clb clcall" data-k="call" data-cl="call" aria-label="電話" hidden>' + CL_IC.phone + '<em class="clcall-n"></em></button>'
+      + '<button type="button" class="clb" data-k="friend" data-clplus aria-label="友だち追加">' + CL_IC.add + '</button>'
+      + '<button type="button" class="clb" data-k="invite" data-cl="invite" aria-label="招待とQRコード">' + CL_IC.qr + '</button>'
+      + '<button type="button" class="clb" data-k="notice" data-cl="notice" aria-label="お知らせ（伝言）">' + CL_IC.bell + '<i class="clbadge" data-cl-badge hidden></i></button>'
+      + '<button type="button" class="clb" data-k="tplus" data-cl="tplus" aria-label="トークの＋（新しいトーク・共有・声とマイクなど）" aria-haspopup="menu">' + CL_IC.plus + '</button>'
+      + '<button type="button" class="clb" data-k="set" data-cl="set" aria-label="設定">' + CL_IC.gear + '</button>'
+      + '<button type="button" class="clb clword" data-k="id" data-cl="id" aria-label="HATHABO ID">ID</button>'
+      + '<button type="button" class="clb" data-k="fee" data-cl="fee" aria-label="料金・お支払い">' + CL_IC.yen + '</button></div>';
     document.querySelectorAll('.hbp-top, .hbtop').forEach(el => el.insertAdjacentHTML('afterbegin', set));
     document.body.insertAdjacentHTML('beforeend', '<span class="cltools cltools-fix"><button type="button" data-px="cvScr"></button><button type="button" data-px="cvSpk"></button><button type="button" data-px="cvMicSw"></button><button type="button" class="clfr" data-cl="ctx" hidden></button><button type="button" class="clfr" data-clplus>＋ 友だち追加</button></span>');
     { const tt = $('hbTopTools'); if (tt) tt.insertAdjacentHTML('beforeend', '<button type="button" class="clfr" data-cl="ctx" hidden></button><button type="button" class="clfr" data-clplus>＋ 友だち追加</button>'); }
@@ -7376,19 +7506,22 @@ body.cl .cltools [data-cl="ctx"].clfr { background: transparent !important; colo
     clearTimeout(r._t); r._t = setTimeout(() => { r.hidden = true; }, 45000);
   };
   function hbCallSheetBody() {
+    const T = HBP.callT;
+    if (T && T.list && T.list.length) return T.list.map(x => '<button type="button" class="hcs-p" data-hcs-call="' + esc(x.code) + '"><i>' + esc(String(x.name || '?').slice(0, 1)) + '</i><span>' + esc(x.name || '相手') + 'さんに電話する</span>' + CL_IC.phone + '</button>').join('');
     const F = HBP.friends, L = (F && F.list) || [];
     if (!F) return '<p class="hcs-m">友だちをよみこみ中…</p>';
     if (!L.length) return '<p class="hcs-m">まだ友だちがいません。友だち申請をして、相手が承認すると電話できます。</p><button type="button" class="hcs-go" data-hcs="friends">友だちのページへ</button>';
     return L.map(x => '<button type="button" class="hcs-p" data-hcs-call="' + esc(x.code) + '"><i>' + esc(String(x.name || '?').slice(0, 1)) + '</i><span>' + esc(x.name || '友だち') + 'さん</span>' + CL_IC.phone + '</button>').join('');
   }
-  function hbCallSheet() {
+  function hbCallSheet(target) {
+    HBP.callT = target || null;
     let sh = $('hbCallSheet');
     if (!sh) { sh = document.createElement('div'); sh.id = 'hbCallSheet'; sh.setAttribute('role', 'dialog'); sh.setAttribute('aria-label', '電話する友だちをえらぶ'); document.body.append(sh);
       sh.addEventListener('click', e => {
         const c = e.target.closest('[data-hcs-call]'); if (c) { if (!J.ready) return toast('つながってから、もう一度押してください'); c.disabled = true; c.dataset.orig = c.dataset.orig || c.querySelector('span').textContent; c.querySelector('span').textContent = '呼び出しの準備中…'; return jrSend({ type: 'call_start', code: c.dataset.hcsCall }); }
         const g = e.target.closest('[data-hcs]'); if (g) { sh.hidden = true; hbpOpen('friends'); return; }
         if (e.target === sh || e.target.closest('.hcs-x')) sh.hidden = true; }); }
-    sh.innerHTML = '<div class="hcs-c"><div class="hcs-h"><b>電話する</b><button type="button" class="hcs-x" aria-label="閉じる">×</button></div><div class="hcs-l">' + hbCallSheetBody() + '</div><p class="hcs-n">ハタボでつながっている友だちと、声で話せます。相手に通知がとどきます。</p></div>';
+    sh.innerHTML = '<div class="hcs-c"><div class="hcs-h"><b>' + esc((HBP.callT && HBP.callT.label) || '電話する') + '</b><button type="button" class="hcs-x" aria-label="閉じる">×</button></div><div class="hcs-l">' + hbCallSheetBody() + '</div><p class="hcs-n">ハタボでつながっている友だちと、声で話せます。押すと相手に通知がとどきます。</p></div>';
     sh.hidden = false; if (J.ready) jrSend({ type: 'friends' });
   }
   window.hbCallSheetSync = () => { const sh = $('hbCallSheet'); if (sh && !sh.hidden) { const l = sh.querySelector('.hcs-l'); if (l) l.innerHTML = hbCallSheetBody(); } };
