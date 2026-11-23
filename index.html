@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="ja">
 <head>
-<meta charset="utf-8"><meta name="hb-ver" content="2026-11-23a">
+<meta charset="utf-8"><meta name="hb-ver" content="2026-11-23b">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex">
 <title>ハタボ｜すべての人に、AIの愛棒を</title><meta name="description" content="話すだけで、調べもの・下書き・相談まで、いっしょに動くAIの愛棒。PCとスマホとLINEで使えます。"><meta property="og:type" content="website"><meta property="og:site_name" content="ハタボ"><meta property="og:title" content="ハタボ｜すべての人に、AIの愛棒を"><meta property="og:description" content="話すだけで、調べもの・下書き・相談まで、いっしょに動くAIの愛棒。"><meta property="og:url" content="https://app.hatha-lab.com/"><meta property="og:image" content="https://app.hatha-lab.com/feed_emblem.jpg"><meta name="twitter:card" content="summary">
@@ -2392,6 +2392,38 @@ body.cl:is(.av-hatabo, .av-komugi):not(.chatview):not(.hbp-open):not(.plain):not
 .hbplus-sh { top: var(--vvt, 0px); bottom: auto; height: var(--vvh, 100%); }
 html:has(> body.cl.av-hatabo), body.cl.av-hatabo { background-color: #0A1226; } html:has(> body.cl.av-komugi), body.cl.av-komugi { background-color: #0A0810; }
 @media (max-width: 899px) { body.cl:is(:not(.pcweb),.pcnarrow) .chatv .cv-bot { padding-bottom: calc(6px + max(0px, env(safe-area-inset-bottom) - 14px)) !important; } }
+/* 11/23：事務局の一覧の表が、グリッドの中で高さ8pxにつぶれて見えなかった（横スクロールの箱は、中身の高さを持たない）。中身の高さにする */
+.hbp-body:has(> .adtbl) { grid-auto-rows: max-content; } .adtbl { min-height: fit-content; }
+/* 11/23 ラインナップ別の管理画面：右上の自分の顔（切りかえ）・どの画面を開くか・エース・ワークス */
+#hbTopTools .lnav, .cltools-fix .lnav { margin-left: 4px; width: 36px; height: 36px; min-width: 36px; } .cltools-fix .lnav i { width: 30px; height: 30px; }
+.lnav, .hbp-top button.lnav, .hbtop button.lnav { flex: none; width: 44px; height: 44px; min-width: 44px; margin-left: auto; padding: 0; border: 0; border-radius: 50%; background: transparent; display: grid; place-items: center; cursor: pointer; }
+.clset .lnav { margin-left: 2px; } .clset .cltitle + .lnav, .clset .lnav:only-of-type { margin-left: auto; }
+.lnav i { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; background: #2C4C8E; color: #fff; font: 800 14px var(--display, sans-serif); font-style: normal; box-shadow: 0 0 0 2px rgba(255,255,255,.85); }
+.lnav.biz i { background: #B8892A; }
+.lnpop { position: fixed; z-index: 9000; min-width: 260px; max-width: calc(100vw - 16px); padding: 8px; border-radius: 16px; background: #141A28; color: #fff; border: 1px solid rgba(255,255,255,.12); box-shadow: 0 18px 40px -12px rgba(0,0,0,.6); display: grid; gap: 2px; }
+.lnpop[hidden] { display: none; }
+.lnpop-h { padding: 6px 10px 8px; font: 800 12px var(--display, sans-serif); opacity: .7; }
+.lnpop-i { display: flex; align-items: center; gap: 10px; min-height: 52px; padding: 6px 10px; border: 0; border-radius: 12px; background: transparent; color: inherit; text-align: left; cursor: pointer; }
+.lnpop-i:hover, .lnpop-i:focus-visible { background: rgba(255,255,255,.08); } .lnpop-i.on { background: rgba(231,194,90,.16); }
+.lnpop-i span, .lnpick-i span { display: grid; min-width: 0; } .lnpop-i b, .lnpick-i b { font-size: 15px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .lnpop-i small, .lnpick-i small { font-size: 12px; opacity: .7; }
+.lnpop-n { margin: 6px 10px 4px; font-size: 12px; line-height: 1.6; opacity: .7; }
+.lnk { flex: none; width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; font: 800 14px var(--display, sans-serif); font-style: normal; color: #fff; background: #2C4C8E; }
+.lnk.ace { background: #C0612B; } .lnk.works { background: #2E7D5B; } .lnk.office { background: #8A6A1C; }
+.lnpick { display: grid; gap: 10px; margin-top: 12px; } @media (min-width: 900px) { .lnpick { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.lnpick-i { display: flex; align-items: center; gap: 14px; width: 100%; min-height: 76px; text-align: left; cursor: pointer; font: inherit; color: inherit; }
+.lnpick-i .lnk { width: 48px; height: 48px; font-size: 18px; }
+.lnro { display: grid; gap: 2px; margin-top: 12px; border-color: #E7C25A !important; } .lnro span { font-size: 12.5px; opacity: .8; }
+.lntabwrap { margin-top: 12px; padding: 10px 12px; } .lntabs { display: flex; gap: 6px; flex-wrap: wrap; } .lntabs button { min-height: 36px; }
+.lnaibo, .lnhead, #hbpBody .lngrid > .hbc { margin-top: 12px; } .lnaibo.off { opacity: .8; } .lnaibo .hbsw, .lnaibo .hbin, .lnaibo textarea { margin-top: 8px; }
+.lnhours { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 8px; font-size: 13px; } .lnhours .hbin[type=time] { width: auto; margin: 0; }
+.lnwd { display: flex; gap: 4px; flex-wrap: wrap; } .lnwd label { display: inline-flex; align-items: center; gap: 2px; min-height: 32px; padding: 0 6px; border-radius: 8px; border: 1px solid rgba(128,128,128,.35); }
+.lnamt { width: 110px !important; flex: none; margin: 0 4px 0 0 !important; }
+.lngrid { display: grid; gap: 0 12px; } @media (min-width: 900px) { .lngrid { grid-template-columns: 1fr 1fr; } }
+.lnstat { display: flex; gap: 8px; margin: 8px 0; } .lnstat span { flex: 1; display: grid; padding: 10px; border-radius: 12px; background: rgba(128,128,128,.12); font-size: 12px; text-align: center; } .lnstat b { font: 800 22px var(--display, sans-serif); }
+.lnmem { flex-wrap: wrap; gap: 6px; } @media (max-width: 899px) { .lnmem > div { flex: 1 1 100%; } }
+.lnqr { position: fixed; inset: 0; z-index: 9500; display: grid; place-items: center; background: rgba(0,0,0,.55); padding: 16px; } .lnqr[hidden] { display: none; }
+.lnqr-c { width: min(360px, 100%); display: grid; gap: 10px; padding: 18px; border-radius: 18px; background: #fff; color: #111; text-align: center; } .lnqr-c svg { width: 100%; height: auto; } .lnqr-c small { word-break: break-all; font-size: 11px; opacity: .7; }
+@media print { body > *:not(#lnQrOv) { display: none !important; } #lnQrOv { position: static; background: #fff; } #lnQrOv .hbrow2 { display: none; } }
 </style>
 </head>
 <body>
@@ -4232,6 +4264,7 @@ html:has(> body.cl.av-hatabo), body.cl.av-hatabo { background-color: #0A1226; } 
         break; }
       case 'google_url': if (!urlOk(m.url, 'google')) { toast('Googleのページを開けませんでした（行き先を確かめられません）'); break; } try { if (window.liff && liff.openWindow) liff.openWindow({ url: m.url, external: true }); else window.open(m.url, '_blank'); } catch (e) { location.href = m.url; } toast('ブラウザでGoogleにログインしてね。終わったらLINEにもどってきてね'); setTimeout(() => jrSend({ type: 'google_status' }), 20000); break;
       case 'docs': HBP.docs = m; if (!$('hbPage').hidden && HBP.page === 'docs') hbpRender(); break;
+      case 'lineup': case 'ace': case 'works': if (window.lnMsg) window.lnMsg(m); break;   // 11/23 ラインナップ別の管理画面
       case 'clones': HBP.clones = m; try { document.dispatchEvent(new Event('hbclones')); hbpChats(); } catch (e) {} if (m.msg && !J.agentWant) toast(m.msg); if (!$('hbPage').hidden && HBP.page === 'clones') hbpRender(); break;
       case 'console': if (m.error) { HBP.conErr = m.error; if (!HBP.con) { if (HBP.page === 'console') hbpRender(); } else toast(m.error); break; } HBP.conErr = ''; if (m.denied) { HBP.con = { denied: true }; } else { HBP.con = m; if (m.msg) toast(m.msg); } conBadge(); try { hbpChats(); } catch (e) {} if (!$('hbPage').hidden && HBP.page === 'console') hbpRender(); break;
       case 'thread': if (m.denied) { toast('この会話は見られません'); break; } HBP.thr = m; if (HBP.con && HBP.con.threads) { const x = HBP.con.threads.find(t => t.id === m.t.id); if (x) x.unread = 0; conBadge(); } if (!$('hbPage').hidden && (HBP.page === 'console' || HBP.page === 'person')) hbpRender(); break;
@@ -4757,6 +4790,7 @@ html:has(> body.cl.av-hatabo), body.cl.av-hatabo { background-color: #0A1226; } 
     const body = $('hbpBody');
     body.classList.remove('wide'); body.classList.remove('con'); body.classList.remove('chatpg');
     if (p === 'console') return conRender(body);
+    if (window.lnRender && window.lnRender(p, body)) return;   // 11/23：どの画面を開くか・エース（お店）・ワークス（会社）
     if (!d && p !== 'times' && p !== 'perms' && p !== 'share' && p !== 'aisai' && p !== 'goen' && p !== 'inbox' && p !== 'gacha' && p !== 'friends' && p !== 'custom' && p !== 'settings' && p !== 'google' && p !== 'social' && p !== 'docs' && p !== 'reqs' && p !== 'clones' && p !== 'admin' && p !== 'org' && p !== 'ohome' && p !== 'aids' && p !== 'uperson' && p !== 'api' && p !== 'more' && p !== 'voice' && p !== 'person' && p !== 'group' && p !== 'byok' && p !== 'connectors' && p !== 'plugins') { body.innerHTML = '<div class="hbc"><p>よみこみ中です…</p></div>'; return; }
     const n = x => Number(x || 0).toLocaleString('ja-JP');
     if (p === 'my') {
@@ -4994,8 +5028,8 @@ html:has(> body.cl.av-hatabo), body.cl.av-hatabo { background-color: #0A1226; } 
           <input class="hbin" data-carea="${esc(x.code)}" value="${esc(x.area || '')}" placeholder="地域（例：川崎市高津区）" maxlength="30">
           <textarea class="hbin" rows="2" data-cnote="${esc(x.code)}" placeholder="この愛棒へのメモ（定休日、伝えてよいこと・いけないこと など）">${esc(x.note)}</textarea>
           <div class="hbrow2"><button type="button" class="hbbtn w" data-csave="${esc(x.code)}">メモを保存</button><button type="button" class="hbbtn w" data-cext="${esc(x.code)}">期限を30日のばす</button><button type="button" class="hbbtn ${x.active ? 'w' : ''}" data-cact="${esc(x.code)}" data-on="${x.active ? 0 : 1}">${x.active ? '止める' : 'また受けつける'}</button></div></div>`).join('');
-      body.innerHTML = `<div class="hbc"><div class="k">AIBO</div><h3>役割つきの愛棒</h3><p>受付・予約係・相談役など、役割ごとに愛棒を増やして、URLを渡せます。渡した人は、自分のハタボを持っていなくても、あなたの愛棒と話せます。その愛棒から来た人が話しはじめると、ありがとうポイントが届きます。</p><p class="hbmuted">いまのランク：${esc(C.rank)}（作れる愛棒は${n(C.cap)}人まで・いま${n((C.items || []).length)}人）</p></div>
-        <div class="hbc"><div class="k">NEW</div><h3>愛棒を増やす</h3>
+      body.innerHTML = `<div class="hbc"><div class="k">AIBO</div><h3>役割つきの愛棒</h3><p>受付・予約係・相談役など、役割ごとに愛棒を増やして、URLを渡せます。渡した人は、自分のハタボを持っていなくても、あなたの愛棒と話せます。その愛棒から来た人が話しはじめると、ありがとうポイントが届きます。</p>${C.personal ? '' : `<p class="hbmuted">いま${n((C.items || []).length)}人（上限なし）</p>`}</div>
+        ${C.personal ? `<div class="hbc lnnote"><div class="k">ONE AIBO</div><h3>個人のハタボの相棒は1体です</h3><p>あなたの相棒は「わたしのハタボ」1体です。名前・アイコン・話し方は「キャラ設定」で変えられます。お店や会社で、受付・予約係などの窓口を増やすなら、ハタボ エース・ハタボ ワークスで作れます。</p>${(C.items || []).length ? `<p><b>いま作ってある${n((C.items || []).length)}人の愛棒は、消さずにそのまま残します。</b>お店で使っているなら、ハタボ エースに移すと、受付中のオン・オフや問い合わせの履歴が使えます。移したいときは、ハタボ公式に相談してください。</p>` : ''}</div>` : `<div class="hbc"><div class="k">NEW</div><h3>愛棒を増やす</h3>
           <input class="hbin" id="clName" placeholder="愛棒の名前（例：受付くん）" maxlength="30">
           <div class="hbrow2"><label>役割<select class="hbin" id="clRole">${opt(C.roles || [], '受付')}</select></label><label>キャラ<select class="hbin" id="clAv">${opt(C.avatars || [], 'hatabo')}</select></label></div>
           <input class="hbin" id="clLabel" placeholder="だれに渡す？（例：お店のお客さん、〇〇さん）" maxlength="60">
@@ -5005,8 +5039,8 @@ html:has(> body.cl.av-hatabo), body.cl.av-hatabo { background-color: #0A1226; } 
           <label class="hbsw"><input type="checkbox" id="clListed"><span>AIからの検索に出す（ChatGPTなどからさがせる）</span></label>
           <input class="hbin" id="clArea" placeholder="地域（例：川崎市高津区）" maxlength="30">
           <textarea class="hbin" id="clNote" rows="2" placeholder="この愛棒へのメモ（あとから変えられます）"></textarea>
-          <button type="button" class="hbbtn" id="clMake">愛棒を作って、URLをLINEに送る</button></div>${items || ''}`;
-      body.querySelector('#clMake').onclick = e => { e.target.disabled = true; jrSend({ type: 'clone_new', name: $('clName').value, role: $('clRole').value, avatar: $('clAv').value, label: $('clLabel').value, days: $('clDays').value, price: $('clPrice').checked, reserve: $('clReserve').checked, listed: $('clListed').checked, area: $('clArea').value, note: $('clNote').value }); };
+          <button type="button" class="hbbtn" id="clMake">愛棒を作って、URLをLINEに送る</button></div>`}${items || ''}`;
+      if (body.querySelector('#clMake')) body.querySelector('#clMake').onclick = e => { e.target.disabled = true; jrSend({ type: 'clone_new', name: $('clName').value, role: $('clRole').value, avatar: $('clAv').value, label: $('clLabel').value, days: $('clDays').value, price: $('clPrice').checked, reserve: $('clReserve').checked, listed: $('clListed').checked, area: $('clArea').value, note: $('clNote').value }); };
       const set = (code, o) => jrSend(Object.assign({ type: 'clone_set', code }, o));
       body.querySelectorAll('[data-ccopy]').forEach(b => b.onclick = async () => { try { await navigator.clipboard.writeText(b.dataset.ccopy); toast('コピーしたよ'); } catch (e) { toast('コピーできなかった'); } });
       body.querySelectorAll('[data-crole]').forEach(s => s.onchange = () => set(s.dataset.crole, { role: s.value }));
@@ -5044,15 +5078,17 @@ html:has(> body.cl.av-hatabo), body.cl.av-hatabo { background-color: #0A1226; } 
       if (A.denied) { body.innerHTML = '<div class="hbc"><p>事務局だけが見られる画面です。</p></div>'; return; }
       const dt = t => t ? new Date(t).toLocaleDateString('ja-JP') : '';
       const K = { person: '人', clone: '役割つき愛棒', group: 'グループ' }, ST = Object.fromEntries(HB_ST_KEYS.map(k => [k, hbStName(k)])), CHN = { hatabo: 'ハタボ', komugi: 'コムギ', junior: 'ジュニア' };
-      const nq = t => String(t || '').normalize('NFKC').toLowerCase().replace(/\s+/g, ''), q = nq(HBP.adminQ), kf = HBP.adminK || '', sf = HBP.adminS || '', cf = HBP.adminC || '';
-      const rows = (A.rows || []).filter(r => (!kf || r.kind === kf || (kf === 'pay' && r.payFail)) && (!sf || hbStKey(r.status || r.stage) === sf) && (!cf || (r.chars || []).includes(cf)) && (!q || [r.name, r.ownerName, r.code, r.role, r.lineup, (r.chars || []).map(c => CHN[c]).join(' '), r.parentName].join(' ').normalize('NFKC').toLowerCase().replace(/\s+/g, '').includes(q)));
+      const nq = t => String(t || '').normalize('NFKC').toLowerCase().replace(/\s+/g, ''), q = nq(HBP.adminQ), kf = HBP.adminK || '', sf = HBP.adminS || '', cf = HBP.adminC || '', lf = HBP.adminL || '', LNN = { hatabo: 'ハタボ', ace: 'エース', works: 'ワークス' };
+      const rows = (A.rows || []).filter(r => (!lf || (r.lineups || []).includes(lf)) && (!kf || r.kind === kf || (kf === 'pay' && r.payFail)) && (!sf || hbStKey(r.status || r.stage) === sf) && (!cf || (r.chars || []).includes(cf)) && (!q || [r.name, r.ownerName, r.code, r.role, r.lineup, (r.chars || []).map(c => CHN[c]).join(' '), r.parentName].join(' ').normalize('NFKC').toLowerCase().replace(/\s+/g, '').includes(q)));
       const s = A.sum || {};
       body.classList.add('wide');
       body.innerHTML = `<div class="hbc"><div class="k">OFFICE</div><h3>事務局の管理画面</h3><p class="hbmuted">人 ${n(s.people)}・${HB_ST_KEYS.map(k => hbStName(k) + ' ' + n((A.rows || []).filter(r => r.kind === 'person' && hbStKey(r.status || r.stage) === k).length)).join('・')}・支払いの失敗 ${n(s.payFail)}・役割つきの愛棒 ${n(s.clones)}・グループ ${n(s.groups)}・今月のAPI ${n(s.api)}回（${n(s.apiYen)}円）</p>
-          <div class="hbrow2"><input class="hbin" id="adQ" type="search" placeholder="名前・コード・役割でさがす" value="${esc(HBP.adminQ || '')}"><select class="hbin" id="adK"><option value="">ぜんぶ</option><option value="person" ${kf === 'person' ? 'selected' : ''}>人</option><option value="clone" ${kf === 'clone' ? 'selected' : ''}>役割つきの愛棒</option><option value="group" ${kf === 'group' ? 'selected' : ''}>グループ</option><option value="pay" ${kf === 'pay' ? 'selected' : ''}>支払いの失敗</option></select><select class="hbin" id="adS"><option value="">状態：ぜんぶ</option>${Object.entries(ST).map(([k, l]) => `<option value="${k}" ${sf === k ? 'selected' : ''}>${l}</option>`).join('')}</select><select class="hbin" id="adC"><option value="">キャラ：ぜんぶ</option>${Object.entries(CHN).map(([k, l]) => `<option value="${k}" ${cf === k ? 'selected' : ''}>${l}</option>`).join('')}</select><button type="button" class="hbbtn w" data-go="aids">AIDの一覧</button><button type="button" class="hbbtn w" id="adR">読みなおす</button></div></div>
-        <div class="hbc adtbl"><table><thead><tr><th>名前</th><th>種類</th><th>状態</th><th>ランク・pt</th><th>ご縁・開いた</th><th>役割（URLごと）</th><th>メモ</th><th>はじめた日</th><th></th></tr></thead><tbody>${rows.slice(0, 300).map(r => `<tr>
+          ${s.lineup ? `<div class="lnstat">${Object.entries(LNN).map(([k, l]) => { const x = s.lineup[k] || {}; return `<span><b>${n(x.n)}</b>${l}（会員 ${n(x.member)}・今月の目安 ${x.yen == null ? '—' : n(x.yen) + '円'}）</span>`; }).join('')}</div>` : ''}
+          <div class="hbrow2"><input class="hbin" id="adQ" type="search" placeholder="名前・コード・役割でさがす" value="${esc(HBP.adminQ || '')}"><select class="hbin" id="adK"><option value="">ぜんぶ</option><option value="person" ${kf === 'person' ? 'selected' : ''}>人</option><option value="clone" ${kf === 'clone' ? 'selected' : ''}>役割つきの愛棒</option><option value="group" ${kf === 'group' ? 'selected' : ''}>グループ</option><option value="pay" ${kf === 'pay' ? 'selected' : ''}>支払いの失敗</option></select><select class="hbin" id="adL"><option value="">ラインナップ：ぜんぶ</option>${Object.entries(LNN).map(([k, l]) => `<option value="${k}" ${lf === k ? 'selected' : ''}>${l}</option>`).join('')}</select><select class="hbin" id="adS"><option value="">状態：ぜんぶ</option>${Object.entries(ST).map(([k, l]) => `<option value="${k}" ${sf === k ? 'selected' : ''}>${l}</option>`).join('')}</select><select class="hbin" id="adC"><option value="">キャラ：ぜんぶ</option>${Object.entries(CHN).map(([k, l]) => `<option value="${k}" ${cf === k ? 'selected' : ''}>${l}</option>`).join('')}</select><button type="button" class="hbbtn w" data-go="aids">AIDの一覧</button><button type="button" class="hbbtn w" id="adR">読みなおす</button></div></div>
+        <div class="hbc adtbl"><table><thead><tr><th>名前</th><th>種類</th><th>ラインナップ</th><th>状態</th><th>ランク・pt</th><th>ご縁・開いた</th><th>役割（URLごと）</th><th>メモ</th><th>はじめた日</th><th></th></tr></thead><tbody>${rows.slice(0, 300).map(r => `<tr>
           <td>${r.kind === 'person' ? `<button type="button" class="adname" data-auser="${esc(r.code)}"><b>${esc(r.name || r.ownerName || '（名前なし）')}</b></button>` : `<b>${esc(r.name || r.ownerName || '（名前なし）')}</b>`} ${(r.chars || []).map(c => `<i class="hbch ${esc(c)}" title="${esc(CHN[c] || c)}">${esc((CHN[c] || c).slice(0, 1))}</i>`).join('')}<br><small class="hbmuted">${esc(r.code)}${r.kind === 'clone' && r.ownerName ? '・' + esc(r.ownerName) + 'さんの愛棒' : ''}</small></td>
           <td>${K[r.kind] || esc(r.kind)}${r.kind === 'clone' ? (r.active ? '' : '（止）') : ''}</td>
+          <td>${(r.lineups || []).map(k => `<span class="hbtag${r.plan === k ? ' gold' : ''}" title="${r.plan === k ? '会員' : ''}">${LNN[k] || k}${r.plan === k ? '・会員' : ''}</span>`).join(' ')}${r.plan && r.plan !== 'hatabo' && r.lineups && r.lineups.includes(r.plan) ? `<br><button type="button" class="hbmini" data-lnpeek="${r.plan}|${esc(r.code)}">見るだけで開く</button>` : ''}</td>
           <td>${r.kind === 'person' ? `<i class="hbst ${esc(hbStKey(r.status || r.stage))}">${esc(hbStName(r.status || r.stage))}</i>` : ''}${r.parentName ? '<br><small>' + esc(r.parentName) + 'さんの紹介</small>' : ''}${r.lineup ? '<br><small>' + esc(r.lineup) + '</small>' : ''}${r.payFail ? '<br><b style="color:#C0392B">支払い失敗</b>' : ''}</td>
           <td>${esc(r.rank)}<br><small>${n(r.ptsTotal)}pt（残り${n(r.pts)}）${r.adopts ? '・採用' + n(r.adopts) : ''}${r.aisaiHelp ? '・愛祭' + n(r.aisaiHelp) : ''}</small></td>
           <td>${n(r.kids)}人・${n(r.visits)}回${r.api || r.apiDone ? '<br><small>API ' + n(r.api) + '回・' + n(r.apiYen) + '円</small>' : ''}</td>
@@ -5080,6 +5116,8 @@ html:has(> body.cl.av-hatabo), body.cl.av-hatabo { background-color: #0A1226; } 
       qi.addEventListener('input', e => { if (e.isComposing || qi._ime) return; qgo(); }); qi.addEventListener('compositionstart', () => { qi._ime = 1; }); qi.addEventListener('compositionend', () => { qi._ime = 0; qgo(); }); qi.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.isComposing) { clearTimeout(HBP.adT); HBP.adminQ = qi.value; hbpRender(); } });
       body.querySelector('#adK').onchange = e => { HBP.adminK = e.target.value; hbpRender(); };
       body.querySelector('#adS').onchange = e => { HBP.adminS = e.target.value; hbpRender(); };
+      body.querySelector('#adL').onchange = e => { HBP.adminL = e.target.value; hbpRender(); };
+      body.querySelectorAll('[data-lnpeek]').forEach(b => b.onclick = () => { const [v, id] = b.dataset.lnpeek.split('|'); window.lnPeek && window.lnPeek(v, id); });
       body.querySelector('#adC').onchange = e => { HBP.adminC = e.target.value; hbpRender(); };
       body.querySelectorAll('[data-auser]').forEach(b => b.onclick = () => hbpOpenUser(b.dataset.auser));
       body.querySelector('#adR').onclick = () => jrSend({ type: 'admin' });
@@ -5101,8 +5139,8 @@ html:has(> body.cl.av-hatabo), body.cl.av-hatabo { background-color: #0A1226; } 
           ${ed && !OG.some(c => c.sample === 'we') ? '<button type="button" class="hbbtn" id="orgSeed">WeCorporationのサンプルを作る</button>' : ''}
           ${ed ? `<form id="orgAddC" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px"><input class="hbin" name="name" placeholder="法人の名前" style="flex:2 1 200px" required><input class="hbin" name="plan" placeholder="プラン（例：ハタボ ワークス）" style="flex:1 1 140px"><button class="hbmini" type="submit">法人を足す</button></form>` : ''}</div>
         ${OG.map(c => `<div class="hbc${sel.corp === c.id && !sel.fac ? ' orgsel' : ''}" id="org_${esc(c.id)}"><div class="k">CORP${c.sample ? '・SAMPLE' : ''}</div><h3>${esc(c.name)}</h3><p class="hbmuted" style="font-size:12.5px">${esc(c.plan || '')}${c.note ? '・' + esc(c.note) : ''}${c.entry ? '・入口の窓口：?ref=' + esc(c.entry) : ''}</p>
-          <b style="display:block;margin-top:8px;font-size:13px">法人の人（全部の施設を見る）</b>${memL(c.members, c.id)}${addM(c.id)}
-          <div class="orggrid">${(c.facilities || []).map(f => `<div class="orgfac${sel.fac === f.id ? ' orgsel' : ''}" id="fac_${esc(f.id)}"><span class="hbtag">${esc(KN[f.kind] || '施設')}</span> <b>${esc(f.name)}</b>${ed ? ` <button type="button" class="hbmini" data-odf="${esc(c.id)}|${esc(f.id)}">消す</button>` : ''}${f.note ? `<p class="hbmuted" style="font-size:12px;margin:4px 0">${esc(f.note)}</p>` : ''}${memL(f.members, c.id, f.id)}${addM(c.id, f.id)}</div>`).join('')}</div>
+          <button type="button" class="hbmini" data-lnpeek="works|${esc(c.id)}">ワークスの画面を見るだけで開く</button><b style="display:block;margin-top:8px;font-size:13px">法人の人（全部の施設を見る）</b>${memL(c.members, c.id)}${addM(c.id)}
+          <div class="orggrid">${(c.facilities || []).map(f => `<div class="orgfac${sel.fac === f.id ? ' orgsel' : ''}" id="fac_${esc(f.id)}"><span class="hbtag">${esc(KN[f.kind] || '施設')}</span> <b>${esc(f.name)}</b>${f.kind !== 'office' ? ` <button type="button" class="hbmini" data-lnpeek="ace|${esc(f.id)}">エースの画面を見る</button>` : ''}${ed ? ` <button type="button" class="hbmini" data-odf="${esc(c.id)}|${esc(f.id)}">消す</button>` : ''}${f.note ? `<p class="hbmuted" style="font-size:12px;margin:4px 0">${esc(f.note)}</p>` : ''}${memL(f.members, c.id, f.id)}${addM(c.id, f.id)}</div>`).join('')}</div>
           ${ed ? `<form class="orgAddF" data-c="${esc(c.id)}" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px"><input class="hbin" name="name" placeholder="施設の名前（例：物件C）" style="flex:2 1 180px" required><select class="hbin" name="kind">${Object.entries(KN).map(([k, l]) => `<option value="${k}">${l}</option>`).join('')}</select><button class="hbmini" type="submit">施設を足す</button>${c.sample ? '' : ''}<button type="button" class="hbmini" data-odc="${esc(c.id)}">この法人を消す</button></form>` : ''}</div>`).join('')}`;
       const op = o => jrSend(Object.assign({ type: 'org_op' }, o));
       const sd = body.querySelector('#orgSeed'); if (sd) sd.onclick = () => { sd.disabled = true; op({ op: 'seed_we' }); };
@@ -5111,6 +5149,7 @@ html:has(> body.cl.av-hatabo), body.cl.av-hatabo { background-color: #0A1226; } 
       body.querySelectorAll('.orgAddM').forEach(f => f.onsubmit = e => { e.preventDefault(); const code = f.elements.code.value, name = f.elements.name.value.trim(); if (!code && !name) return toast('アカウントを選ぶか、名前を入れてください'); op({ op: 'add_member', corp: f.dataset.c, fac: f.dataset.f, code, name, role: f.elements.role.value }); });
       body.querySelectorAll('[data-odm]').forEach(b => b.onclick = () => { const [c, f, i] = b.dataset.odm.split('|'); op({ op: 'del_member', corp: c, fac: f, i: Number(i) }); });
       body.querySelectorAll('[data-odf]').forEach(b => b.onclick = () => { const [c, f] = b.dataset.odf.split('|'); if (confirm('この施設を消しますか？')) op({ op: 'del_fac', corp: c, fac: f }); });
+      body.querySelectorAll('[data-lnpeek]').forEach(b => b.onclick = () => { const [v, id] = b.dataset.lnpeek.split('|'); window.lnPeek && window.lnPeek(v, id); });
       body.querySelectorAll('[data-odc]').forEach(b => b.onclick = () => { if (confirm('この法人を消しますか？施設もいっしょに消えます')) op({ op: 'del_corp', corp: b.dataset.odc }); });
       body.querySelectorAll('[data-auser]').forEach(b => b.onclick = () => hbpOpenUser(b.dataset.auser));
       const tgt = sel.fac ? body.querySelector('#fac_' + sel.fac) : sel.corp ? body.querySelector('#org_' + sel.corp) : null; if (tgt) setTimeout(() => { try { tgt.scrollIntoView({ block: 'start', behavior: 'smooth' }); } catch (e) {} }, 60);
@@ -7526,6 +7565,178 @@ html:has(> body.cl.av-hatabo), body.cl.av-hatabo { background-color: #0A1226; } 
   }
   window.hbCallSheetSync = () => { const sh = $('hbCallSheet'); if (sh && !sh.hidden) { const l = sh.querySelector('.hcs-l'); if (l) l.innerHTML = hbCallSheetBody(); } };
   clInit();
+
+  /* ===== 11/23 ラインナップ別の管理画面（設計H章）：右上の自分の顔 → 個人・エース・ワークス（・事務局）の切りかえ。
+     入口のURL：?view=me ・ ?view=ace&fac=ID ・ ?view=works&corp=ID ・ ?view=office。持っているかは毎回サーバーがたしかめる（ことわられたらMyハタボ） ===== */
+  const LN = { data: null, cur: { view: 'me' }, boot: false, aceTab: 'aibo', inqF: 'open' };
+  window.LN = LN;
+  const lnEsc = t => String(t == null ? '' : t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const lnDt = t => t ? new Date(t).toLocaleString('ja-JP', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—';
+  const lnN = x => Number(x || 0).toLocaleString('ja-JP');
+  const LN_WD = ['日', '月', '火', '水', '木', '金', '土'];
+  function lnWant() { const v = String(qpar('view') || '').replace(/[^a-z]/g, ''); if (!v) return null; return { view: v, id: String((v === 'ace' ? qpar('fac') : v === 'works' ? qpar('corp') : '') || '').replace(/[^\w-]/g, '').slice(0, 24) }; }
+  function lnInitial() { return String((($('hbpAcctAv') || {}).textContent) || 'ハ').slice(0, 1); }
+  /** 右上の自分の顔（どの画面にも）。押すと切りかえ */
+  function lnAvatar() {
+    const html = '<button type="button" class="lnav" data-ln-sw aria-label="画面の切りかえ（個人・エース・ワークス）" aria-haspopup="menu"><i></i></button>';
+    document.querySelectorAll('.clset').forEach(st => { if (!st.querySelector('[data-ln-sw]')) st.insertAdjacentHTML('beforeend', html); });
+    document.querySelectorAll('#hbTopTools, .cltools-fix').forEach(tt => { if (!tt.querySelector('[data-ln-sw]')) tt.insertAdjacentHTML('beforeend', html); });   // パソコン：右上の道具の並びのいちばん右
+    const ini = lnInitial(); document.querySelectorAll('[data-ln-sw] i').forEach(i => { if (i.textContent !== ini) i.textContent = ini; });
+    document.querySelectorAll('[data-ln-sw]').forEach(b => b.classList.toggle('biz', LN.cur.view !== 'me'));
+  }
+  function lnItems() {
+    const D = LN.data || { ace: [], works: [] }, out = [{ view: 'me', id: '', name: 'ハタボ（あなた専用）', sub: 'Myハタボ・トーク・伝言' }];
+    (D.ace || []).forEach(a => out.push({ view: 'ace', id: a.id, name: a.name, sub: 'ハタボ エース' + (a.corpName ? '・' + a.corpName : '') + (a.edit ? '' : '・見るだけ') }));
+    (D.works || []).forEach(w => out.push({ view: 'works', id: w.id, name: w.name, sub: 'ハタボ ワークス' + (w.edit ? '' : '・見るだけ') }));
+    return out;
+  }
+  function lnSwitcher(btn) {
+    let pop = $('lnPop'); if (!pop) { pop = document.createElement('div'); pop.id = 'lnPop'; pop.className = 'lnpop'; pop.setAttribute('role', 'menu'); pop.hidden = true; document.body.append(pop); }
+    if (!pop.hidden) { pop.hidden = true; return; }
+    const D = LN.data || {}, it = lnItems(), on = x => x.view === LN.cur.view && (x.view === 'me' || x.id === LN.cur.id);
+    pop.innerHTML = '<b class="lnpop-h">画面の切りかえ</b>' + it.map(x => `<button type="button" role="menuitem" class="lnpop-i${on(x) ? ' on' : ''}" data-ln-go="${lnEsc(x.view)}" data-id="${lnEsc(x.id)}"><i class="lnk ${lnEsc(x.view)}">${x.view === 'me' ? '個' : x.view === 'ace' ? 'A' : 'W'}</i><span><b>${lnEsc(x.name)}</b><small>${lnEsc(x.sub)}</small></span></button>`).join('')
+      + (D.office || J.office ? `<button type="button" role="menuitem" class="lnpop-i${LN.cur.view === 'office' ? ' on' : ''}" data-ln-go="office" data-id=""><i class="lnk office">事</i><span><b>事務局</b><small>事務局の管理画面</small></span></button>` : '')
+      + (it.length === 1 && !(D.office || J.office) ? '<p class="lnpop-n">お店で使うならハタボ エース、会社で使うならハタボ ワークス。持つと、ここで切りかえられます。</p>' : '');
+    pop.hidden = false; const r = btn.getBoundingClientRect(), w = pop.offsetWidth; pop.style.top = Math.round(r.bottom + 6) + 'px'; pop.style.left = Math.round(Math.max(8, Math.min(r.right - w, window.innerWidth - w - 8))) + 'px';
+  }
+  document.addEventListener('click', e => {
+    const sw = e.target.closest && e.target.closest('[data-ln-sw]'); if (sw) { e.preventDefault(); e.stopPropagation(); return lnSwitcher(sw); }
+    const g = e.target.closest && e.target.closest('[data-ln-go]'); if (g) { const pop = $('lnPop'); if (pop) pop.hidden = true; return lnGo(g.dataset.lnGo, g.dataset.id || ''); }
+    const pop = $('lnPop'); if (pop && !pop.hidden && !(e.target.closest && e.target.closest('#lnPop'))) pop.hidden = true;
+  }, true);
+  /** 画面を開く：サーバーにたしかめてから（覚えるのもサーバー） */
+  function lnGo(view, id) { if (!J.ready) return toast('つながってから、もう一度押してください'); jrSend({ type: 'lineup', want: { view, id: id || '' } }); }
+  window.lnGo = lnGo;
+  /** 事務局が「見るだけ」で開く（法人と施設の画面から） */
+  window.lnPeek = (view, id) => { lnShow({ view, id, ro: true, office: true }); };
+  function lnShow(o) {
+    if (!o) return;
+    if (o.view !== 'office' && document.body.classList.contains('officemode') && !o.office) { document.body.classList.remove('officemode'); }
+    LN.cur = { view: o.view, id: o.id || '', ro: !!o.ro, office: !!o.office };
+    if (o.view === 'me') { HBP.page = 'my'; hbpOpen('my'); if (J.ready) jrSend({ type: 'mypage' }); }
+    else if (o.view === 'office') { document.body.classList.add('officemode'); hbpOpen('ohome'); if (J.ready) jrSend({ type: 'admin' }); }
+    else { HBP[o.view] = null; hbpOpen(o.view); if (J.ready) jrSend({ type: o.view, id: o.id }); }
+    lnAvatar();
+  }
+  window.lnMsg = m => {
+    if (m.type === 'lineup') {
+      LN.data = m; const boot = !LN.boot; LN.boot = true;
+      if (m.deny) { toast(m.deny + '。Myハタボを開きました'); lnShow({ view: 'me' }); }
+      else if (m.open) lnShow(m.open);
+      else if (boot && m.needPick) hbpOpen('pick');
+      lnAvatar(); return;
+    }
+    if (m.type === 'ace' || m.type === 'works') {
+      if (m.denied) { HBP[m.type] = null; toast((m.why || 'この画面は開けません') + '。Myハタボを開きました'); lnShow({ view: 'me' }); return; }
+      HBP[m.type] = m; if (m.msg) toast(m.msg); if (m.type === 'works' && m.id && LN.cur.view !== 'works') LN.cur = { view: 'works', id: m.id, ro: m.ro };
+      if (!$('hbPage').hidden && HBP.page === m.type) hbpRender();
+    }
+  };
+  document.addEventListener('jrready', () => {
+    if (LN.boot) return; lnAvatar();
+    const join = String(qpar('join') || '').replace(/[^\w-]/g, ''), w = lnWant();
+    if (join && w && w.view === 'works') { LN.boot = true; LN.cur = { view: 'works', id: w.id }; hbpOpen('works'); jrSend({ type: 'works', id: w.id, op: 'join', token: join }); jrSend({ type: 'lineup', boot: 1 }); return; }
+    if (w) return jrSend({ type: 'lineup', want: w });
+    if (qpar('page') || qpar('ref') || qpar('with') || qpar('stage') || document.body.classList.contains('av-komugi') || document.body.classList.contains('officemode')) { LN.boot = true; jrSend({ type: 'lineup' }); return; }   // ほかの入口から来たときは、いつもどおり（切りかえの一覧だけ取る）
+    jrSend({ type: 'lineup' });
+  });
+  setInterval(lnAvatar, 1500);
+  const lnHead = (k, title, sub) => `<div class="hbc lnhead"><div class="k">${k}</div><h3>${lnEsc(title)}</h3>${sub ? `<p class="hbmuted" style="font-size:12.5px">${sub}</p>` : ''}</div>`;
+  const lnRo = X => X.ro ? `<div class="hbc lnro"><b>見るだけで開いています</b><span>${X.office ? '事務局の役割で開いています。変えられるのは最高管理者だけです。' : '変えられるのは、管理者の方だけです。'}</span></div>` : '';
+  const lnTabs = (cur, list, attr) => `<div class="hbfil lntabs">${list.map(([k, l]) => `<button type="button" data-${attr}="${k}" class="${cur === k ? 'on' : ''}">${l}</button>`).join('')}</div>`;
+  function lnRenderPick(body) {
+    const it = lnItems();
+    body.innerHTML = lnHead('WELCOME', 'どの画面を開きますか', 'あとからでも、右上の自分の顔のボタンで、いつでも切りかえられます。次からは、最後に使った画面がすぐ開きます。')
+      + `<div class="lnpick">${it.map(x => `<button type="button" class="hbc lnpick-i" data-ln-go="${lnEsc(x.view)}" data-id="${lnEsc(x.id)}"><i class="lnk ${lnEsc(x.view)}">${x.view === 'me' ? '個' : x.view === 'ace' ? 'A' : 'W'}</i><span><b>${lnEsc(x.name)}</b><small>${lnEsc(x.view === 'me' ? 'トーク・伝言・友だち・メモ・残り・HATHABO ID' : x.sub)}</small></span></button>`).join('')}</div>`;
+  }
+  function lnRenderAce(body) {
+    const X = HBP.ace;
+    if (!X) { body.innerHTML = '<div class="hbc"><p>よみこみ中…</p></div>'; if (J.ready && LN.cur.id) jrSend({ type: 'ace', id: LN.cur.id }); return; }
+    $('hbpTitle').textContent = X.name || 'ハタボ エース';
+    const ed = !X.ro, send = o => jrSend(Object.assign({ type: 'ace', id: X.id }, o)), t = LN.aceTab, S0 = X.sums || {};
+    let main = '';
+    if (t === 'aibo') {
+      main = (X.aibos || []).map(a => { const h = a.hours || {}, cl = h.closed || [];
+        return `<div class="hbc lnaibo${a.accepting ? '' : ' off'}"><div class="k">${lnEsc(a.role)}</div><h3>${lnEsc(a.name)} <span class="hbtag ${a.accepting && a.inHours ? 'gold' : ''}">${!a.accepting ? '受付を止めています' : a.inHours ? '受付中' : '受付時間外'}</span></h3>
+          <p class="hbmuted" style="font-size:12.5px">今日の問い合わせ ${lnN(a.today)}件・最後の返事 ${lnDt(a.lastAt)}</p>
+          <div class="hburl"><input class="hbin" readonly value="${lnEsc(a.url)}"><button type="button" class="hbbtn w" data-lncopy="${lnEsc(a.url)}">コピー</button><button type="button" class="hbbtn w" data-lnqr="${lnEsc(a.url)}">QR</button></div>
+          ${ed ? `<label class="hbsw"><input type="checkbox" data-lnacc="${lnEsc(a.code)}" ${a.accepting ? 'checked' : ''}><span>受付中（オフのときは、下の決まった文だけを返し、お店には知らせません）</span></label>
+          <div class="lnhours"><b>受付時間</b><input class="hbin" type="time" data-lnopen="${lnEsc(a.code)}" value="${lnEsc(h.open || '')}"> 〜 <input class="hbin" type="time" data-lnclose="${lnEsc(a.code)}" value="${lnEsc(h.close || '')}">
+            <span class="lnwd">${LN_WD.map((w, i) => `<label><input type="checkbox" data-lnwd="${lnEsc(a.code)}" value="${i}" ${cl.includes(i) ? '' : 'checked'}>${w}</label>`).join('')}</span></div>
+          <label class="hbsw"><input type="checkbox" data-lnfix="${lnEsc(a.code)}" ${a.offFixed ? 'checked' : ''}><span>受付時間外も、決まった文だけを返す</span></label>
+          <input class="hbin" data-lnoff="${lnEsc(a.code)}" value="${lnEsc(a.offMsg)}" placeholder="時間外の決まった文（例：ただいま受付時間外です）" maxlength="200">
+          <div class="hbrow2"><label>役割<select class="hbin" data-lnrole="${lnEsc(a.code)}">${(X.roles || []).map(r => `<option${r === a.role ? ' selected' : ''}>${lnEsc(r)}</option>`).join('')}</select></label></div>
+          <textarea class="hbin" rows="2" data-lnfaq="${lnEsc(a.code)}" placeholder="よくある質問と答え（この相棒が読みます）">${lnEsc(a.faq)}</textarea>
+          <textarea class="hbin" rows="2" data-lnmenu="${lnEsc(a.code)}" placeholder="メニュー・料金・営業時間の案内">${lnEsc(a.menu)}</textarea>
+          <button type="button" class="hbbtn w" data-lnsave="${lnEsc(a.code)}">保存</button>` : `<p class="hbmuted" style="font-size:12.5px">受付時間：${h.open ? lnEsc(h.open + '〜' + h.close) + (cl.length ? '（休み：' + cl.map(i => LN_WD[i]).join('・') + '）' : '') : '決めていません'}</p>`}</div>`; }).join('') || '<div class="hbc"><p class="hbmuted">まだ相棒がいません。</p></div>';
+      if (ed) main = `<div class="hbc"><div class="k">NEW</div><h3>相棒を増やす（上限なし）</h3><div class="hbrow2"><input class="hbin" id="lnAName" placeholder="名前（例：受付くん）" maxlength="30"><select class="hbin" id="lnARole">${(X.roles || []).map(r => `<option>${lnEsc(r)}</option>`).join('')}</select></div><button type="button" class="hbbtn" id="lnAMake">相棒を作る</button></div>` + main;
+    } else if (t === 'inq') {
+      const f = LN.inqF, L = (X.inq || []).filter(q => f === 'all' || (f === 'open' ? !q.done : q.done));
+      main = `<div class="hbc">${lnTabs(f, [['open', '未対応 ' + lnN(S0.open)], ['done', '対応済み ' + lnN(S0.done)], ['all', 'ぜんぶ']], 'lnif')}<div class="hbrows">${L.map(q => `<div class="hbrow lnmem"><div><b>${lnEsc(q.vname || 'お客さま')}${q.told ? ' <span class="hbtag gold">人に回した</span>' : ''}${q.unread ? ' <span class="hbtag">未読 ' + lnN(q.unread) + '</span>' : ''}</b><span>${lnEsc(q.aiboName)}・${lnDt(q.last)}・${lnN(q.n)}回${q.preview ? '・' + lnEsc(q.preview) : ''}</span></div>${ed ? `<button type="button" class="hbmini" data-lndone="${lnEsc(q.id)}" data-on="${q.done ? 0 : 1}">${q.done ? '未対応にもどす' : '対応済みにする'}</button>` : ''}</div>`).join('') || '<p class="hbmuted">ありません</p>'}</div>
+        ${X.office ? '<p class="hbmuted" style="font-size:12px">事務局には、会話の中身は出しません（件数と様子だけ）。</p>' : '<p class="hbmuted" style="font-size:12px">会話の中身と返事は「管理画面」の会話から。スタッフのLINEへの転送は、伝言が届いたときに記録されます。</p>'}</div>`;
+    } else if (t === 'resv') {
+      main = `<div class="hbc"><div class="k">REFERRAL</div><h3>送客（予約の希望）</h3><p class="hbmuted" style="font-size:12.5px">手数料15%は、法務の確認がすむまで「記録だけ」です。請求はしません。</p><div class="hbrows">${(X.resv || []).map(r => `<div class="hbrow lnmem"><div><b>${lnEsc(r.name)}さん・${lnEsc(r.when)}${r.people ? '・' + lnN(r.people) + '人' : ''}</b><span>${{ new: '未確認', done: '成立', no: '見送り' }[r.status] || r.status}${r.status === 'done' ? '・' + lnN(r.amount) + '円・手数料（記録）' + lnN(r.fee) + '円' : ''}・${lnDt(r.at)}</span></div>${ed ? `<input class="hbin lnamt" type="number" min="0" data-lnamt="${lnEsc(r.id)}" value="${r.amount || ''}" placeholder="金額"><button type="button" class="hbmini" data-lnres="${lnEsc(r.id)}" data-st="done">成立</button><button type="button" class="hbmini" data-lnres="${lnEsc(r.id)}" data-st="no">見送り</button>` : ''}</div>`).join('') || '<p class="hbmuted">まだありません</p>'}</div></div>
+        <div class="hbc"><div class="k">MONTHLY</div><h3>月ごとの明細（記録だけ）</h3><div class="hbrows">${(X.months || []).map(x => `<div class="hbrow"><div><b>${lnEsc(x.month)}</b><span>成立 ${lnN(x.n)}件・${lnN(x.amount)}円・手数料15% ${lnN(x.fee)}円（請求しません）</span></div></div>`).join('') || '<p class="hbmuted">まだありません</p>'}</div></div>`;
+    } else {
+      const st = X.settings || {}, mo = X.money || {}, w = mo.wallet;
+      main = `<div class="hbc"><div class="k">SHOP</div><h3>お店の設定（公開する看板）</h3>${ed ? `<input class="hbin" id="lnSName" value="${lnEsc(st.name)}" placeholder="お店の名前" maxlength="40"><input class="hbin" id="lnSAddr" value="${lnEsc(st.addr)}" placeholder="住所" maxlength="100"><textarea class="hbin" id="lnSSign" rows="3" placeholder="受付の内容（お客さまに見せる看板）">${lnEsc(st.sign)}</textarea><button type="button" class="hbbtn" id="lnSSave">保存</button>` : `<p>${lnEsc(st.name)}<br>${lnEsc(st.addr)}</p><p class="hbmuted">${lnEsc(st.sign)}</p>`}</div>
+        <div class="hbc"><div class="k">STAFF</div><h3>スタッフ（届け先と役目）</h3><div class="hbrows">${(X.staff || []).map(s => `<div class="hbrow"><div><b>${lnEsc(s.name || s.code)}</b><span>${lnEsc(s.role)}${s.code ? '・' + lnEsc(s.code) : ''}</span></div>${ed && s.code ? `<button type="button" class="hbmini" data-lnsdel="${lnEsc(s.code)}">外す</button>` : ''}</div>`).join('') || '<p class="hbmuted">まだいません</p>'}</div>
+          ${ed ? `<div class="hbrow2"><input class="hbin" id="lnStCode" placeholder="スタッフの紹介コード" maxlength="20"><select class="hbin" id="lnStRole">${X.staffKind === 'fac' ? '<option>担当</option><option>管理者</option><option>閲覧</option>' : '<option value="reply">返事もできる</option><option value="view">見るだけ</option>'}</select><button type="button" class="hbbtn w" id="lnStAdd">入れる</button></div>` : ''}</div>
+        <div class="hbc"><div class="k">MONEY</div><h3>お店の残り・会員</h3><p>${w ? '返事 ' + lnN(w.replies) + '回分・声 ' + lnN(w.voiceMin) + '分' + (w.nextExp ? '・期限 ' + new Date(w.nextExp).toLocaleDateString('ja-JP') : '') : '—'}</p><p class="hbmuted" style="font-size:12.5px">${mo.member ? 'ハタボ エース会員（月' + lnN(mo.yen) + '円）' : 'エース会員ではありません（月' + lnN(mo.yen) + '円）'}・LINE公式アカウントとの連携はエース会員の特典（準備中）・請求書と領収書は「料金・お支払い」から</p></div>`;
+    }
+    body.innerHTML = lnHead('HATABO ACE', X.name || 'お店', (X.corpName ? lnEsc(X.corpName) + '・' : '') + '相棒 ' + lnN(S0.aibos) + '体・今日の問い合わせ ' + lnN(S0.today) + '件・未対応 ' + lnN(S0.open) + '件') + lnRo(X)
+      + `<div class="hbc lntabwrap">${lnTabs(t, [['aibo', '相棒'], ['inq', '問い合わせ'], ['resv', '送客'], ['shop', 'お店の設定']], 'lnat')}</div>` + main;
+    body.querySelectorAll('[data-lnat]').forEach(b => b.onclick = () => { LN.aceTab = b.dataset.lnat; hbpRender(); });
+    body.querySelectorAll('[data-lnif]').forEach(b => b.onclick = () => { LN.inqF = b.dataset.lnif; hbpRender(); });
+    body.querySelectorAll('[data-lncopy]').forEach(b => b.onclick = async () => { try { await navigator.clipboard.writeText(b.dataset.lncopy); toast('コピーしました'); } catch (e) { toast('コピーできませんでした'); } });
+    body.querySelectorAll('[data-lnqr]').forEach(b => b.onclick = () => lnQr(b.dataset.lnqr, b.dataset.t || ''));
+    if (!ed) return;
+    const mk = body.querySelector('#lnAMake'); if (mk) mk.onclick = () => { mk.disabled = true; send({ op: 'aibo_new', name: $('lnAName').value, role: $('lnARole').value }); };
+    const set = (code, o) => send(Object.assign({ op: 'aibo_set', code }, o));
+    body.querySelectorAll('[data-lnacc]').forEach(c => c.onchange = () => set(c.dataset.lnacc, { accepting: c.checked }));
+    body.querySelectorAll('[data-lnfix]').forEach(c => c.onchange = () => set(c.dataset.lnfix, { offFixed: c.checked }));
+    body.querySelectorAll('[data-lnrole]').forEach(c => c.onchange = () => set(c.dataset.lnrole, { role: c.value }));
+    body.querySelectorAll('[data-lnsave]').forEach(b => b.onclick = () => { const c = b.dataset.lnsave, q = s => body.querySelector('[' + s + '="' + c + '"]');
+      const closed = LN_WD.map((_, i) => i).filter(i => !body.querySelector('[data-lnwd="' + c + '"][value="' + i + '"]').checked);
+      set(c, { offMsg: q('data-lnoff').value, faq: q('data-lnfaq').value, menu: q('data-lnmenu').value, hours: { open: q('data-lnopen').value, close: q('data-lnclose').value, closed } }); });
+    body.querySelectorAll('[data-lndone]').forEach(b => b.onclick = () => send({ op: 'inq_done', tid: b.dataset.lndone, done: b.dataset.on === '1' }));
+    body.querySelectorAll('[data-lnres]').forEach(b => b.onclick = () => { const a = body.querySelector('[data-lnamt="' + b.dataset.lnres + '"]'); send({ op: 'resv', rid: b.dataset.lnres, status: b.dataset.st, amount: a ? a.value : 0 }); });
+    const ss = body.querySelector('#lnSSave'); if (ss) ss.onclick = () => send({ op: 'shop_set', name: $('lnSName').value, addr: $('lnSAddr').value, sign: $('lnSSign').value });
+    const sa = body.querySelector('#lnStAdd'); if (sa) sa.onclick = () => send({ op: 'staff_add', code: $('lnStCode').value, role: $('lnStRole').value });
+    body.querySelectorAll('[data-lnsdel]').forEach(b => b.onclick = () => { if (confirm('外しますか？')) send({ op: 'staff_del', code: b.dataset.lnsdel }); });
+  }
+  function lnRenderWorks(body) {
+    const X = HBP.works;
+    if (!X) { body.innerHTML = '<div class="hbc"><p>よみこみ中…</p></div>'; if (J.ready && LN.cur.id) jrSend({ type: 'works', id: LN.cur.id }); return; }
+    $('hbpTitle').textContent = X.name || 'ハタボ ワークス';
+    const ed = !X.ro, send = o => jrSend(Object.assign({ type: 'works', id: X.id }, o)), s = X.seats || {}, sh = X.shared;
+    body.innerHTML = lnHead('HATABO WORKS', X.name || '会社', 'メンバー ' + lnN((X.members || []).length) + '人・今月（' + lnEsc(X.month) + '）の回数だけを出します。会話の中身は出しません。') + lnRo(X)
+      + `<div class="lngrid"><div class="hbc"><div class="k">SEATS</div><h3>席の数</h3><div class="lnstat"><span><b>${lnN(s.contract)}</b>契約</span><span><b>${lnN(s.used)}</b>使っている</span><span><b>${lnN(s.free)}</b>空き</span></div><p class="hbmuted" style="font-size:12.5px">1席 月${lnN(s.yen)}円。最初の${lnN(s.firstFree)}人までは、はじめのトッピング（1人あたり返事${lnN(s.perSeat)}回分）が会社の共有に入ります（無料分）。</p>${ed ? '<button type="button" class="hbbtn w" data-go="plan">席を足す・減らす（料金・お支払い）</button>' : ''}</div>
+        <div class="hbc"><div class="k">SHARED</div><h3>会社で共有する残り</h3><div class="lnstat"><span><b>${sh ? lnN(sh.replies) : '—'}</b>返事（回分）</span><span><b>${sh ? lnN(sh.voiceMin) : '—'}</b>声（分）</span><span><b>${sh && sh.nextExp ? new Date(sh.nextExp).toLocaleDateString('ja-JP') : '—'}</b>期限</span></div><p class="hbmuted" style="font-size:12px">メンバーごとの月の上限は、下の一覧で決められます。</p></div></div>
+      <div class="hbc"><div class="k">MEMBERS</div><h3>メンバー</h3><div class="hbrows">${(X.members || []).map(x => `<div class="hbrow lnmem"><div><b>${lnEsc(x.name || x.code || '（名前なし）')} <span class="hbtag${x.admin ? ' gold' : ''}">${x.admin ? '管理者' : 'メンバー'}</span>${x.invited ? ' <span class="hbtag">招待中</span>' : ''}</b><span>今月 ${lnN(x.used)}回${x.cap != null ? '（上限 ' + lnN(x.cap) + '回）' : ''}・最後に使った日 ${x.lastAt ? new Date(x.lastAt).toLocaleDateString('ja-JP') : '—'}</span></div>${ed && x.code ? `<input class="hbin lnamt" type="number" min="0" data-lncap="${lnEsc(x.code)}" value="${x.cap == null ? '' : x.cap}" placeholder="月の上限"><button type="button" class="hbmini" data-lnrm="${lnEsc(x.code)}">外す</button>` : ''}</div>`).join('') || '<p class="hbmuted">まだいません</p>'}</div>
+        ${ed ? `<div class="hbrow2" style="margin-top:10px"><input class="hbin" id="lnWCode" placeholder="招待する人の紹介コード" maxlength="20"><select class="hbin" id="lnWRole"><option value="member">メンバー</option><option value="admin">管理者</option></select><button type="button" class="hbbtn w" id="lnWInv">招待</button><button type="button" class="hbbtn w" id="lnWLink">招待リンク・QR</button></div>${X.newLink ? `<div class="hburl"><input class="hbin" readonly value="${lnEsc(X.newLink)}"><button type="button" class="hbbtn w" data-lncopy="${lnEsc(X.newLink)}">コピー</button></div><p class="hbmuted" style="font-size:12px">7日間・1回だけ使えます。</p>` : ''}` : ''}</div>
+      <div class="hbc"><div class="k">RANKING</div><h3>使った順（今月）</h3><div class="hbrows">${(X.ranking || []).map((x, i) => `<div class="hbrow"><div><b>${i + 1}. ${lnEsc(x.name || x.code)}</b><span>${lnN(x.used)}回</span></div></div>`).join('') || '<p class="hbmuted">まだありません</p>'}</div></div>`;
+    body.querySelectorAll('[data-lncopy]').forEach(b => b.onclick = async () => { try { await navigator.clipboard.writeText(b.dataset.lncopy); toast('コピーしました'); } catch (e) { toast('コピーできませんでした'); } });
+    body.querySelectorAll('[data-go="plan"]').forEach(b => b.onclick = () => { hbpOpen('plan'); if (J.ready) jrSend({ type: 'mypage' }); });
+    if (!ed) return;
+    const iv = body.querySelector('#lnWInv'); if (iv) iv.onclick = () => send({ op: 'invite', code: $('lnWCode').value, role: $('lnWRole').value });
+    const lk = body.querySelector('#lnWLink'); if (lk) lk.onclick = () => send({ op: 'invite_link' });
+    body.querySelectorAll('[data-lnrm]').forEach(b => b.onclick = () => { if (confirm('このメンバーを外しますか？')) send({ op: 'remove', code: b.dataset.lnrm }); });
+    body.querySelectorAll('[data-lncap]').forEach(i => i.onchange = () => send({ op: 'cap', code: i.dataset.lncap, capR: i.value }));
+  }
+  /** QR（アプリの中の QR の作り方。外のサービスには送らない）。印刷できる形で重ねて出す */
+  function lnQr(url, title) {
+    clQrLib().then(() => { const q = qrcode(0, 'M'); q.addData(url, 'Byte'); q.make();
+      let o = $('lnQrOv'); if (!o) { o = document.createElement('div'); o.id = 'lnQrOv'; o.className = 'lnqr'; document.body.append(o); o.addEventListener('click', e => { if (e.target === o || e.target.closest('[data-lnqx]')) o.hidden = true; if (e.target.closest('[data-lnqp]')) window.print(); }); }
+      o.innerHTML = `<div class="lnqr-c"><b>${lnEsc(title || 'QRコード')}</b>${q.createSvgTag({ cellSize: 6, margin: 2, scalable: true })}<small>${lnEsc(url)}</small><div class="hbrow2"><button type="button" class="hbbtn" data-lnqp>印刷する</button><button type="button" class="hbbtn w" data-lnqx>閉じる</button></div></div>`; o.hidden = false; });
+  }
+  window.lnQr = lnQr;
+  window.lnRender = (p, body) => {
+    if (p === 'pick') { $('hbpTitle').textContent = 'どの画面を開くか'; lnRenderPick(body); return true; }
+    if (p === 'ace') { body.classList.add('wide'); lnRenderAce(body); return true; }
+    if (p === 'works') { body.classList.add('wide'); lnRenderWorks(body); return true; }
+    return false;
+  };
 
   /* ===== キャラのアイコン：選んだ画像をまん中で四角に切って小さくし、保存。アプリの中のキャラの絵をそのアイコンに ===== */
   function clButterIcon() { return 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22%3E%3Cdefs%3E%3CradialGradient id=%22g%22 cx=%22.5%22 cy=%22.35%22 r=%22.7%22%3E%3Cstop offset=%220%22 stop-color=%22%23FFF8E1%22/%3E%3Cstop offset=%221%22 stop-color=%22%23FCE3A6%22/%3E%3C/radialGradient%3E%3ClinearGradient id=%22f%22 x1=%220%22 y1=%220%22 x2=%220%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23FFD84D%22/%3E%3Cstop offset=%221%22 stop-color=%22%23F7BD1E%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx=%2264%22 cy=%2264%22 r=%2264%22 fill=%22url(%23g)%22/%3E%3Cg transform=%22translate(64 62) scale(1.22) translate(-64 -66)%22%3E%3Cellipse cx=%2264%22 cy=%2294%22 rx=%2250%22 ry=%2215%22 fill=%22%23fff%22 stroke=%22%23D5DCE8%22 stroke-width=%222.5%22/%3E%3Cellipse cx=%2264%22 cy=%2292%22 rx=%2236%22 ry=%229%22 fill=%22none%22 stroke=%22%23E8ECF3%22 stroke-width=%222%22/%3E%3Cpath d=%22M30 56 L44 42 H100 L98 56 Z%22 fill=%22%23FFE98C%22 stroke=%22%23E8A912%22 stroke-width=%222.5%22 stroke-linejoin=%22round%22/%3E%3Cpath d=%22M98 56 L100 42 L104 47 V82 Q104 86 100 88 L98 89 Z%22 fill=%22%23EFAE17%22 stroke=%22%23E8A912%22 stroke-width=%222.5%22 stroke-linejoin=%22round%22/%3E%3Crect x=%2228%22 y=%2255%22 width=%2271%22 height=%2235%22 rx=%227%22 fill=%22url(%23f)%22 stroke=%22%23E8A912%22 stroke-width=%222.5%22/%3E%3Cpath d=%22M40 89 q2 7 5 0%22 fill=%22%23F7BD1E%22 stroke=%22%23E8A912%22 stroke-width=%222%22/%3E%3Ccircle cx=%2252%22 cy=%2269%22 r=%224%22 fill=%22%233B2A12%22/%3E%3Ccircle cx=%2275%22 cy=%2269%22 r=%224%22 fill=%22%233B2A12%22/%3E%3Ccircle cx=%2253.3%22 cy=%2267.6%22 r=%221.3%22 fill=%22%23fff%22/%3E%3Ccircle cx=%2276.3%22 cy=%2267.6%22 r=%221.3%22 fill=%22%23fff%22/%3E%3Cpath d=%22M57 76 Q63.5 83 70 76%22 fill=%22none%22 stroke=%22%233B2A12%22 stroke-width=%223%22 stroke-linecap=%22round%22/%3E%3Cellipse cx=%2244%22 cy=%2277%22 rx=%225%22 ry=%223.3%22 fill=%22%23FF8FA0%22 opacity=%22.75%22/%3E%3Cellipse cx=%2283%22 cy=%2277%22 rx=%225%22 ry=%223.3%22 fill=%22%23FF8FA0%22 opacity=%22.75%22/%3E%3Cpath d=%22M50 47 h22%22 stroke=%22%23FFF7CF%22 stroke-width=%223%22 stroke-linecap=%22round%22 opacity=%22.9%22/%3E%3C/g%3E%3C/svg%3E'; }   /* バターちゃんの絵（お皿の上のバター） */
