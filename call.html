@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ハタボ 電話（試し）</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#16233F">
+<style>
+:root{--bg:#16233F;--bg2:#22355C;--ink:#fff;--sub:#B9C2D6;--hb:#62AD7F;--end:#E5484D;--btn:rgba(255,255,255,.14);--btnon:#fff;--card:rgba(255,255,255,.08);--line:rgba(255,255,255,.18)}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:linear-gradient(180deg,var(--bg),var(--bg2));color:var(--ink);font:16px/1.6 -apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;-webkit-tap-highlight-color:transparent}
+main{min-height:100%;max-width:480px;margin:0 auto;padding:max(20px,env(safe-area-inset-top)) 16px max(28px,env(safe-area-inset-bottom));display:flex;flex-direction:column}
+.top{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--sub)}
+.tag{border:1px solid var(--line);border-radius:999px;padding:2px 10px}
+.who{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px 0}
+.face{width:132px;height:132px;border-radius:50%;background:var(--hb);display:grid;place-items:center;font-size:54px;font-weight:800;position:relative}
+.face.ring::after{content:"";position:absolute;inset:-10px;border-radius:50%;border:3px solid rgba(98,173,127,.55);animation:ring 1.6s ease-out infinite}
+@keyframes ring{from{transform:scale(.92);opacity:1}to{transform:scale(1.25);opacity:0}}
+@media (prefers-reduced-motion:reduce){.face.ring::after{animation:none}}
+.name{font-size:24px;font-weight:800;margin:18px 0 2px}
+.state{color:var(--sub);font-size:15px;min-height:1.6em}
+.time{font-variant-numeric:tabular-nums;font-size:15px;color:var(--sub)}
+.setup{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:18px}
+.setup label{display:block;font-size:13px;color:var(--sub);margin:10px 0 4px}
+.setup label:first-child{margin-top:0}
+.setup input{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:12px;background:rgba(0,0,0,.2);color:var(--ink);font-size:16px}
+.share{display:flex;gap:8px;margin-top:12px}
+.share button{flex:1;border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:12px;padding:10px;font-size:14px;cursor:pointer}
+.link{font-size:12px;color:var(--sub);word-break:break-all;margin-top:8px}
+.bar{display:flex;justify-content:center;gap:28px;align-items:flex-start}
+.ctl{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12px;color:var(--sub);background:none;border:0;cursor:pointer;padding:0}
+.ctl i{width:68px;height:68px;border-radius:50%;background:var(--btn);display:grid;place-items:center}
+.ctl svg{width:30px;height:30px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.ctl.on i{background:var(--btnon)} .ctl.on svg{stroke:#16233F}
+.ctl.call i{background:var(--hb)} .ctl.end i{background:var(--end)}
+.ctl:disabled{opacity:.45;cursor:default}
+.ctl:focus-visible i{outline:3px solid #F7E3A8;outline-offset:3px}
+.diag{margin-top:18px;font-size:12px;color:var(--sub);text-align:center;min-height:1.4em}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<main>
+  <div class="top"><span>ハタボ 電話</span><span class="tag">試し</span></div>
+
+  <div class="who">
+    <div class="face" id="face" aria-hidden="true">?</div>
+    <div class="name" id="peerName">相手を待っています</div>
+    <div class="state" id="state" aria-live="polite">リンクを相手に送って、ふたりで「かける」を押してください</div>
+    <div class="time" id="time"></div>
+  </div>
+
+  <div class="setup" id="setup">
+    <label for="me">あなたの呼び名</label>
+    <input id="me" autocomplete="nickname" placeholder="例：ヒロ" maxlength="20">
+    <label for="key">合言葉</label>
+    <input id="key" type="password" autocomplete="off">
+    <div class="share">
+      <button type="button" id="shareBtn">相手にリンクを送る</button>
+      <button type="button" id="newBtn">新しい部屋</button>
+    </div>
+    <div class="link" id="link"></div>
+  </div>
+
+  <div class="bar">
+    <button class="ctl" id="muteBtn" type="button" disabled aria-pressed="false">
+      <i><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/><path id="muteX" d="M4 4l16 16" hidden/></svg></i><span id="muteTx">ミュート</span>
+    </button>
+    <button class="ctl call" id="callBtn" type="button">
+      <i><svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg></i><span>かける</span>
+    </button>
+    <button class="ctl end" id="endBtn" type="button" hidden>
+      <i><svg viewBox="0 0 24 24" style="transform:rotate(135deg)"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg></i><span>切る</span>
+    </button>
+  </div>
+  <div class="diag" id="diag"></div>
+  <audio id="remote" autoplay playsinline></audio>
+</main>
+<script>
+(() => {
+  const P = new URLSearchParams(location.search);
+  // 11/22 安全：つなぐサーバーは本番の Cloud Run だけ（手元の localhost で開いたときだけ localhost も）。URLの ?s= で別の所にされて、合言葉や切符が送られないように
+  const HOST0 = 'butter-junior-722073142596.asia-northeast1.run.app', s0 = String(P.get('s') || '').replace(/^(wss?|https?):\/\//, '').replace(/\/.*$/, '');
+  const host = s0 && (s0 === HOST0 || (/^(localhost|127\.0\.0\.1)$/.test(location.hostname) && /^(localhost|127\.0\.0\.1)(:\d+)?$/.test(s0))) ? s0 : HOST0;
+  const http = (/^(localhost|127\.)/.test(host) ? 'http://' : 'https://') + host;
+  const wsBase = (/^(localhost|127\.)/.test(host) ? 'ws://' : 'wss://') + host;
+  const $ = id => document.getElementById(id);
+  const get = k => { try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } };
+  const put = (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} };
+  const newRoom = () => Array.from(crypto.getRandomValues(new Uint8Array(8)), b => 'abcdefghjkmnpqrstuvwxyz23456789'[b % 31]).join('');
+  let room = (P.get('room') || '').toLowerCase();
+  if (!/^[a-z0-9]{6,16}$/.test(room)) { room = newRoom(); P.set('room', room); history.replaceState(null, '', '?' + P.toString()); }
+  const T = P.get('t') || '', ROLE = P.get('r') || '';   // アプリから：友だちどうしの電話（合言葉の代わりに切符）
+  $('key').value = P.get('k') || get('callKey');
+  $('me').value = P.get('n') || get('callName');
+  if (T) {
+    $('setup').hidden = true; $('newBtn').hidden = true;
+    const peer = (P.get('p') || '相手').slice(0, 20); $('peerName').textContent = peer; setFace0(peer);
+    document.querySelector('#callBtn span').textContent = ROLE === 'in' ? '出る' : 'かける';
+    state(ROLE === 'in' ? peer + 'さんから電話です。「出る」を押してください' : '「かける」を押すと、' + peer + 'さんを呼び出します');
+  }
+  function setFace0(n) { const f = document.getElementById('face'); if (f) f.textContent = (n || '?').slice(0, 1); }
+
+  let ws = null, pc = null, mic = null, muted = false, t0 = 0, tick = null, ice = null, pend = [], peerName = '';
+  const state = t => { $('state').textContent = t; };
+  const diag = t => { $('diag').textContent = t; };
+  const shareUrl = () => { const q = new URLSearchParams({ room }); if (host !== HOST0) q.set('s', host); return location.origin + location.pathname + '?' + q.toString(); };
+  $('link').textContent = shareUrl() + '（合言葉は別に伝えてください）';
+
+  $('shareBtn').onclick = async () => {
+    const url = shareUrl(), text = 'ハタボの電話（試し）です。ひらいて「かける」を押してね';
+    try { if (navigator.share) { await navigator.share({ title: 'ハタボ 電話', text, url }); return; } } catch (e) { if (e.name === 'AbortError') return; }
+    try { await navigator.clipboard.writeText(url); state('リンクをコピーしました'); } catch (e) { state('リンクを長押しでコピーしてください'); }
+  };
+  $('newBtn').onclick = () => { if (ws) return; room = newRoom(); P.set('room', room); history.replaceState(null, '', '?' + P.toString()); $('link').textContent = shareUrl() + '（合言葉は別に伝えてください）'; state('新しい部屋にしました'); };
+
+  function setFace(n) { $('face').textContent = (n || '?').slice(0, 1); }
+  function clock() { const s = Math.floor((Date.now() - t0) / 1000); $('time').textContent = String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0'); }
+  function ui(on) {
+    $('callBtn').hidden = on; $('endBtn').hidden = !on; $('muteBtn').disabled = !on;
+    $('setup').hidden = on || !!T; $('newBtn').disabled = on;
+  }
+  const send = o => { try { ws && ws.readyState === 1 && ws.send(JSON.stringify(o)); } catch (e) {} };
+
+  async function start() {
+    const k = $('key').value.trim(), me = $('me').value.trim();
+    if (!k && !T) { state('合言葉を入れてください'); $('key').focus(); return; }
+    if (!T) { put('callKey', k); put('callName', me); }
+    $('callBtn').disabled = true; state('マイクを準備しています');
+    try { mic = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } }); }
+    catch (e) { $('callBtn').disabled = false; state('マイクが使えません。ブラウザの設定でマイクを許可してください'); return; }
+    const r = await fetch(http + '/call/ice', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(T ? { t: T, room } : { k }) }).catch(() => null);
+    if (!r || !r.ok) { stopAll(); $('callBtn').disabled = false; state(r && r.status === 403 ? '合言葉がちがいます' : 'サーバーにつながりません'); return; }
+    ice = await r.json();
+    diag(ice.turn ? '中継：Cloudflare' : '中継なし（STUNだけ）');
+    ws = new WebSocket(wsBase + '/call?room=' + encodeURIComponent(room) + (T ? '&t=' + encodeURIComponent(T) : '&k=' + encodeURIComponent(k)));
+    ws.onmessage = e => onMsg(JSON.parse(e.data)).catch(err => { console.error(err); state('うまくつながりませんでした'); });
+    ws.onclose = e => {
+      const why = { 4003: T ? '電話の切符の期限が切れました。もう一度かけてください' : '合言葉がちがいます', 4009: 'この部屋はもう2人います', 4029: '少し待ってからもう一度', 4008: '1時間たったので切れました' }[e.code];
+      if (ws) { stopAll(); state(why || '切れました'); }
+    };
+    ws.onopen = () => { ui(true); $('callBtn').disabled = false; send({ type: 'hello', name: me }); };
+  }
+
+  function makePc() {
+    pc = new RTCPeerConnection({ iceServers: ice.iceServers });
+    mic.getTracks().forEach(t => pc.addTrack(t, mic));
+    pc.ontrack = e => { $('remote').srcObject = e.streams[0]; $('remote').play().catch(() => {}); };
+    pc.onicecandidate = e => { if (e.candidate) send({ type: 'ice', c: e.candidate }); };
+    pc.onconnectionstatechange = () => {
+      const s = pc && pc.connectionState;
+      if (s === 'connected') { $('face').classList.remove('ring'); state('つながっています'); t0 = Date.now(); clearInterval(tick); tick = setInterval(clock, 1000); clock(); route(); }
+      else if (s === 'disconnected') state('電波が弱いようです…');
+      else if (s === 'failed') { state('つながりませんでした（中継のキーが入っているか確かめてください）'); }
+    };
+  }
+  async function route() {
+    try {
+      const st = await pc.getStats(); let pair = null, loc = {};
+      st.forEach(r => { if (r.type === 'candidate-pair' && r.nominated && r.state === 'succeeded') pair = r; if (r.type === 'local-candidate') loc[r.id] = r; });
+      const c = pair && loc[pair.localCandidateId];
+      if (c) diag(c.candidateType === 'relay' ? '中継（Cloudflare）でつながっています' : 'じかにつながっています（' + c.candidateType + '）');
+    } catch (e) {}
+  }
+  async function flush() { for (const c of pend.splice(0)) await pc.addIceCandidate(c).catch(() => {}); }
+
+  async function onMsg(m) {
+    if (m.type === 'joined') { $('face').classList.add('ring'); state(m.peers > 1 ? 'つないでいます…' : T ? '呼び出しています…（相手が出るのを待っています）' : '相手を待っています（リンクを送ってね）'); }
+    else if (m.type === 'hello') { peerName = String(m.name || '相手').slice(0, 20); $('peerName').textContent = peerName; setFace(peerName); }
+    else if (m.type === 'peer') {   // 相手が入ってきた → こちらからかける
+      send({ type: 'hello', name: $('me').value.trim() });
+      if (pc) { pc.close(); pc = null; }
+      makePc(); state('呼び出しています…');
+      await pc.setLocalDescription(await pc.createOffer());
+      send({ type: 'offer', sdp: pc.localDescription });
+    }
+    else if (m.type === 'offer') {
+      if (pc) { pc.close(); pc = null; }
+      makePc(); await pc.setRemoteDescription(m.sdp); await flush();
+      await pc.setLocalDescription(await pc.createAnswer());
+      send({ type: 'answer', sdp: pc.localDescription });
+    }
+    else if (m.type === 'answer' && pc) { await pc.setRemoteDescription(m.sdp); await flush(); }
+    else if (m.type === 'ice') { if (pc && pc.remoteDescription) await pc.addIceCandidate(m.c).catch(() => {}); else pend.push(m.c); }
+    else if (m.type === 'mute') state(m.on ? peerName + 'さんがミュートにしました' : 'つながっています');
+    else if (m.type === 'left' || m.type === 'bye') {
+      if (pc) { pc.close(); pc = null; } clearInterval(tick); $('time').textContent = '';
+      $('face').classList.add('ring'); state('相手が切りました。待っていれば、またつながります'); diag('');
+    }
+  }
+
+  function stopAll() {
+    clearInterval(tick); $('time').textContent = '';
+    if (pc) { pc.close(); pc = null; }
+    if (mic) { mic.getTracks().forEach(t => t.stop()); mic = null; }
+    const w = ws; ws = null; if (w) try { w.close(); } catch (e) {}
+    pend = []; muted = false; $('muteBtn').classList.remove('on'); $('muteBtn').setAttribute('aria-pressed', 'false'); $('muteX').hidden = true; $('muteTx').textContent = 'ミュート';
+    $('face').classList.remove('ring'); ui(false);
+  }
+
+  $('callBtn').onclick = start;
+  $('endBtn').onclick = () => { send({ type: 'bye' }); stopAll(); state('切りました'); diag(''); };
+  $('muteBtn').onclick = () => {
+    if (!mic) return; muted = !muted; mic.getAudioTracks().forEach(t => { t.enabled = !muted; });
+    $('muteBtn').classList.toggle('on', muted); $('muteBtn').setAttribute('aria-pressed', String(muted)); $('muteX').hidden = !muted;
+    $('muteTx').textContent = muted ? 'ミュート中' : 'ミュート'; send({ type: 'mute', on: muted });
+  };
+  window.addEventListener('pagehide', () => send({ type: 'bye' }));
+})();
+</script>
+</body>
+</html>

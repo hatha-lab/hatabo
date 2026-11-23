@@ -55,7 +55,7 @@
       },
       "action": {
         "type": "uri",
-        "label": "プラン・支払い",
+        "label": "料金・お支払い",
         "uri": "https://miniapp.line.me/2012676035-yCkx6tBu?page=plan"
       }
     },

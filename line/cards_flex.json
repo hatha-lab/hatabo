@@ -1,6 +1,6 @@
 {
   "type": "flex",
-  "altText": "Myハタボ：のこり{{残り}}往復・お試しあと{{残り日数}}日",
+  "altText": "Myハタボ：返事の残り{{残り}}回分・{{期限}}まで",
   "contents": {
     "type": "carousel",
     "contents": [
@@ -64,7 +64,7 @@
             },
             {
               "type": "text",
-              "text": "{{プラン名}}",
+              "text": "{{ラインナップ}}・{{状態}}",
               "wrap": true,
               "color": "#5E6B85",
               "size": "xs"
@@ -84,7 +84,7 @@
                 },
                 {
                   "type": "text",
-                  "text": "往復 のこり",
+                  "text": "回分 返事の残り",
                   "wrap": true,
                   "color": "#5E6B85",
                   "size": "sm",
@@ -116,7 +116,7 @@
             },
             {
               "type": "text",
-              "text": "次の更新 {{更新日}}",
+              "text": "声の残り {{声の残り}}分・{{期限}}まで",
               "wrap": true,
               "color": "#5E6B85",
               "size": "xs"
@@ -179,7 +179,7 @@
                   "contents": [
                     {
                       "type": "text",
-                      "text": "TRIAL",
+                      "text": "STARTER",
                       "wrap": true,
                       "color": "#5E6B85",
                       "size": "xxs",
@@ -187,7 +187,7 @@
                     },
                     {
                       "type": "text",
-                      "text": "お試し中",
+                      "text": "はじめのトッピング",
                       "wrap": true,
                       "color": "#16233F",
                       "size": "lg",
@@ -207,7 +207,7 @@
               "contents": [
                 {
                   "type": "text",
-                  "text": "Zグレード",
+                  "text": "返事300回分＋声5分",
                   "wrap": true,
                   "color": "#16233F",
                   "size": "md",
@@ -216,7 +216,7 @@
                 },
                 {
                   "type": "text",
-                  "text": "あと{{残り日数}}日",
+                  "text": "{{期限}}まで",
                   "wrap": true,
                   "color": "#C9A24A",
                   "size": "md",
@@ -227,7 +227,7 @@
             },
             {
               "type": "text",
-              "text": "11日目から「{{次のプラン}}」月{{金額}}円になります。いつでも変えられます。",
+              "text": "基本料は0円です。使い切っても、料金は自動ではかかりません。足りなくなったら、トッピングを足せます。",
               "wrap": true,
               "color": "#5E6B85",
               "size": "sm"
@@ -247,7 +247,7 @@
               "height": "sm",
               "action": {
                 "type": "uri",
-                "label": "プランを見る",
+                "label": "料金を見る",
                 "uri": "https://miniapp.line.me/2012676035-yCkx6tBu?page=plan"
               }
             },
