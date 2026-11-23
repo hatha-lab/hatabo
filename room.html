@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0B0E15">
+<title>ハタボ 部屋の相棒</title>
+<!-- 11/23 エースの部屋（宿）：部屋の端末（タブレット）と、お客さまのQRで開く画面。
+     ・お客さま：room.html?g=<部屋の印>（滞在中だけの仮のIDをこのブラウザに持つ）
+     ・端末：room.html?dev=1&g=<部屋の印> → お店の設定コード → 「この端末を〇〇号室にする」→ 端末トークンをこのブラウザに持つ（人のアカウントではない。管理画面から取り消せる）
+     ・できるのは、その部屋の相棒と話すことだけ。マイクのボタン1つ。返事は声と字幕（すけた灰色の帯） -->
+<style>
+:root { --bg: #0B0E15; --fg: #F2F4F8; --mut: rgba(242,244,248,.66); --gold: #E7C25A; }
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: var(--bg); color: var(--fg); font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Noto Sans JP", sans-serif; -webkit-tap-highlight-color: transparent; }
+body { display: grid; grid-template-rows: auto 1fr auto; min-height: 100dvh; padding: env(safe-area-inset-top) 16px env(safe-area-inset-bottom); overflow: hidden; }
+header { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 14px 4px 6px; }
+header b { font-size: 18px; } header small { display: block; font-size: 13px; color: var(--mut); }
+header img { width: 36px; height: 36px; }
+main { display: grid; place-items: center; align-content: center; gap: 18px; text-align: center; }
+#mic { width: min(56vw, 300px); height: min(56vw, 300px); border-radius: 50%; border: 0; background: radial-gradient(circle at 50% 35%, #3B5BA8, #1C2C57 70%); color: #fff; display: grid; place-items: center; box-shadow: 0 0 0 10px rgba(59,91,168,.18), 0 20px 60px -20px rgba(0,0,0,.8); cursor: pointer; touch-action: manipulation; transition: transform .15s, box-shadow .2s; }
+#mic svg { width: 42%; height: 42%; }
+#mic:active { transform: scale(.97); }
+body.listen #mic { background: radial-gradient(circle at 50% 35%, #E5484D, #8E1F24 70%); box-shadow: 0 0 0 14px rgba(229,72,77,.22), 0 0 0 28px rgba(229,72,77,.10); animation: pulse 1.2s infinite; }
+body.speak #mic { background: radial-gradient(circle at 50% 35%, #2E7D5B, #164331 70%); }
+body.off #mic { background: #2A2F3B; box-shadow: none; }
+@keyframes pulse { 50% { box-shadow: 0 0 0 20px rgba(229,72,77,.16), 0 0 0 40px rgba(229,72,77,.06); } }
+#st { min-height: 3.2em; font-size: 18px; line-height: 1.6; color: var(--mut); padding: 0 8px; }
+#st b { color: var(--fg); }
+/* 字幕：#308 と同じ、すけた灰色の帯。2〜3行で、古い行は上へ流す */
+#cap { position: fixed; left: 16px; right: 16px; bottom: calc(env(safe-area-inset-bottom) + 18px); max-height: calc(1.6em * 3 + 20px); overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; padding: 10px 14px; border-radius: 14px; background: rgba(40,40,48,.6); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); color: #fff; font-size: 17px; line-height: 1.6; pointer-events: none; -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 10px); mask-image: linear-gradient(to bottom, transparent 0, #000 10px); }
+#cap[hidden] { display: none; } #cap p { margin: 0; } #cap p.me { opacity: .7; font-size: 15px; }
+form#tx { display: flex; gap: 8px; width: min(520px, 100%); margin: 0 auto 90px; }
+form#tx input { flex: 1; min-width: 0; height: 48px; padding: 0 14px; border-radius: 24px; border: 1px solid rgba(255,255,255,.18); background: rgba(255,255,255,.06); color: var(--fg); font-size: 16px; }
+form#tx button, .btn { height: 48px; padding: 0 20px; border-radius: 24px; border: 0; background: #F2F4F8; color: #0B0E15; font: 700 16px inherit; cursor: pointer; }
+.card { width: min(520px, 100%); padding: 20px; border-radius: 18px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.12); text-align: left; display: grid; gap: 12px; }
+.card h1 { font-size: 20px; margin: 0; } .card p { margin: 0; color: var(--mut); line-height: 1.7; font-size: 15px; }
+.card input { height: 56px; padding: 0 16px; border-radius: 14px; border: 1px solid rgba(255,255,255,.2); background: rgba(0,0,0,.3); color: var(--fg); font-size: 24px; letter-spacing: .2em; text-align: center; }
+.rooms { display: grid; gap: 8px; } .rooms button { min-height: 56px; border-radius: 14px; border: 1px solid rgba(255,255,255,.18); background: rgba(255,255,255,.04); color: var(--fg); font-size: 17px; text-align: left; padding: 0 16px; cursor: pointer; }
+.rooms button.on { border-color: var(--gold); background: rgba(231,194,90,.14); }
+.hint { font-size: 13px; color: var(--mut); }
+[hidden] { display: none !important; }
+</style>
+</head>
+<body class="off">
+<header><div><b id="hRoom">部屋の相棒</b><small id="hShop">ハタボ</small></div><img src="award_mark.svg" alt="" id="hLogo"></header>
+<main id="mainV">
+  <section id="setupV" class="card" hidden>
+    <h1>この端末を部屋の相棒にする</h1>
+    <p>宿のスタッフの方へ：お店の管理画面（ハタボ エース →「部屋」）で「端末の設定コード」を出して、ここに入れてください。</p>
+    <input id="code" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="8けたのコード" aria-label="設定コード">
+    <button class="btn" id="codeGo" type="button">つぎへ</button>
+    <div class="rooms" id="roomList" hidden></div>
+    <button class="btn" id="bindGo" type="button" hidden>この端末を〇〇号室にする</button>
+    <p class="hint" id="setupMsg"></p>
+  </section>
+  <section id="talkV" hidden>
+    <button id="mic" type="button" aria-label="話す / Talk / 说话 / 말하기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button>
+    <p id="st">ボタンを押して、話してください<br><small>Tap and speak ・ 按下说话 ・ 눌러서 말하세요</small></p>
+  </section>
+</main>
+<form id="tx" hidden><input id="txIn" placeholder="文字で入力 / Type here" maxlength="300" aria-label="文字で入力"><button type="submit">送る</button></form>
+<div id="cap" hidden aria-live="polite"></div>
+<script>
+(() => {
+  'use strict';
+  const $ = id => document.getElementById(id), Q = new URLSearchParams(location.search);
+  const G = String(Q.get('g') || '').replace(/[^\w-]/g, '').slice(0, 40), DEV = Q.get('dev') === '1';
+  const DEF = 'butter-junior-722073142596.asia-northeast1.run.app';
+  const sq = String(Q.get('s') || '').replace(/^(wss?|https?):\/\//, '').replace(/\/.*$/, '');
+  const SRV = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) && /^(localhost|127\.0\.0\.1)(:\d+)?$/.test(sq) ? sq : DEF;   // ほかのサーバーにはつながない（手元の試しだけ ?s=）
+  const WSU = (/^(localhost|127\.)/.test(SRV) ? 'ws://' : 'wss://') + SRV + '/talk';
+  const ls = { get: k => { try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } }, set: (k, v) => { try { if (v) localStorage.setItem(k, v); else localStorage.removeItem(k); } catch (e) {} } };
+  const TK = 'hb.roomTok', GK = 'hb.roomG.' + G;
+  let ws = null, ready = false, listening = false, ctx = null, mic = null, proc = null, queue = [], playing = false, stopT = 0, closed = '';
+  const st = (h) => { $('st').innerHTML = h; };
+  const cap = (t, me) => { const c = $('cap'); const p = document.createElement('p'); p.textContent = t; if (me) p.className = 'me'; c.append(p); while (c.children.length > 6) c.firstChild.remove(); c.hidden = false; };
+  const mode = m => { document.body.classList.remove('off', 'listen', 'speak'); if (m) document.body.classList.add(m); };
+  function send(o) { if (ws && ws.readyState === 1) ws.send(o instanceof ArrayBuffer ? o : JSON.stringify(o)); }
+  function connect(hello, onMsg) {
+    ws = new WebSocket(WSU);
+    ws.onopen = () => { if (hello) ws.send(JSON.stringify(hello)); };
+    ws.onmessage = e => { let m; try { m = JSON.parse(e.data); } catch (x) { return; } onMsg(m); };
+    ws.onclose = () => { ready = false; stopListen(); if (!closed) setTimeout(() => start(), 3000); };
+  }
+  /* ---- 端末の設定 ---- */
+  function setup() {
+    $('setupV').hidden = false; $('talkV').hidden = true; $('hRoom').textContent = '端末の設定'; let code = '', pick = '';
+    connect(null, m => {
+      if (m.type === 'room_setup') { if (!m.ok) { $('setupMsg').textContent = m.why || 'コードがちがいます'; return; }
+        $('hShop').textContent = m.shop || ''; const L = $('roomList'); L.innerHTML = ''; L.hidden = false;
+        m.rooms.forEach(r => { const b = document.createElement('button'); b.type = 'button'; b.textContent = (r.no ? r.no + '　' : '') + r.name; if (r.g === G) { pick = r.id; b.className = 'on'; } b.onclick = () => { pick = r.id; [...L.children].forEach(x => x.classList.toggle('on', x === b)); $('bindGo').textContent = 'この端末を' + (r.no || r.name) + 'にする'; }; L.append(b); if (r.g === G) $('bindGo').textContent = 'この端末を' + (r.no || r.name) + 'にする'; });
+        $('bindGo').hidden = false; $('setupMsg').textContent = '部屋をえらんでください'; }
+      if (m.type === 'room_bound') { if (!m.ok) { $('setupMsg').textContent = m.why || ''; return; } ls.set(TK, m.token); closed = 'reload'; try { ws.close(); } catch (e) {} location.replace(location.pathname + '?dev=1&g=' + encodeURIComponent(m.g || G) + (sq ? '&s=' + encodeURIComponent(sq) : '')); }
+    });
+    $('codeGo').onclick = () => { code = $('code').value.replace(/\D/g, ''); if (code.length !== 8) { $('setupMsg').textContent = '8けたの数字を入れてください'; return; } send({ type: 'room_setup', code }); };
+    $('bindGo').onclick = () => { if (!pick) return; send({ type: 'room_bind', code, room: pick, label: /iPad/.test(navigator.userAgent) ? 'iPad' : /Android/.test(navigator.userAgent) ? 'Android' : '端末' }); };
+  }
+  /* ---- 話す ---- */
+  function onTalk(m) {
+    if (m.type === 'room_ready') {
+      $('hRoom').textContent = (m.no ? m.no + '　' : '') + (m.name || '部屋'); $('hShop').textContent = (m.shop || '') + (m.aibo ? '・' + m.aibo : '');
+      if (m.closed) { closed = 'closed'; mode('off'); st('<b>' + esc(m.closed) + '</b>'); return; }
+      if (!DEV && m.gid) ls.set(GK, JSON.stringify({ gid: m.gid, stay: m.stay }));
+      ready = true; mode(''); $('tx').hidden = DEV; return;
+    }
+    if (m.type === 'error') { closed = m.code || 'err'; mode('off'); st('<b>' + esc(m.why || 'つながりませんでした') + '</b>'); if (DEV && /取り消/.test(m.why || '')) { ls.set(TK, ''); setTimeout(() => location.reload(), 4000); } return; }
+    if (m.type === 'room_closed') { if (m.why === 'out' && !DEV) ls.set(GK, ''); return; }
+    if (m.type === 'partial') { st('<b>' + esc(m.text) + '</b>'); return; }
+    if (m.type === 'heard') { stopListen(); cap(m.text, true); st('…'); return; }
+    if (m.type === 'reply_start') { queue = []; mode('speak'); return; }
+    if (m.type === 'audio') { if (m.text) cap(m.text); if (m.mp3) { queue.push(m.mp3); play(); } return; }
+    if (m.type === 'reply_end') { if (!playing && !queue.length) idle(); return; }
+  }
+  const esc = t => String(t || '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  function idle() { mode(''); st('ボタンを押して、話してください<br><small>Tap and speak ・ 按下说话 ・ 눌러서 말하세요</small>'); }
+  function play() {
+    if (playing || !queue.length) return; playing = true;
+    const a = new Audio('data:audio/mpeg;base64,' + queue.shift());
+    const next = () => { playing = false; if (queue.length) play(); else idle(); };
+    a.onended = next; a.onerror = next; a.play().catch(next);
+  }
+  async function startListen() {
+    if (!ready || listening) return;
+    try {
+      ctx = ctx || new (window.AudioContext || window.webkitAudioContext)(); if (ctx.state === 'suspended') await ctx.resume();
+      mic = mic || await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } });
+    } catch (e) { st('<b>マイクが使えません。ブラウザの設定でマイクを許可してください</b><br><small>Please allow the microphone</small>'); return; }
+    queue = []; send({ type: 'barge' });
+    const src = ctx.createMediaStreamSource(mic); proc = ctx.createScriptProcessor(4096, 1, 1);
+    proc.onaudioprocess = ev => { if (!listening) return; const d = ev.inputBuffer.getChannelData(0), r = ctx.sampleRate / 16000, n = Math.floor(d.length / r), pcm = new Int16Array(n);
+      for (let i = 0; i < n; i++) { const s0 = Math.floor(i * r), s1 = Math.min(d.length, Math.floor((i + 1) * r)); let v = 0; for (let j = s0; j < s1; j++) v += d[j]; v /= Math.max(1, s1 - s0); pcm[i] = Math.max(-1, Math.min(1, v * 1.5)) * 0x7fff; }
+      send(pcm.buffer); };
+    src.connect(proc); proc.connect(ctx.destination);
+    listening = true; mode('listen'); st('<b>聞いています…</b><br><small>Listening ・ 正在听 ・ 듣고 있어요</small>');
+    clearTimeout(stopT); stopT = setTimeout(stopListen, 15000);
+  }
+  function stopListen() { listening = false; clearTimeout(stopT); try { if (proc) proc.disconnect(); } catch (e) {} proc = null; if (document.body.classList.contains('listen')) idle(); }
+  $('mic').onclick = () => { if (listening) stopListen(); else startListen(); };
+  $('tx').onsubmit = e => { e.preventDefault(); const t = $('txIn').value.trim(); if (!t || !ready) return; cap(t, true); send({ type: 'text', text: t }); $('txIn').value = ''; };
+  // 端末の設定をこの端末から消す（タイトルを5回つづけて押す）。ふだんは管理画面の「取り消し」で
+  let taps = 0, tapT = 0; $('hRoom').onclick = () => { taps++; clearTimeout(tapT); tapT = setTimeout(() => { taps = 0; }, 1500); if (DEV && taps >= 5 && confirm('この端末の設定を消しますか？')) { ls.set(TK, ''); location.reload(); } };
+  function start() {
+    if (!G && !DEV) { st('<b>部屋のQRコードから開いてください</b>'); return; }
+    $('setupV').hidden = true; $('talkV').hidden = false;
+    if (DEV) { const tok = ls.get(TK); if (!tok) return setup(); return connect({ type: 'hello', room: { token: tok } }, onTalk); }
+    let g0 = {}; try { g0 = JSON.parse(ls.get(GK) || '{}'); } catch (e) {}
+    connect({ type: 'hello', room: { g: G, gid: g0.gid || '', stay: g0.stay || '' } }, onTalk);
+  }
+  window.__room = { onTalk, setup, cap, mode, st };   // 画面の確認用
+  if (!window.__roomPreview) start();
+})();
+</script>
+</body>
+</html>

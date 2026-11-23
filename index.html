@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="ja">
 <head>
-<meta charset="utf-8"><meta name="hb-ver" content="2026-11-23b">
+<meta charset="utf-8"><meta name="hb-ver" content="2026-11-23c">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex">
 <title>ハタボ｜すべての人に、AIの愛棒を</title><meta name="description" content="話すだけで、調べもの・下書き・相談まで、いっしょに動くAIの愛棒。PCとスマホとLINEで使えます。"><meta property="og:type" content="website"><meta property="og:site_name" content="ハタボ"><meta property="og:title" content="ハタボ｜すべての人に、AIの愛棒を"><meta property="og:description" content="話すだけで、調べもの・下書き・相談まで、いっしょに動くAIの愛棒。"><meta property="og:url" content="https://app.hatha-lab.com/"><meta property="og:image" content="https://app.hatha-lab.com/feed_emblem.jpg"><meta name="twitter:card" content="summary">
@@ -2417,6 +2417,8 @@ html:has(> body.cl.av-hatabo), body.cl.av-hatabo { background-color: #0A1226; } 
 .lnaibo, .lnhead, #hbpBody .lngrid > .hbc { margin-top: 12px; } .lnaibo.off { opacity: .8; } .lnaibo .hbsw, .lnaibo .hbin, .lnaibo textarea { margin-top: 8px; }
 .lnhours { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 8px; font-size: 13px; } .lnhours .hbin[type=time] { width: auto; margin: 0; }
 .lnwd { display: flex; gap: 4px; flex-wrap: wrap; } .lnwd label { display: inline-flex; align-items: center; gap: 2px; min-height: 32px; padding: 0 6px; border-radius: 8px; border: 1px solid rgba(128,128,128,.35); }
+.lncode { margin: 4px 0 0; font: 800 34px ui-monospace, Menlo, monospace; letter-spacing: .12em; text-align: center; }
+.lnacts { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 8px; } .lnacts select { flex: 1 1 160px; width: auto; margin: 0 !important; } .lnacts .hbmini { min-height: 36px; padding: 0 12px; }
 .lnamt { width: 110px !important; flex: none; margin: 0 4px 0 0 !important; }
 .lngrid { display: grid; gap: 0 12px; } @media (min-width: 900px) { .lngrid { grid-template-columns: 1fr 1fr; } }
 .lnstat { display: flex; gap: 8px; margin: 8px 0; } .lnstat span { flex: 1; display: grid; padding: 10px; border-radius: 12px; background: rgba(128,128,128,.12); font-size: 12px; text-align: center; } .lnstat b { font: 800 22px var(--display, sans-serif); }
@@ -7670,6 +7672,23 @@ html:has(> body.cl.av-hatabo), body.cl.av-hatabo { background-color: #0A1226; } 
           <textarea class="hbin" rows="2" data-lnmenu="${lnEsc(a.code)}" placeholder="メニュー・料金・営業時間の案内">${lnEsc(a.menu)}</textarea>
           <button type="button" class="hbbtn w" data-lnsave="${lnEsc(a.code)}">保存</button>` : `<p class="hbmuted" style="font-size:12.5px">受付時間：${h.open ? lnEsc(h.open + '〜' + h.close) + (cl.length ? '（休み：' + cl.map(i => LN_WD[i]).join('・') + '）' : '') : '決めていません'}</p>`}</div>`; }).join('') || '<div class="hbc"><p class="hbmuted">まだ相棒がいません。</p></div>';
       if (ed) main = `<div class="hbc"><div class="k">NEW</div><h3>相棒を増やす（上限なし）</h3><div class="hbrow2"><input class="hbin" id="lnAName" placeholder="名前（例：受付くん）" maxlength="30"><select class="hbin" id="lnARole">${(X.roles || []).map(r => `<option>${lnEsc(r)}</option>`).join('')}</select></div><button type="button" class="hbbtn" id="lnAMake">相棒を作る</button></div>` + main;
+    } else if (t === 'room') {   // 11/23 部屋（宿）：部屋の一覧・QR・端末・チェックアウト
+      const RM = X.rooms || { items: [], devices: [] }, devOf = id => (RM.devices || []).filter(d => d.room === id), aname = c => ((X.aibos || []).find(a => a.code === c) || {}).name || '（相棒をえらぶ）';
+      main = `<div class="hbc"><div class="k">ROOMS</div><h3>部屋</h3><p class="hbmuted" style="font-size:12.5px">部屋ごとに、お客さまのスマホ用のQRと、部屋の端末（タブレットなど）用のURLがあります。会話は滞在ごとに分かれ、チェックアウトで消えます（宿の知識・よくある質問は残ります）。声は1部屋 月${lnN((X.roomVoice || {}).min || 60)}分・1回${lnN((X.roomVoice || {}).sec || 30)}秒まで（こえたら字幕だけ）。</p>
+        ${ed ? `<div class="lnhours"><b>チェックアウトの時刻</b><input class="hbin" type="time" id="lnCo" value="${lnEsc(RM.checkout || '11:00')}"><span class="hbmuted" style="font-size:12px">この時刻をすぎると、自動でチェックアウト（会話を消す）</span></div>
+        <div class="hbrow2" style="margin-top:10px"><input class="hbin" id="lnRNo" placeholder="号室（例：201）" maxlength="10"><input class="hbin" id="lnRName" placeholder="名前（例：ツイン）" maxlength="30"></div>
+        <div class="hbrow2"><select class="hbin" id="lnRAibo">${(X.aibos || []).map(a => `<option value="${lnEsc(a.code)}">${lnEsc(a.name)}（${lnEsc(a.role)}）</option>`).join('') || '<option value="">先に「相棒」で相棒を作ってください</option>'}</select></div>
+        <textarea class="hbin" id="lnRMemo" rows="2" placeholder="この部屋のこと（設備・使い方。相棒が読みます）" maxlength="600"></textarea>
+        <button type="button" class="hbbtn" id="lnRAdd">部屋を足す</button>` : ''}</div>
+        ${ed ? `<div class="hbc"><div class="k">DEVICE</div><h3>部屋の端末の設定</h3><p class="hbmuted" style="font-size:12.5px">① 端末（iPad・Androidタブレットなど）のブラウザで、その部屋の「端末用URL」を開く ② 下の設定コードを入れる ③「この端末を〇〇号室にする」を押す。端末はこのお店の部屋の相棒と話すことしかできません。なくしたときは、下の一覧から取り消してください。</p>
+          ${RM.setup ? `<p class="lncode">${lnEsc(RM.setup.code.replace(/(\d{4})(\d{4})/, '$1 $2'))}</p><p class="hbmuted" style="font-size:12px">${new Date(RM.setup.exp).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })}まで使えます</p>` : ''}<button type="button" class="hbbtn w" id="lnRCode">${RM.setup ? '新しい設定コードを出す' : '端末の設定コードを出す（30分）'}</button></div>` : ''}
+        ${(RM.items || []).map((r, i) => `<div class="hbc lnaibo${r.active ? '' : ' off'}"><div class="k">ROOM ${lnEsc(r.no || '')}</div><h3>${lnEsc((r.no ? r.no + '　' : '') + r.name)} <span class="hbtag">${r.active ? '話せる' : '止めています'}</span></h3>
+          <p class="hbmuted" style="font-size:12.5px">相棒：${lnEsc(aname(r.aibo))}・いまの滞在の会話 ${lnN(r.talks)}人・この滞在のはじまり ${lnDt(r.stayAt)}${r.lastOut ? '・前のチェックアウト ' + lnDt(r.lastOut.at) + (r.lastOut.why === 'auto' ? '（自動）' : '') : ''}${r.memo ? '<br>' + lnEsc(r.memo) : ''}</p>
+          <div class="hburl"><input class="hbin" readonly value="${lnEsc(r.qr)}" aria-label="お客さまのQRのURL"><button type="button" class="hbbtn w" data-lnqr="${lnEsc(r.qr)}" data-t="${lnEsc((r.no || r.name) + '　お客さま用（スマホで読む）')}">QR・印刷</button></div>
+          <div class="hburl"><input class="hbin" readonly value="${lnEsc(r.dev)}" aria-label="端末用のURL"><button type="button" class="hbbtn w" data-lncopy="${lnEsc(r.dev)}">端末用URL</button></div>
+          <div class="hbrows">${devOf(r.id).map(dv => `<div class="hbrow lnmem"><div><b>端末：${lnEsc(dv.label)}</b><span>設定 ${lnDt(dv.at)}・最後 ${lnDt(dv.last)}</span></div>${ed ? `<button type="button" class="hbmini" data-lnrev="${lnEsc(dv.id)}">取り消す</button>` : ''}</div>`).join('')}</div>
+          ${ed ? `<div class="hbrow2"><button type="button" class="hbbtn" data-lnout="${lnEsc(r.id)}">チェックアウトしました</button></div>
+          <div class="lnacts"><select class="hbin" data-lnraibo="${lnEsc(r.id)}">${(X.aibos || []).map(a => `<option value="${lnEsc(a.code)}"${a.code === r.aibo ? ' selected' : ''}>${lnEsc(a.name)}</option>`).join('')}</select><button type="button" class="hbmini" data-lnract="${lnEsc(r.id)}" data-on="${r.active ? 0 : 1}">${r.active ? '止める' : 'また話せるように'}</button><button type="button" class="hbmini" data-lnrmv="${lnEsc(r.id)}" data-d="-1" ${i ? '' : 'disabled'}>↑</button><button type="button" class="hbmini" data-lnrmv="${lnEsc(r.id)}" data-d="1" ${i < RM.items.length - 1 ? '' : 'disabled'}>↓</button><button type="button" class="hbmini" data-lnrdel="${lnEsc(r.id)}">消す</button></div>` : ''}</div>`).join('') || '<div class="hbc"><p class="hbmuted">まだ部屋がありません。</p></div>'}`;
     } else if (t === 'inq') {
       const f = LN.inqF, L = (X.inq || []).filter(q => f === 'all' || (f === 'open' ? !q.done : q.done));
       main = `<div class="hbc">${lnTabs(f, [['open', '未対応 ' + lnN(S0.open)], ['done', '対応済み ' + lnN(S0.done)], ['all', 'ぜんぶ']], 'lnif')}<div class="hbrows">${L.map(q => `<div class="hbrow lnmem"><div><b>${lnEsc(q.vname || 'お客さま')}${q.told ? ' <span class="hbtag gold">人に回した</span>' : ''}${q.unread ? ' <span class="hbtag">未読 ' + lnN(q.unread) + '</span>' : ''}</b><span>${lnEsc(q.aiboName)}・${lnDt(q.last)}・${lnN(q.n)}回${q.preview ? '・' + lnEsc(q.preview) : ''}</span></div>${ed ? `<button type="button" class="hbmini" data-lndone="${lnEsc(q.id)}" data-on="${q.done ? 0 : 1}">${q.done ? '未対応にもどす' : '対応済みにする'}</button>` : ''}</div>`).join('') || '<p class="hbmuted">ありません</p>'}</div>
@@ -7685,7 +7704,7 @@ html:has(> body.cl.av-hatabo), body.cl.av-hatabo { background-color: #0A1226; } 
         <div class="hbc"><div class="k">MONEY</div><h3>お店の残り・会員</h3><p>${w ? '返事 ' + lnN(w.replies) + '回分・声 ' + lnN(w.voiceMin) + '分' + (w.nextExp ? '・期限 ' + new Date(w.nextExp).toLocaleDateString('ja-JP') : '') : '—'}</p><p class="hbmuted" style="font-size:12.5px">${mo.member ? 'ハタボ エース会員（月' + lnN(mo.yen) + '円）' : 'エース会員ではありません（月' + lnN(mo.yen) + '円）'}・LINE公式アカウントとの連携はエース会員の特典（準備中）・請求書と領収書は「料金・お支払い」から</p></div>`;
     }
     body.innerHTML = lnHead('HATABO ACE', X.name || 'お店', (X.corpName ? lnEsc(X.corpName) + '・' : '') + '相棒 ' + lnN(S0.aibos) + '体・今日の問い合わせ ' + lnN(S0.today) + '件・未対応 ' + lnN(S0.open) + '件') + lnRo(X)
-      + `<div class="hbc lntabwrap">${lnTabs(t, [['aibo', '相棒'], ['inq', '問い合わせ'], ['resv', '送客'], ['shop', 'お店の設定']], 'lnat')}</div>` + main;
+      + `<div class="hbc lntabwrap">${lnTabs(t, [['aibo', '相棒'], ['room', '部屋'], ['inq', '問い合わせ'], ['resv', '送客'], ['shop', 'お店の設定']], 'lnat')}</div>` + main;
     body.querySelectorAll('[data-lnat]').forEach(b => b.onclick = () => { LN.aceTab = b.dataset.lnat; hbpRender(); });
     body.querySelectorAll('[data-lnif]').forEach(b => b.onclick = () => { LN.inqF = b.dataset.lnif; hbpRender(); });
     body.querySelectorAll('[data-lncopy]').forEach(b => b.onclick = async () => { try { await navigator.clipboard.writeText(b.dataset.lncopy); toast('コピーしました'); } catch (e) { toast('コピーできませんでした'); } });
@@ -7701,6 +7720,15 @@ html:has(> body.cl.av-hatabo), body.cl.av-hatabo { background-color: #0A1226; } 
       set(c, { offMsg: q('data-lnoff').value, faq: q('data-lnfaq').value, menu: q('data-lnmenu').value, hours: { open: q('data-lnopen').value, close: q('data-lnclose').value, closed } }); });
     body.querySelectorAll('[data-lndone]').forEach(b => b.onclick = () => send({ op: 'inq_done', tid: b.dataset.lndone, done: b.dataset.on === '1' }));
     body.querySelectorAll('[data-lnres]').forEach(b => b.onclick = () => { const a = body.querySelector('[data-lnamt="' + b.dataset.lnres + '"]'); send({ op: 'resv', rid: b.dataset.lnres, status: b.dataset.st, amount: a ? a.value : 0 }); });
+    { const q = s0 => body.querySelector(s0), b0 = q('#lnRAdd'); if (b0) b0.onclick = () => { b0.disabled = true; send({ op: 'room_add', no: q('#lnRNo').value, name: q('#lnRName').value, aibo: q('#lnRAibo').value, memo: q('#lnRMemo').value }); };
+      const co = q('#lnCo'); if (co) co.onchange = () => send({ op: 'checkout_time', hhmm: co.value });
+      const rc = q('#lnRCode'); if (rc) rc.onclick = () => send({ op: 'setup_code' });
+      body.querySelectorAll('[data-lnout]').forEach(b => b.onclick = () => { if (confirm('チェックアウトにします。この部屋のいまの滞在の会話を消します（もどせません）。よろしいですか？')) send({ op: 'checkout', rid: b.dataset.lnout }); });
+      body.querySelectorAll('[data-lnrev]').forEach(b => b.onclick = () => { if (confirm('この端末の設定を取り消しますか？端末はすぐ話せなくなります')) send({ op: 'dev_revoke', dev: b.dataset.lnrev }); });
+      body.querySelectorAll('[data-lnraibo]').forEach(x => x.onchange = () => send({ op: 'room_set', rid: x.dataset.lnraibo, aibo: x.value }));
+      body.querySelectorAll('[data-lnract]').forEach(b => b.onclick = () => send({ op: 'room_set', rid: b.dataset.lnract, active: b.dataset.on === '1' }));
+      body.querySelectorAll('[data-lnrmv]').forEach(b => b.onclick = () => send({ op: 'room_move', rid: b.dataset.lnrmv, dir: Number(b.dataset.d) }));
+      body.querySelectorAll('[data-lnrdel]').forEach(b => b.onclick = () => { if (confirm('この部屋を消しますか？会話と端末の設定も消えます')) send({ op: 'room_del', rid: b.dataset.lnrdel }); }); }
     const ss = body.querySelector('#lnSSave'); if (ss) ss.onclick = () => send({ op: 'shop_set', name: $('lnSName').value, addr: $('lnSAddr').value, sign: $('lnSSign').value });
     const sa = body.querySelector('#lnStAdd'); if (sa) sa.onclick = () => send({ op: 'staff_add', code: $('lnStCode').value, role: $('lnStRole').value });
     body.querySelectorAll('[data-lnsdel]').forEach(b => b.onclick = () => { if (confirm('外しますか？')) send({ op: 'staff_del', code: b.dataset.lnsdel }); });
