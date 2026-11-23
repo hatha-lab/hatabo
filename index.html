@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="ja">
 <head>
-<meta charset="utf-8"><meta name="hb-ver" content="2026-11-23c">
+<meta charset="utf-8"><meta name="hb-ver" content="2026-11-23d">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex">
 <title>ハタボ｜すべての人に、AIの愛棒を</title><meta name="description" content="話すだけで、調べもの・下書き・相談まで、いっしょに動くAIの愛棒。PCとスマホとLINEで使えます。"><meta property="og:type" content="website"><meta property="og:site_name" content="ハタボ"><meta property="og:title" content="ハタボ｜すべての人に、AIの愛棒を"><meta property="og:description" content="話すだけで、調べもの・下書き・相談まで、いっしょに動くAIの愛棒。"><meta property="og:url" content="https://app.hatha-lab.com/"><meta property="og:image" content="https://app.hatha-lab.com/feed_emblem.jpg"><meta name="twitter:card" content="summary">
@@ -2341,11 +2341,17 @@ body.cl .cltools [data-cl="ctx"].clfr { background: transparent !important; colo
 #hbCallSheet .hcs-p span{flex:1}#hbCallSheet .hcs-p svg{width:22px;height:22px;color:#7FD3A0}
 #hbCallSheet .hcs-m,#hbCallSheet .hcs-n{font-size:13px;color:#9AA6BE;line-height:1.7}
 #hbCallSheet .hcs-go{margin-top:6px;padding:10px 16px;border:0;border-radius:999px;background:#F4F6FA;color:#0A1226;font:800 13.5px var(--display)}
-#hbCallRing{position:fixed;left:10px;right:10px;top:calc(10px + env(safe-area-inset-top));z-index:2147482500;display:flex;align-items:center;gap:10px;padding:12px;border-radius:18px;background:#16233F;color:#fff;box-shadow:0 14px 32px rgba(0,0,0,.45);animation:hcrIn .3s ease}
+/* 11/23 着信の帯：いちばん上（z-index の上限）・画面の幅いっぱい・大きな「出る」「あとで」（高さ52px）。ほかの板・案内・字幕より上で、必ず押せる */
+#hbCallRing{position:fixed;left:8px;right:8px;top:calc(8px + env(safe-area-inset-top));z-index:2147483647;display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center;padding:14px;border-radius:20px;background:#16233F;color:#fff;box-shadow:0 14px 32px rgba(0,0,0,.45),0 0 0 2px #62AD7F;animation:hcrIn .3s ease;pointer-events:auto!important;touch-action:manipulation;-webkit-user-select:none;user-select:none}
 @keyframes hcrIn{from{transform:translateY(-120%)}to{transform:none}}
-#hbCallRing .hcr-i{width:42px;height:42px;border-radius:50%;background:#2F7A4E;display:grid;place-items:center}#hbCallRing .hcr-i svg{width:22px;height:22px}
-#hbCallRing .hcr-t{flex:1;min-width:0}#hbCallRing .hcr-t b{display:block;font:800 15px var(--display)}#hbCallRing .hcr-t span{font-size:12px;color:#B9C3D8}
-#hbCallRing button{border:0;border-radius:999px;padding:10px 14px;font:800 13.5px var(--display)}#hbCallRing .hcr-no{background:rgba(255,255,255,.12);color:#fff}#hbCallRing .hcr-ok{background:#62AD7F;color:#fff}
+#hbCallRing *{pointer-events:auto}
+#hbCallRing .hcr-i{width:46px;height:46px;border-radius:50%;background:#2F7A4E;display:grid;place-items:center;animation:hcrPulse 1.2s ease-in-out infinite}#hbCallRing .hcr-i svg{width:24px;height:24px}
+@keyframes hcrPulse{50%{box-shadow:0 0 0 8px rgba(98,173,127,.25)}}
+@media (prefers-reduced-motion:reduce){#hbCallRing,#hbCallRing .hcr-i{animation:none}}
+#hbCallRing .hcr-t{min-width:0}#hbCallRing .hcr-t b{display:block;font:800 16px var(--display);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#hbCallRing .hcr-t span{display:block;font-size:12.5px;color:#B9C3D8}
+#hbCallRing .hcr-btns{grid-column:1/-1;display:grid;grid-template-columns:1fr 1.4fr;gap:10px}
+#hbCallRing button{min-height:52px;border:0;border-radius:999px;padding:0 14px;font:800 16px var(--display);cursor:pointer;touch-action:manipulation}#hbCallRing .hcr-no{background:rgba(255,255,255,.14);color:#fff}#hbCallRing .hcr-ok{background:#62AD7F;color:#fff}
+#hbCallRing button:active{transform:scale(.97)}
 #hbCallOv{position:fixed;inset:0;z-index:2147482400;background:#16233F}#hbCallOv iframe{width:100%;height:100%;border:0;display:block}
 #hbCallOv .hbcall-x{position:absolute;right:12px;top:calc(10px + env(safe-area-inset-top));padding:8px 14px;border:0;border-radius:999px;background:rgba(255,255,255,.14);color:#fff;font:700 12.5px var(--display)}
 /* ===== UIとUX（11/22 点検）：小さいスマホ・タップの大きさ ===== */
@@ -7521,30 +7527,69 @@ html:has(> body.cl.av-hatabo), body.cl.av-hatabo { background-color: #0A1226; } 
     setInterval(clTickBars, 600); clTickBars();
   }
   /* ===== 11/22 電話：上の帯の電話のマーク → 友だちをえらぶ → 電話の画面（アプリの中に重ねる）。かかってきたら上に知らせ ===== */
-  function hbCallOpen(url) {
-    if (!url) return;
-    if (!urlOk(url, 'call')) { toast('電話の画面を開けませんでした（行き先を確かめられません）'); return; }   // 11/22 安全：マイクを使う画面なので、自分たちの call.html だけ
+  // 11/23：電話の画面の住所を、自分たちの call.html にそろえる。サーバーが古い住所（止まった github.io など）を送ってきても、
+  // 部屋と切符（?room=&t=…）はそのままで、このアプリと同じ所の call.html で開く（前はここではじかれて「出る」が何も起きないように見えた）
+  const CALL_ORIGIN = () => (/(^|\.)hatha-lab\.com$/.test(location.hostname) ? location.origin : 'https://app.hatha-lab.com');
+  function callUrlFix(url) {
+    if (urlOk(url, 'call')) return String(url);
+    try { const x = new URL(String(url || '')); if (x.protocol === 'https:' && /\/call\.html$/.test(x.pathname) && x.searchParams.get('room')) return CALL_ORIGIN() + '/call.html' + x.search; } catch (e) {}
+    return '';
+  }
+  function hbCallOpen(url0) {
+    if (!url0) return false;
+    const url = callUrlFix(url0);
+    if (!url) { toast('電話の画面を開けませんでした（行き先を確かめられません）'); return false; }   // 11/22 安全：マイクを使う画面なので、自分たちの call.html だけ
+    if (window.hbCallRingStop) window.hbCallRingStop(false);
     // 11/23：iPhoneのLINEの中では、別のサイト（github.io）の電話の画面を重ねて開くと、マイクの許可が出ずに話せなかった。
     // iPhoneのLINEでは、マイクが確実に使えるSafariで開く（相手の側も同じ）。ほかは今までどおり重ねて開き、うまくいかないときのためにSafariで開くボタンも置く
     const iosLine = /iPhone|iPad|iPod/.test(navigator.userAgent) && / Line\//i.test(navigator.userAgent);
-    const ext = () => { try { if (window.liff && liff.openWindow) { liff.openWindow({ url, external: true }); return true; } } catch (e) {} try { location.href = url; return true; } catch (e) {} return false; };
-    if (iosLine && ext()) { toast('電話の画面をSafariで開きます。「かける」を押して、マイクを「許可」してください'); const r = $('hbCallRing'); if (r) r.hidden = true; const sh = $('hbCallSheet'); if (sh) sh.hidden = true; return; }
+    const ext = () => { try { if (window.liff && liff.openWindow) { liff.openWindow({ url, external: true }); return true; } } catch (e) {} try { location.href = url + (url.includes('openExternalBrowser') ? '' : '&openExternalBrowser=1'); return true; } catch (e) {} return false; };
+    if (iosLine && ext()) { toast('電話の画面をSafariで開きます。「出る」（かける）を押して、マイクを「許可」してください'); const sh = $('hbCallSheet'); if (sh) sh.hidden = true; return true; }
     let o = $('hbCallOv');
     if (!o) { o = document.createElement('div'); o.id = 'hbCallOv'; o.innerHTML = '<iframe title="電話" allow="microphone; autoplay"></iframe><button type="button" class="hbcall-x" aria-label="電話の画面を閉じる">閉じる</button><button type="button" class="hbcall-ext" style="position:absolute;left:12px;top:calc(10px + env(safe-area-inset-top));z-index:2;padding:8px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.3);background:rgba(10,14,22,.7);color:#fff;font:700 12px var(--display, sans-serif)">声が出ないときはブラウザで開く</button>'; document.body.append(o);
       o.querySelector('.hbcall-ext').onclick = () => { const u = o.querySelector('iframe').src; if (!/^https:/.test(u)) return; try { if (window.liff && liff.openWindow) liff.openWindow({ url: u, external: true }); else window.open(u, '_blank', 'noopener'); } catch (e) { location.href = u; } o.querySelector('iframe').src = 'about:blank'; o.hidden = true; };
       o.querySelector('.hbcall-x').onclick = () => { if (!confirm('電話の画面を閉じます。話している途中なら切れます。')) return; o.querySelector('iframe').src = 'about:blank'; o.hidden = true; }; }
-    o.querySelector('iframe').src = url; o.hidden = false; const r = $('hbCallRing'); if (r) r.hidden = true; const sh = $('hbCallSheet'); if (sh) sh.hidden = true;
+    o.querySelector('iframe').src = url; o.hidden = false; const sh = $('hbCallSheet'); if (sh) sh.hidden = true;
+    return true;
   }
   window.hbCallOpen = hbCallOpen;
+  /* 11/23 着信：帯（いちばん上・大きなボタン）と、呼び出し音。
+     iPhoneのLINEでは、画面に一度もふれていないと音を出せない（自動再生の制限）。アプリの中で一度でもふれていれば（audioUnlock）、
+     その音の準備（AC）で、プルルル…と鳴らす。navigator.vibrate は iPhone では使えない（Androidだけふるえる）。
+     アプリを閉じているときは、ここは動かない（通知の音だけ。sw.js と PRの説明を見てね） */
+  const RING = { t: 0, end: 0, on: false };
+  function ringSound(on) {
+    clearTimeout(RING.t); RING.on = !!on; if (!on) return;
+    const beat = () => {
+      if (!RING.on) return;
+      if (Date.now() > RING.end) return hbCallRingStop(true);
+      try { const a = AC(); if (a.state === 'running') { const t0 = a.currentTime + 0.02; for (let i = 0; i < 2; i++) { const s0 = t0 + i * 0.5; tone(1320, s0, 0.4, 'sine', 0.22); tone(1660, s0, 0.4, 'sine', 0.12); } } } catch (e) {}
+      try { if (navigator.vibrate) navigator.vibrate([400, 200, 400]); } catch (e) {}
+      RING.t = setTimeout(beat, 3000);
+    };
+    beat();
+  }
+  function hbCallRingStop(missed) {
+    ringSound(false); try { if (navigator.vibrate) navigator.vibrate(0); } catch (e) {}
+    const r = $('hbCallRing'); if (!r) return;
+    if (missed && !r.hidden && r.dataset.from) { r.hidden = true; toast((r.dataset.from || '友だち') + 'さんから電話がありました（出られませんでした）'); return; }
+    r.hidden = true;
+  }
+  window.hbCallRingStop = hbCallRingStop;
   window.hbCallRing = m => {
+    if (!m || !m.url) return;
     let r = $('hbCallRing');
-    if (!r) { r = document.createElement('div'); r.id = 'hbCallRing'; r.setAttribute('role', 'alertdialog'); document.body.append(r); }
-    r.innerHTML = '<div class="hcr-i">' + CL_IC.phone + '</div><div class="hcr-t"><b></b><span>電話です</span></div><button type="button" class="hcr-no">あとで</button><button type="button" class="hcr-ok">出る</button>';
-    r.querySelector('b').textContent = (m.name || '友だち') + 'さんから';
-    r.querySelector('.hcr-ok').onclick = () => hbCallOpen(m.url);
-    r.querySelector('.hcr-no').onclick = () => { r.hidden = true; };
-    r.hidden = false; try { if (navigator.vibrate) navigator.vibrate([300, 150, 300, 150, 300]); } catch (e) {}
-    clearTimeout(r._t); r._t = setTimeout(() => { r.hidden = true; }, 45000);
+    if (!r) { r = document.createElement('div'); r.id = 'hbCallRing'; r.setAttribute('role', 'alertdialog'); r.setAttribute('aria-live', 'assertive'); }
+    document.body.append(r);   // 毎回いちばん最後に置きなおす（あとから開いた板・案内の下にならないように）
+    const who = String(m.name || '友だち').slice(0, 20);
+    r.dataset.from = who; r.setAttribute('aria-label', who + 'さんから電話');
+    r.innerHTML = '<div class="hcr-i">' + CL_IC.phone + '</div><div class="hcr-t"><b></b><span>ハタボの電話です</span></div><div class="hcr-btns"><button type="button" class="hcr-no">あとで</button><button type="button" class="hcr-ok">出る</button></div>';
+    r.querySelector('b').textContent = who + 'さんから';
+    const ok = r.querySelector('.hcr-ok'), sub = r.querySelector('.hcr-t span');
+    ok.onclick = () => { ringSound(false); try { if (!hbCallOpen(m.url)) { sub.textContent = '電話の画面を開けませんでした。もう一度「出る」を押してください'; ringSound(false); } } catch (e) { sub.textContent = '電話の画面を開けませんでした（' + (e.message || e) + '）'; } };
+    r.querySelector('.hcr-no').onclick = () => { r.dataset.from = ''; hbCallRingStop(false); };
+    r.hidden = false; RING.end = Date.now() + 45000; ringSound(true);
+    clearTimeout(r._t); r._t = setTimeout(() => hbCallRingStop(true), 45000);
   };
   function hbCallSheetBody() {
     const T = HBP.callT;

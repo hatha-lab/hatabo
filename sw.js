@@ -11,6 +11,11 @@ self.addEventListener('push', e => {
     tag: d.tag || 'inbox',
     renotify: true,
     data: { url: d.url || '', page: d.page || 'inbox', from: d.from || '', callUrl: d.callUrl || '' },
+    // 11/23 電話：音を消さない（silent:false）・押すまで出しっぱなし・同じ tag でも鳴らしなおす。
+    // iPhone（ホーム画面に置いたハタボ）は、ふつうの通知音が1回鳴るだけ（着信音のように鳴り続ける・ふるえる指定は iOS が無視する）。
+    // LINEのミニアプリだけを使っている人には、この通知は届かない（ウェブの通知は、ホーム画面に置いたハタボだけ）
+    silent: false,
+    vibrate: d.tag === 'call' ? [400, 200, 400, 200, 400] : undefined,
     requireInteraction: d.tag === 'call'
   })];
   const nav = self.navigator;

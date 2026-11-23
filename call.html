@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>ハタボ 電話（試し）</title>
+<title>ハタボ 電話</title>
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#16233F">
 <style>
@@ -38,12 +38,17 @@ main{min-height:100%;max-width:480px;margin:0 auto;padding:max(20px,env(safe-are
 .ctl:disabled{opacity:.45;cursor:default}
 .ctl:focus-visible i{outline:3px solid #F7E3A8;outline-offset:3px}
 .diag{margin-top:18px;font-size:12px;color:var(--sub);text-align:center;min-height:1.4em}
+.inline{display:grid;gap:8px;margin:14px 0 0;padding:14px;border-radius:16px;background:#F7E3A8;color:#16233F;font-size:14px}
+.inline b{font-size:15px}.inline .go,.inline .cp{display:flex;align-items:center;justify-content:center;min-height:48px;border-radius:999px;font:800 15px/1 inherit;text-decoration:none;border:0;cursor:pointer}
+.inline .go{background:#16233F;color:#fff}.inline .cp{background:rgba(22,35,63,.1);color:#16233F}
 [hidden]{display:none!important}
 </style>
 </head>
 <body>
 <main>
-  <div class="top"><span>ハタボ 電話</span><span class="tag">試し</span></div>
+  <div class="top"><span>ハタボ 電話</span><span class="tag" id="testTag" hidden>合言葉のテスト</span></div>
+  <!-- 11/23：友だちからの電話（切符つき）では「試し」を出さない。合言葉で入るテストのときだけ右上に出す -->
+  <div class="inline" id="inLine" hidden><b>LINEの中では、マイクが使えないことがあります</b><span>下のボタンで Safari に切りかえて「出る」を押してください。</span><a class="go" id="extBtn" href="#">Safariで開く</a><button type="button" class="cp" id="copyBtn">リンクをコピー（Safariに貼る）</button></div>
 
   <div class="who">
     <div class="face" id="face" aria-hidden="true">?</div>
@@ -92,7 +97,20 @@ main{min-height:100%;max-width:480px;margin:0 auto;padding:max(20px,env(safe-are
   const newRoom = () => Array.from(crypto.getRandomValues(new Uint8Array(8)), b => 'abcdefghjkmnpqrstuvwxyz23456789'[b % 31]).join('');
   let room = (P.get('room') || '').toLowerCase();
   if (!/^[a-z0-9]{6,16}$/.test(room)) { room = newRoom(); P.set('room', room); history.replaceState(null, '', '?' + P.toString()); }
+  // 11/23（着信の不具合）：前は state を下で定義していたので、切符つき（友だちからの電話）で開くと、上の if (T) の中の state(…) が
+  // 「定義の前に使った」エラーになり、そこでスクリプトが止まって「出る」「かける」に何もつかなかった（押しても何も起きない）
+  const state = t => { $('state').textContent = t; };
+  const diag = t => { $('diag').textContent = t; };
   const T = P.get('t') || '', ROLE = P.get('r') || '';   // アプリから：友だちどうしの電話（合言葉の代わりに切符）
+  $('testTag').hidden = !!T;   // 「合言葉のテスト」は、切符なし（合言葉で入る）ときだけ
+  if (!T) document.title = 'ハタボ 電話（合言葉のテスト）';
+  // 11/23：iPhoneのLINEの中のブラウザでは、マイクの許可が出ないことがある（「出る」を押しても進まない）。Safariに切りかえる道を、はじめから見せる
+  const IN_LINE = / Line\//i.test(navigator.userAgent) && /iPhone|iPad|iPod/.test(navigator.userAgent);
+  const extUrl = () => { const q = new URLSearchParams(location.search); q.set('openExternalBrowser', '1'); return location.origin + location.pathname + '?' + q.toString(); };
+  if (IN_LINE) {
+    $('inLine').hidden = false; $('extBtn').href = extUrl();
+    $('copyBtn').onclick = async () => { const u = location.href.replace(/([?&])openExternalBrowser=1&?/, '$1').replace(/[?&]$/, ''); try { await navigator.clipboard.writeText(u); $('copyBtn').textContent = 'コピーしました。Safariのアドレス欄に貼ってください'; } catch (e) { prompt('このリンクをコピーして、Safariで開いてください', u); } };
+  }
   $('key').value = P.get('k') || get('callKey');
   $('me').value = P.get('n') || get('callName');
   if (T) {
@@ -104,13 +122,11 @@ main{min-height:100%;max-width:480px;margin:0 auto;padding:max(20px,env(safe-are
   function setFace0(n) { const f = document.getElementById('face'); if (f) f.textContent = (n || '?').slice(0, 1); }
 
   let ws = null, pc = null, mic = null, muted = false, t0 = 0, tick = null, ice = null, pend = [], peerName = '';
-  const state = t => { $('state').textContent = t; };
-  const diag = t => { $('diag').textContent = t; };
   const shareUrl = () => { const q = new URLSearchParams({ room }); if (host !== HOST0) q.set('s', host); return location.origin + location.pathname + '?' + q.toString(); };
   $('link').textContent = shareUrl() + '（合言葉は別に伝えてください）';
 
   $('shareBtn').onclick = async () => {
-    const url = shareUrl(), text = 'ハタボの電話（試し）です。ひらいて「かける」を押してね';
+    const url = shareUrl(), text = 'ハタボの電話（合言葉のテスト）です。ひらいて「かける」を押してね';
     try { if (navigator.share) { await navigator.share({ title: 'ハタボ 電話', text, url }); return; } } catch (e) { if (e.name === 'AbortError') return; }
     try { await navigator.clipboard.writeText(url); state('リンクをコピーしました'); } catch (e) { state('リンクを長押しでコピーしてください'); }
   };
@@ -129,8 +145,15 @@ main{min-height:100%;max-width:480px;margin:0 auto;padding:max(20px,env(safe-are
     if (!k && !T) { state('合言葉を入れてください'); $('key').focus(); return; }
     if (!T) { put('callKey', k); put('callName', me); }
     $('callBtn').disabled = true; state('マイクを準備しています');
-    try { mic = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } }); }
-    catch (e) { $('callBtn').disabled = false; state('マイクが使えません。ブラウザの設定でマイクを許可してください'); return; }
+    // 11/23：マイクの許可が出ないまま待ち続けると、ボタンが押せないままになる。12秒で切りあげて、もう一度押せるようにする
+    try {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) throw new Error('nomedia');
+      const gp = navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } });
+      let tm = 0;
+      try { mic = await Promise.race([gp, new Promise((_, ng) => { tm = setTimeout(() => { gp.then(st => st.getTracks().forEach(t => t.stop())).catch(() => {}); ng(new Error('timeout')); }, 12000); })]); }
+      finally { clearTimeout(tm); }
+    }
+    catch (e) { $('callBtn').disabled = false; if (IN_LINE) $('inLine').hidden = false; state(IN_LINE ? 'LINEの中ではマイクが使えませんでした。下の「Safariで開く」から出てください' : e.message === 'timeout' ? 'マイクの許可が出ませんでした。もう一度押すか、ブラウザの設定でマイクを許可してください' : 'マイクが使えません。ブラウザの設定でマイクを許可してください'); return; }
     const r = await fetch(http + '/call/ice', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(T ? { t: T, room } : { k }) }).catch(() => null);
     if (!r || !r.ok) { stopAll(); $('callBtn').disabled = false; state(r && r.status === 403 ? '合言葉がちがいます' : 'サーバーにつながりません'); return; }
     ice = await r.json();
