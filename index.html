@@ -1838,6 +1838,18 @@ html.pwa body:is(.av-hatabo, .av-komugi):not(.hbp-open):not(.plain) .hbbot { bot
 .clnote { margin: 6px 0 0; text-align: center; font-size: 11px; line-height: 1.5; color: var(--cmut, #8A93A6); }
 body:not(.cl) .clnote { display: none; }
 .clask { display: grid; }
+/* 11/25 切りかえのボタン：プリセットのあるトークの壁打ち中は「下書き」が選ばれている見た目（「トーク」は選ばれていない見た目） */
+body.hbPre:not(.hbSpkAgent) .clmode button:is([data-v="chat"]).on { background: transparent !important; color: #A9B6CF !important; }
+body.hbPre:not(.hbSpkAgent) .hbp-mode button:is([data-mode="chat"]).on { background: transparent !important; color: var(--cmut) !important; }
+.clmode button[disabled], .hbp-mode button[disabled] { opacity: .45; cursor: default; }
+.clmode button, .hbp-mode button { white-space: nowrap; }
+/* 11/25 トーク画面の右下：いま話している相手のアイコン（押すと、相棒の壁打ち ⇄ 相手側のエージェントの本画面） */
+#cvWhoBtn { position: fixed; right: 14px; bottom: calc(14px + env(safe-area-inset-bottom)); z-index: 60; width: 54px; height: 54px; border-radius: 50%; border: 0; padding: 0; background: #fff; box-shadow: 0 0 0 2px var(--who, #8FB0F0), 0 8px 20px -6px rgba(0,0,0,.5); cursor: pointer; display: none; }
+#cvWhoBtn img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+#cvWhoBtn small { position: absolute; left: 50%; bottom: -15px; transform: translateX(-50%); white-space: nowrap; font: 800 10px/1 var(--display, sans-serif); color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.7); }
+body.chatview #cvWhoBtn, body.cl:not(.hbp-open) #cvWhoBtn { display: block; }
+body.hbp-open:not(.hbshell) #cvWhoBtn { display: none !important; }
+@media (max-width: 899px) { #cvWhoBtn { bottom: calc(118px + env(safe-area-inset-bottom)); width: 46px; height: 46px; } }
 body.cl #hbTopBrand, body.cl .hbp-brand { pointer-events: none !important; cursor: default !important; }   /* ロゴは押せない飾り（ホームは左の一覧から） */
 @media (min-width: 900px) { body.cl #hbTopBrand, body.cl .hbp-brand, .chatv .cv-top > img, #cvName { pointer-events: auto !important; cursor: pointer !important; } }   /* 11/25 パソコン：2つのエンブレムと「HATHABO」の文字は、押すと左のトーク一覧を出す（スマホは三本線のまま） */
 .clb { position: relative; display: grid; place-items: center; flex: none; width: 44px; height: 44px; padding: 0 !important; border: 0 !important; border-radius: 12px !important; background: transparent !important; color: #E8EBF0 !important; cursor: pointer; transition: transform .08s, background .15s; }
@@ -2879,7 +2891,7 @@ html:has(> body.cl.av-hatabo), body.cl.av-hatabo { background-color: #0A1226; } 
     <div class="cv-row">
       <div class="cv-s"><button type="button" class="cv-pill gradeb" data-grade-open>モデル</button><button type="button" class="cv-pill" id="cvMove" title="ChatGPTやClaudeが知っている「あなたのこと」を、わたしのハタボに入れる">いつものAIから引っ越す</button></div>
       <div><button type="button" class="cv-mic" id="cvMic" aria-label="話す"><img src="award_mark.svg" alt=""></button><div class="cv-cap" id="cvCap">おして話す</div></div>
-      <div class="cv-s"><button type="button" class="cv-pill shareb" data-share>紹介する</button></div>
+      <div class="cv-s"><button type="button" class="cv-pill shareb" data-share>紹介する</button><button type="button" class="cv-whob" id="cvWhoBtn" aria-label="いま話している相手（押すと切りかえ）"><img src="award_mark.svg" alt=""><small></small></button></div>
     </div>
   </div>
 </div>
@@ -4255,6 +4267,8 @@ html:has(> body.cl.av-hatabo), body.cl.av-hatabo { background-color: #0A1226; } 
       case 'byok': HBP.byok = m; if (m.saved) toast('キーを保存しました。次の返事から自分のClaudeで動きます'); if (m.removed) toast('キーを消しました'); if (!$('hbPage').hidden && (HBP.page === 'byok' || HBP.page === 'acct')) hbpRender(); break;
       case 'groups_mine': HBP.myGroups = m.list || []; hbpChats(); break;
       case 'group_log': HBP.glog = HBP.glog || {}; HBP.glog[m.gid] = m; if (!$('hbPage').hidden && HBP.page === 'group' && HBP.gid === m.gid) hbpRender(); break;
+      case 'speaker_ask': if (!m.ok) { toast(m.why || '切りかえられませんでした'); break; } if (window.hbShareAsk) window.hbShareAsk(m); break;
+      case 'speaker': if (!m.ok) { toast(m.why || '切りかえられませんでした'); break; } J.speaker = m.who === 'agent' ? 'agent' : 'aibo'; toast(J.speaker === 'agent' ? m.name + 'に切りかえました（' + (m.shared ? '選んだ情報だけ渡しました' : 'あなたの情報は渡していません') + '）' : '相棒の壁打ちにもどりました'); break;
       case 'chat_turns': if (window.hbCvLoad) window.hbCvLoad(m.turns || []); HBP.chats && (HBP.chats.cur = m.id); hbpChats(); break;
       case 'acct': HBP.acct = Object.assign({}, HBP.acct || {}, m, m.error ? {} : { error: '' }); if (m.error) HBP.acct.error = m.error; if (HBP.page === 'merge') hbpRender(); break;
       case 'custom': HBP.custom = m; if (m.saved) { toast('キャラ設定を保存したよ'); window.__aiName = m.aiName || ''; avText(); const t = document.querySelector('#butterTag text'); if (t && avName()) t.textContent = avName(); } if (!$('hbPage').hidden && (HBP.page === 'custom' || HBP.page === 'voice' || HBP.page === 'my')) hbpRender(); break;
@@ -6295,6 +6309,62 @@ const GUIDE_ICON = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http:
       J.agentWant = nm; jrSend({ type: 'clone_new', name: nm + '向け', label: nm, role: '汎用', note: fr ? nm + 'さんへの案内：' + fr : '' }); o.remove(); toast('エージェントを作っています…'); };
   }
   window.hbNewMenu = hbNewMenu;
+  /* --- 11/25 トークごとの相手側のエージェント（プリセット）。ふだんは相棒が話し、右下のアイコンを押したときだけ切りかえる --- */
+  window.HB_TALK_PRESET = { guide: 'ハタボ事務局案内係' };
+  J.speaker = 'aibo';
+  function hbWhoBtn() {
+    const b = $('cvWhoBtn'); if (!b) return;
+    const w = clWho(), P = window.HB_TALK_PRESET[J.focusKey || ''], im = b.querySelector('img');
+    if (im.getAttribute('src') !== w.icon) im.setAttribute('src', w.icon); im.style.filter = w.filter; b.style.setProperty('--who', w.color);
+    b.title = P ? (J.speaker === 'agent' ? 'いま：' + P + '（本画面）。押すと相棒の壁打ちにもどる' : 'いま：' + w.name + '（壁打ち。' + P + 'には見えません）。押すと' + P + 'に切りかえ') : 'いま：' + w.name;
+    b.querySelector('small').textContent = P ? (J.speaker === 'agent' ? '本画面' : '壁打ち') : '';
+    const inp = $('cvInput'); if (inp) { if (!('ph0' in inp.dataset)) inp.dataset.ph0 = inp.placeholder; inp.placeholder = P ? (J.speaker === 'agent' ? P + 'に話しかける' : '壁打ち：相棒と下書き（' + P + 'には見えません）') : inp.dataset.ph0; }
+  }
+  setInterval(hbWhoBtn, 400);
+  $('cvWhoBtn').addEventListener('click', () => {
+    const P = window.HB_TALK_PRESET[J.focusKey || ''];
+    if (!P) return toast('このトークには、相手のエージェントがいません（いまは' + clWho().name + 'と話しています）');
+    if (J.speaker === 'agent') return jrSend({ type: 'speaker', who: 'aibo' });
+    toast('切りかえの確認を用意しています…'); jrSend({ type: 'speaker_ask' });
+  });
+  function hbShareAsk(m) {   // 切りかえるたびに確認。既定は「送らない」。渡す中身は、ここで見せたものだけ
+    const o = document.createElement('div'); o.id = 'hbShareAsk';
+    o.style.cssText = 'position:fixed;inset:0;z-index:2147483001;background:rgba(8,12,24,.55);display:grid;place-items:center;padding:20px';
+    const has = !!m.preview;
+    o.innerHTML = '<div role="dialog" aria-modal="true" style="background:#fff;color:#141A2A;border-radius:20px;max-width:440px;width:100%;padding:22px;font:500 14.5px/1.7 var(--display);box-shadow:0 24px 70px rgba(0,0,0,.45)"><b style="display:block;font-size:18px;margin-bottom:8px"></b>'
+      + '<p style="margin:0 0 10px;color:#3A4358">あなたの情報（このトークの壁打ち・覚えたこと）を渡しますか？</p>'
+      + '<div data-pv style="white-space:pre-wrap;background:#F6F8FB;border:1px solid #DDE3EC;border-radius:12px;padding:10px 12px;font-size:13px;max-height:38vh;overflow:auto;margin-bottom:12px"></div>'
+      + '<label style="display:flex;gap:8px;align-items:center;margin-bottom:6px;cursor:pointer"><input type="radio" name="hbShare" value="no" checked> <b>送らない</b><span style="color:#5B6478;font-size:12.5px">（何も渡さずに切りかえる）</span></label>'
+      + '<label style="display:flex;gap:8px;align-items:center;margin-bottom:14px;cursor:pointer"><input type="radio" name="hbShare" value="yes"' + (has ? '' : ' disabled') + '> <b>送る</b><span style="color:#5B6478;font-size:12.5px">（上の中身だけを渡す）</span></label>'
+      + '<button type="button" data-a="go" style="width:100%;border:0;border-radius:14px;background:#2F8A55;color:#fff;font-weight:800;padding:12px;cursor:pointer">切りかえる</button>'
+      + '<button type="button" data-a="x" style="width:100%;border:0;background:none;color:#5B6478;font-weight:700;padding:8px;margin-top:4px;cursor:pointer">やめる</button></div>';
+    o.querySelector('b').textContent = m.name + 'に切りかえます';
+    o.querySelector('[data-pv]').textContent = has ? m.preview : '渡せる情報はありません（このトークの壁打ちも、関係する覚えたこともありません）';
+    document.body.append(o);
+    o.querySelector('[data-a=go]').onclick = () => { const share = (o.querySelector('input[name=hbShare]:checked') || {}).value === 'yes'; o.remove(); jrSend({ type: 'speaker', who: 'agent', share }); };
+    o.querySelector('[data-a=x]').onclick = () => o.remove();
+  }
+  window.hbShareAsk = hbShareAsk;
+  /* 11/25 上（PC）・下（携帯）の切りかえ：「トーク」「下書き」「愛棒を選ぶ」。プリセットのあるトーク（事務局案内係）は「トーク」＝本画面・「下書き」＝壁打ちの2つだけ。
+     「愛棒を選ぶ」（もとの「愛棒」。動きは同じ）は相棒のトークだけ。ほかのトークでは場所ごと消す */
+  function hbModeBtns() {
+    const P = window.HB_TALK_PRESET[J.focusKey || ''], own = !J.focusKey;
+    document.body.classList.toggle('hbPre', !!P); document.body.classList.toggle('hbSpkAgent', !!P && J.speaker === 'agent');
+    document.querySelectorAll('.clmode, .hbp-mode').forEach(g => {
+      const chat = g.querySelector('[data-v="chat"], [data-mode="chat"]'), ch = g.querySelector('[data-v="char"], [data-mode="char"]'); if (!chat) return;
+      let d = g.querySelector('[data-draft]'); if (!d) { d = document.createElement('button'); d.type = 'button'; d.dataset.draft = '1'; d.textContent = '下書き'; chat.after(d); }
+      if (ch) { if (ch.textContent !== '愛棒を選ぶ') ch.textContent = '愛棒を選ぶ'; ch.hidden = !own; }
+      d.hidden = !(own || P); d.disabled = own; d.title = own ? '下書きは、相手のいるトークで使います' : '相棒と下書き（' + P + 'には見えません）';
+      d.classList.toggle('on', !!P && J.speaker !== 'agent');
+    });
+  }
+  setInterval(hbModeBtns, 300);
+  document.addEventListener('click', e => {
+    const d = e.target.closest && e.target.closest('[data-draft]');
+    if (d) { e.preventDefault(); e.stopImmediatePropagation(); if (d.disabled) return; if (window.hbSetView) window.hbSetView('chat'); if (J.speaker === 'agent') jrSend({ type: 'speaker', who: 'aibo' }); return; }
+    const c = e.target.closest && e.target.closest('.clmode [data-v="chat"], .hbp-mode [data-mode="chat"]');
+    if (c && window.HB_TALK_PRESET[J.focusKey || ''] && J.speaker !== 'agent') { toast('切りかえの確認を用意しています…'); jrSend({ type: 'speaker_ask' }); }   // 「トーク」＝本画面（相手のエージェント）。右下のアイコンと同じ確認
+  }, true);
   const hbSheet = (title, html) => {   // 上に出るフォーム（うしろはトーク画面のまま）
     const o = document.createElement('div'); o.className = 'hbsheet';
     o.style.cssText = 'position:fixed;inset:0;z-index:2147483001;background:rgba(8,12,24,.45);display:grid;place-items:center;padding:16px';
@@ -6425,7 +6495,7 @@ const GUIDE_ICON = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http:
   window.hbSetFocus = (k, n) => setFocus(k, n);
   function setFocus(key, name) {
     name = String(name || '').replace(/(さん|様|さま|くん|ちゃん)$/, '') ;   // 「〇〇さんさん」にならないように
-    J.focusKey = key || ''; J.focusName = name || '';
+    J.focusKey = key || ''; J.focusName = name || ''; J.speaker = 'aibo';   // 11/25 どのトークを開いても、はじめは相棒（壁打ち）
     document.body.classList.toggle('hasFocus', !!key);
     const fc = $('cvFocus'); if (fc) fc.querySelector('b').textContent = key === 'chief' ? 'ハタボ事務局長と話しています' : key === 'guide' ? 'ハタボ事務局案内係と話しています' : key ? name + 'さん向けの、わたしのハタボの分身' : '';
     document.querySelectorAll('#cvStrip [data-fk]').forEach(b => b.classList.toggle('on', b.dataset.fk === (key || 'me:me')));
@@ -6461,7 +6531,7 @@ const GUIDE_ICON = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http:
         if (!row) {
           row = document.createElement('div');
           row.className = 'cv-m ' + (her ? 'her' : 'me');
-          if (her) { const w = document.createElement('div'); w.className = 'cv-who'; w.innerHTML = '<img class="cvw' + (J.focusKey ? '' : ' own') + '" src="' + (J.focusKey === 'guide' && window.HB_GUIDE_ICON ? window.HB_GUIDE_ICON : 'award_mark.svg') + '" alt="">'; w.append(document.createTextNode('')); row.append(w); }
+          if (her) { const w = document.createElement('div'); w.className = 'cv-who'; w.innerHTML = '<img class="cvw' + (!J.focusKey || ((window.HB_TALK_PRESET || {})[J.focusKey] && J.speaker !== 'agent') ? ' own' : '') + '" src="' + (J.focusKey === 'guide' && J.speaker === 'agent' && window.HB_GUIDE_ICON ? window.HB_GUIDE_ICON : 'award_mark.svg') + '" alt="">'; w.append(document.createTextNode('')); row.append(w); }
           const body = document.createElement('div'); body.className = 'cv-b'; row.append(body);
           map.set(b, row); L.append(row); $('cvEmpty').hidden = true;
         }
@@ -6493,7 +6563,7 @@ const GUIDE_ICON = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http:
     window.hbCvLoad = turns => {
       [...bubbles.children].forEach(b => b.remove()); L.querySelectorAll('.cv-m').forEach(r => r.remove());
       (turns || []).forEach(t => { if (/^（/.test(String(t.content || ''))) return; const her = t.role !== 'user', row = document.createElement('div'); row.className = 'cv-m ' + (her ? 'her' : 'me');
-        if (her) { const w = document.createElement('div'); w.className = 'cv-who'; w.innerHTML = '<img class="cvw' + (J.focusKey ? '' : ' own') + '" src="' + (J.focusKey === 'guide' && window.HB_GUIDE_ICON ? window.HB_GUIDE_ICON : 'award_mark.svg') + '" alt="">'; w.append(document.createTextNode((typeof avName === 'function' && avName()) || 'ハタボ')); row.append(w); }
+        if (her) { const w = document.createElement('div'); w.className = 'cv-who'; w.innerHTML = '<img class="cvw' + (!J.focusKey || ((window.HB_TALK_PRESET || {})[J.focusKey] && J.speaker !== 'agent') ? ' own' : '') + '" src="' + (J.focusKey === 'guide' && J.speaker === 'agent' && window.HB_GUIDE_ICON ? window.HB_GUIDE_ICON : 'award_mark.svg') + '" alt="">'; w.append(document.createTextNode((typeof avName === 'function' && avName()) || 'ハタボ')); row.append(w); }
         const bd = document.createElement('div'); bd.className = 'cv-b'; bd.textContent = t.content; row.append(bd); L.append(row); });
       $('cvEmpty').hidden = !!L.querySelector('.cv-m'); L.scrollTop = L.scrollHeight;
     };
@@ -7192,7 +7262,7 @@ const GUIDE_ICON = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http:
   function clWho() {
     if (J.visit) { const nm = J.visitName || (($('visitName') || {}).textContent || '').replace(/と話しています$/, '').trim() || 'ご縁の人の愛棒', h = clHue(J.visit); return { kind: 'other', name: nm, icon: clInitial(nm, h), color: 'hsl(' + h + ',60%,58%)', filter: 'none' }; }
     const fk = J.focusKey || '';
-    if (fk && fk !== 'me:me') {
+    if (fk && fk !== 'me:me' && !((window.HB_TALK_PRESET || {})[fk] && J.speaker !== 'agent')) {   // 11/25 プリセットのあるトークでも、壁打ちのあいだは相棒
       const A = J.agent && fk === 'c:' + J.agent.code ? J.agent : null, it = A && ((HBP.clones && HBP.clones.items) || []).find(x => x.code === A.code);
       const nm = fk === 'chief' ? 'ハタボ事務局長' : fk === 'guide' ? 'ハタボ事務局案内係' : A ? (A.name || '愛棒') + (it && it.role ? '・' + it.role : '') : J.focusName || '愛棒';
       const h = fk === 'chief' ? 40 : fk === 'guide' ? 150 : clHue(fk);
