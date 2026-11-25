@@ -7722,7 +7722,7 @@ const GUIDE_ICON = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http:
     const join = String(qpar('join') || '').replace(/[^\w-]/g, ''), w = lnWant();
     if (join && w && w.view === 'works') { LN.boot = true; LN.cur = { view: 'works', id: w.id }; hbpOpen('works'); jrSend({ type: 'works', id: w.id, op: 'join', token: join }); jrSend({ type: 'lineup', boot: 1 }); return; }
     if (w) return jrSend({ type: 'lineup', want: w });
-    if (qpar('page') || qpar('ref') || qpar('with') || qpar('stage') || document.body.classList.contains('av-komugi') || document.body.classList.contains('officemode')) { LN.boot = true; jrSend({ type: 'lineup' }); return; }   // ほかの入口から来たときは、いつもどおり（切りかえの一覧だけ取る）
+    if (qpar('page') || qpar('ref') || qpar('with') || qpar('stage') || document.body.classList.contains('av-komugi') || document.body.classList.contains('officemode')) { LN.boot = true; jrSend(document.body.classList.contains('officemode') ? { type: 'lineup', want: { view: 'office' } } : { type: 'lineup' }); return; }   // 11/25 事務局の入口からは「事務局」を開く（最後に使ったお店・会社の画面に上書きされて、事務局のモードが外れないように。権限はサーバーがたしかめる）   // ほかの入口から来たときは、いつもどおり（切りかえの一覧だけ取る）
     jrSend({ type: 'lineup' });
   });
   setInterval(lnAvatar, 1500);
