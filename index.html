@@ -6023,6 +6023,9 @@ const GUIDE_ICON = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http:
   function hbpDrawer(on) { if (!on) HBP.fromChat = false; $('hbPage').classList.toggle('drawer', !!on); $('hbpScrim').hidden = !on; if (on && J.ready) jrSend({ type: 'chats' }); }
   $('hbpMenu').addEventListener('click', () => hbpDrawer(!$('hbPage').classList.contains('drawer')));
   // 11/22：事務局では、左上のエンブレムと、トーク一覧の事務局長のエンブレムを押すと、事務局のホーム
+  // 11/25 パソコン：エンブレムを押したら、左のトーク一覧をかならず出す（たたむボタンを 11/20 になくしたので、前に「off」で保存した端末は一覧を出し直せなかった）
+  const hbShowSide = () => { if (window.innerWidth < 900) return; $('hbPage').classList.remove('noside'); try { store.set('hbpSide', ''); } catch (e) {} try { hbpChats(); } catch (e) {} };
+  document.querySelector('#hbPage .hbp-brand').addEventListener('click', hbShowSide, true);
   const hbOfficeHome = () => { hbpDrawer(false); hbpOpen('my'); if (J.ready) jrSend({ type: 'admin' }); };
   document.querySelector('#hbPage .hbp-brand').addEventListener('click', e => { if (document.body.classList.contains('officemode')) { e.stopImmediatePropagation(); hbOfficeHome(); } }, true);
   $('hbpTalks').addEventListener('click', e => { const av = e.target.closest && e.target.closest('.hbt-av'), row = av && av.closest('.hbt'); if (!row || !document.body.classList.contains('officemode') || !/^me:/.test(row.dataset.tk || '')) return; e.stopImmediatePropagation(); e.preventDefault(); hbOfficeHome(); }, true);
