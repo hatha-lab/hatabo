@@ -6461,7 +6461,7 @@ const GUIDE_ICON = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http:
         if (!row) {
           row = document.createElement('div');
           row.className = 'cv-m ' + (her ? 'her' : 'me');
-          if (her) { const w = document.createElement('div'); w.className = 'cv-who'; w.innerHTML = '<img class="cvw" src="award_mark.svg" alt="">'; w.append(document.createTextNode('')); row.append(w); }
+          if (her) { const w = document.createElement('div'); w.className = 'cv-who'; w.innerHTML = '<img class="cvw' + (J.focusKey ? '' : ' own') + '" src="' + (J.focusKey === 'guide' && window.HB_GUIDE_ICON ? window.HB_GUIDE_ICON : 'award_mark.svg') + '" alt="">'; w.append(document.createTextNode('')); row.append(w); }
           const body = document.createElement('div'); body.className = 'cv-b'; row.append(body);
           map.set(b, row); L.append(row); $('cvEmpty').hidden = true;
         }
@@ -6493,7 +6493,7 @@ const GUIDE_ICON = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http:
     window.hbCvLoad = turns => {
       [...bubbles.children].forEach(b => b.remove()); L.querySelectorAll('.cv-m').forEach(r => r.remove());
       (turns || []).forEach(t => { if (/^（/.test(String(t.content || ''))) return; const her = t.role !== 'user', row = document.createElement('div'); row.className = 'cv-m ' + (her ? 'her' : 'me');
-        if (her) { const w = document.createElement('div'); w.className = 'cv-who'; w.innerHTML = '<img class="cvw" src="award_mark.svg" alt="">'; w.append(document.createTextNode((typeof avName === 'function' && avName()) || 'ハタボ')); row.append(w); }
+        if (her) { const w = document.createElement('div'); w.className = 'cv-who'; w.innerHTML = '<img class="cvw' + (J.focusKey ? '' : ' own') + '" src="' + (J.focusKey === 'guide' && window.HB_GUIDE_ICON ? window.HB_GUIDE_ICON : 'award_mark.svg') + '" alt="">'; w.append(document.createTextNode((typeof avName === 'function' && avName()) || 'ハタボ')); row.append(w); }
         const bd = document.createElement('div'); bd.className = 'cv-b'; bd.textContent = t.content; row.append(bd); L.append(row); });
       $('cvEmpty').hidden = !!L.querySelector('.cv-m'); L.scrollTop = L.scrollHeight;
     };
@@ -7855,7 +7855,7 @@ const GUIDE_ICON = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http:
     window.__aiIcon = icon || '';
     const use = icon || (/バター/.test(window.__aiName || '') ? clButterIcon() : '');
     let st = document.getElementById('clIconCss'); if (!st) { st = document.createElement('style'); st.id = 'clIconCss'; document.head.append(st); }
-    st.textContent = use ? '.clmark img, .chatv .cv-who img, .hbt[data-tk="me:me"] img, .clacct-ai img { content: url("' + use + '"); border-radius: 50%; object-fit: cover; }' : '';
+    st.textContent = use ? '.clmark img, .chatv .cv-who img.own, .hbt[data-tk="me:me"] img, .clacct-ai img { content: url("' + use + '"); border-radius: 50%; object-fit: cover; }' : '';   // 11/25 吹き出しの絵をバターちゃんにするのは、わたしのハタボと話しているときだけ（案内係などの相手は、その相手の絵）
     document.querySelectorAll('#scene image.hbEmb').forEach(i => i.setAttribute('href', use || 'award_mark.svg'));   /* 愛棒の画面のまんなかも同じ絵 */
   }
   window.__clApply = clApplyIcon;
