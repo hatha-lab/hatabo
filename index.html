@@ -1839,6 +1839,7 @@ html.pwa body:is(.av-hatabo, .av-komugi):not(.hbp-open):not(.plain) .hbbot { bot
 body:not(.cl) .clnote { display: none; }
 .clask { display: grid; }
 body.cl #hbTopBrand, body.cl .hbp-brand { pointer-events: none !important; cursor: default !important; }   /* ロゴは押せない飾り（ホームは左の一覧から） */
+@media (min-width: 900px) { body.cl #hbTopBrand, body.cl .hbp-brand, .chatv .cv-top > img, #cvName { pointer-events: auto !important; cursor: pointer !important; } }   /* 11/25 パソコン：2つのエンブレムと「HATHABO」の文字は、押すと左のトーク一覧を出す（スマホは三本線のまま） */
 .clb { position: relative; display: grid; place-items: center; flex: none; width: 44px; height: 44px; padding: 0 !important; border: 0 !important; border-radius: 12px !important; background: transparent !important; color: #E8EBF0 !important; cursor: pointer; transition: transform .08s, background .15s; }
 .clb svg { width: 23px; height: 23px; }
 .clb:active { transform: scale(.92); background: rgba(255,255,255,.1) !important; }
@@ -6025,7 +6026,15 @@ const GUIDE_ICON = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http:
   // 11/22：事務局では、左上のエンブレムと、トーク一覧の事務局長のエンブレムを押すと、事務局のホーム
   // 11/25 パソコン：エンブレムを押したら、左のトーク一覧をかならず出す（たたむボタンを 11/20 になくしたので、前に「off」で保存した端末は一覧を出し直せなかった）
   const hbShowSide = () => { if (window.innerWidth < 900) return; $('hbPage').classList.remove('noside'); try { store.set('hbpSide', ''); } catch (e) {} try { hbpChats(); } catch (e) {} };
-  document.querySelector('#hbPage .hbp-brand').addEventListener('click', hbShowSide, true);
+  // 11/25 パソコン：どのエンブレムと名前の文字を押しても、同じ動き＝左にトーク一覧、右にトーク（たたんだ一覧も出す）。スマホは三本線のまま
+  const hbShowList = e => {
+    if (window.innerWidth < 900) return; if (e) { e.stopImmediatePropagation(); e.preventDefault(); }
+    hbShowSide(); const B = document.body.classList, app = B.contains('cl') || B.contains('av-hatabo') || B.contains('av-komugi');
+    if (app && !B.contains('plain')) { $('hbPage').hidden = false; hbpShellW(); B.add('hbshell'); B.remove('hbp-open'); try { hbpChats(); } catch (x) {} }   // 左にトーク一覧、右にトーク
+    else hbpOpen('my');
+  };
+  document.querySelector('#hbPage .hbp-brand').addEventListener('click', hbShowList, true);
+  document.querySelectorAll('.chatv .cv-top > img, #cvName').forEach(el => el.addEventListener('click', hbShowList));
   const hbOfficeHome = () => { hbpDrawer(false); hbpOpen('my'); if (J.ready) jrSend({ type: 'admin' }); };
   document.querySelector('#hbPage .hbp-brand').addEventListener('click', e => { if (document.body.classList.contains('officemode')) { e.stopImmediatePropagation(); hbOfficeHome(); } }, true);
   $('hbpTalks').addEventListener('click', e => { const av = e.target.closest && e.target.closest('.hbt-av'), row = av && av.closest('.hbt'); if (!row || !document.body.classList.contains('officemode') || !/^me:/.test(row.dataset.tk || '')) return; e.stopImmediatePropagation(); e.preventDefault(); hbOfficeHome(); }, true);
@@ -6162,7 +6171,7 @@ const GUIDE_ICON = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http:
   document.querySelectorAll('#cvMic > img, #talkBtn > img.temb').forEach(img => { const o = document.createElement('span'); o.className = 'hbvt-orb'; img.replaceWith(o); o.append(img); });
   const hbBuzz = window.hbBuzz = () => { try { if (store.get('hbHaptic', true) && navigator.vibrate) navigator.vibrate(18); } catch (e) {} };
   document.addEventListener('click', e => { if (e.target.closest('#talkBtn, #cvMic, .hbp-voicetab, .hbbot-talk, #hbAskMic')) hbBuzz(); }, true);
-  $('hbTopBrand').addEventListener('click', () => hbpOpen('my'));
+  $('hbTopBrand').addEventListener('click', e => { if (window.innerWidth >= 900) return hbShowList(e); hbpOpen('my'); });   // 11/25 パソコン：左にトーク一覧、右にトーク（ほかのエンブレムと同じ）
   $('hbBot').addEventListener('click', e => { const b = e.target.closest('[data-b]'); if (!b) return; if (b.dataset.b === 'talk') { const t = $('talkBtn'); if (t) t.click(); return; } hbpOpen(b.dataset.b); });
   ['cvScr', 'cvSpk', 'cvMicSw'].forEach(id => { const b = document.getElementById(id); if (b) $('hbTopTools').append(b); });
   $('hbTopMenu').addEventListener('click', () => { hbpOpen('my'); if (window.innerWidth < 900) setTimeout(() => hbpDrawer(true), 30); });
