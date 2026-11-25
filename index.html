@@ -4282,6 +4282,7 @@ html:has(> body.cl.av-hatabo), body.cl.av-hatabo { background-color: #0A1226; } 
       case 'mem_done': if (HBP.thr) jrSend({ type: 'thr_open', id: HBP.thr.t.id }); break;
       case 'consult': if (!m.ok) { toast(m.why || '相談できませんでした'); break; } hbpClose(); toast('相談役につなぎました。声でつづけて話せます（今日の残り' + m.left + '回）'); jrSend({ type: 'text', text: m.prompt }); break;
       case 'api': HBP.api = m; if (m.msg) toast(m.msg); if (!$('hbPage').hidden && HBP.page === 'api') hbpRender(); break;
+      case 'g_op': HBP.gop = m; if (m.msg) toast(m.msg); else if (m.denied) toast('事務局だけが使えます'); if (!$('hbPage').hidden && HBP.page === 'org') hbpRender(); break;   // 11/25 新しい形のグループ（weニセコの見本）
       case 'admin': HBP.admin = m; if (m.msg) toast(m.msg); try { hbpChats(); } catch (e) {} if (!$('hbPage').hidden && (HBP.page === 'admin' || HBP.page === 'aids' || HBP.page === 'org' || HBP.page === 'ohome')) hbpRender(); if (HBP.page === 'uperson' && HBP.ucode && m.msg && J.ready) jrSend({ type: 'admin_person', code: HBP.ucode }); break;
       case 'import': if (window.hbMovePreview) window.hbMovePreview(m); break;
       case 'send_cards': (m.cards || []).forEach(c => window.hbSendCard && window.hbSendCard(c)); break;
@@ -5152,6 +5153,22 @@ html:has(> body.cl.av-hatabo), body.cl.av-hatabo { background-color: #0A1226; } 
           <button type="button" class="hbmini" data-lnpeek="works|${esc(c.id)}">ワークスの画面を見るだけで開く</button><b style="display:block;margin-top:8px;font-size:13px">法人の人（全部の施設を見る）</b>${memL(c.members, c.id)}${addM(c.id)}
           <div class="orggrid">${(c.facilities || []).map(f => `<div class="orgfac${sel.fac === f.id ? ' orgsel' : ''}" id="fac_${esc(f.id)}"><span class="hbtag">${esc(KN[f.kind] || '施設')}</span> <b>${esc(f.name)}</b>${f.kind !== 'office' ? ` <button type="button" class="hbmini" data-lnpeek="ace|${esc(f.id)}">エースの画面を見る</button>` : ''}${ed ? ` <button type="button" class="hbmini" data-odf="${esc(c.id)}|${esc(f.id)}">消す</button>` : ''}${f.note ? `<p class="hbmuted" style="font-size:12px;margin:4px 0">${esc(f.note)}</p>` : ''}${memL(f.members, c.id, f.id)}${addM(c.id, f.id)}</div>`).join('')}</div>
           ${ed ? `<form class="orgAddF" data-c="${esc(c.id)}" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px"><input class="hbin" name="name" placeholder="施設の名前（例：物件C）" style="flex:2 1 180px" required><select class="hbin" name="kind">${Object.entries(KN).map(([k, l]) => `<option value="${k}">${l}</option>`).join('')}</select><button class="hbmini" type="submit">施設を足す</button>${c.sample ? '' : ''}<button type="button" class="hbmini" data-odc="${esc(c.id)}">この法人を消す</button></form>` : ''}</div>`).join('')}`;
+      // 11/25 新しい形（論理の形）のグループ：weニセコの見本（清掃の愛棒・宿泊の愛棒）。事務局の代行で作り、あとで所有者を招いて渡す
+      { const GP = HBP.gop; if (!GP && J.ready) jrSend({ type: 'g_op', op: 'list' });
+        const gd = t => t ? new Date(t).toLocaleDateString('ja-JP', { month: 'numeric', day: 'numeric' }) : '';
+        const props = (GP && GP.props) || [], man = pp => ((pp.docs || []).find(d => d.id === 'staff-clean') || {});
+        const gh = `<div class="hbc" id="gNew"><div class="k">NEW・論理の形</div><h3>${GP && GP.company ? esc(GP.company.name) : 'weニセコ'}（見本）：清掃の愛棒と宿泊の愛棒</h3>
+          <p class="hbmuted" style="font-size:12.5px">新しい形（グループ・資料・案内カード・近くのお店）で作ります。今の法人と施設は変えません。物件ごとに専用のアカウントと、清掃の愛棒・宿泊の愛棒を置きます。中身は見本で、画面にも「中身は見本です」と出ます。英語・中国語・韓国語に切りかえられます。</p>
+          ${ed ? '<button type="button" class="hbbtn" id="gSeed">見本を作る／更新する</button>' : ''}
+          ${props.map(pp => `<div class="orgfac" style="margin-top:10px"><span class="hbtag">${pp.sample ? '見本' : '物件'}</span> <b>${esc(pp.name)}</b>
+            <div style="font-size:13px;margin-top:6px">宿泊の愛棒（お客さま）：${pp.guestQr ? `<a href="${esc(pp.guestQr)}" target="_blank" rel="noopener">開く</a>` : '—'}</div>
+            <div style="font-size:13px">清掃の愛棒（清掃スタッフの仮の入り口・${gd(pp.staffExp)}まで）：${pp.staffUrl ? `<a href="${esc(pp.staffUrl)}" target="_blank" rel="noopener">開く</a>` : '—'} ${ed ? `<button type="button" class="hbmini" data-gsl="${esc(pp.id)}">作り直す（古いものは使えなくなる）</button>` : ''}</div>
+            ${ed ? `<form class="gDoc" data-g="${esc(pp.id)}" style="margin-top:8px"><b style="font-size:13px">清掃マニュアル（清掃スタッフ向け・この物件だけ）</b>${man(pp).sample ? ' <span class="hbtag">見本</span>' : ''}<textarea class="hbin" name="body" rows="5" style="width:100%;margin-top:4px" placeholder="ここに清掃マニュアルを貼ります">${esc(man(pp).body || '')}</textarea><button class="hbmini" type="submit">保存</button></form>` : ''}</div>`).join('')}</div>`;
+        body.insertAdjacentHTML('afterbegin', gh);
+        const gs = body.querySelector('#gSeed'); if (gs) gs.onclick = () => { gs.disabled = true; jrSend({ type: 'g_op', op: 'seed' }); };
+        body.querySelectorAll('[data-gsl]').forEach(b => b.onclick = () => { if (confirm('清掃スタッフの入り口を作り直しますか？今の入り口は使えなくなります')) jrSend({ type: 'g_op', op: 'staff_link', gid: b.dataset.gsl }); });
+        body.querySelectorAll('.gDoc').forEach(f => f.onsubmit = e => { e.preventDefault(); jrSend({ type: 'g_op', op: 'doc_set', gid: f.dataset.g, id: 'staff-clean', aud: 'staff', title: '清掃マニュアル', body: f.elements.body.value }); });
+      }
       const op = o => jrSend(Object.assign({ type: 'org_op' }, o));
       const sd = body.querySelector('#orgSeed'); if (sd) sd.onclick = () => { sd.disabled = true; op({ op: 'seed_we' }); };
       const ac = body.querySelector('#orgAddC'); if (ac) ac.onsubmit = e => { e.preventDefault(); op({ op: 'add_corp', name: ac.name.value, plan: ac.plan.value }); };
