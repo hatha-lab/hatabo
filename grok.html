@@ -732,7 +732,7 @@ body.feedfs #feed > .dash{display:none}
       try { dest = ctx.createMediaStreamDestination(); spk = spk || Object.assign(document.createElement('audio'), { autoplay: true, playsInline: true }); spk.setAttribute('playsinline', ''); spk.srcObject = dest.stream; spk.play().catch(() => {}); } catch (e) { dest = null; }
       await ctx.resume();
       mic = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } });
-      const r = await fetch(base + '/grok/session', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ k: key, t: tok, wt: WT, name: $('name').value.trim(), gyo: P.get('gyo') || '', scene: P.get('scene') || '', tone: P.get('tone') || '', msg: P.get('msg') || '' }) });
+      const r = await fetch(base + '/grok/session', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ k: key, t: tok, wt: WT, voice: (curBot && curBot.voice) || '', name: $('name').value.trim(), gyo: P.get('gyo') || '', scene: P.get('scene') || '', tone: P.get('tone') || '', msg: P.get('msg') || '' }) });
       const j = await r.json().catch(() => ({}));
       if (!r.ok || !j.token) throw new Error(j.error || ('つなげませんでした（' + r.status + '）'));
       if (j.memo) { memo = j.memo; grow(); }
@@ -904,14 +904,15 @@ body.feedfs #feed > .dash{display:none}
     ['お風呂の相手', 'お風呂の時間に、しりとり・数え歌・今日のできごとの話し相手', '遊び'], ['しりとり・クイズ', '家族みんなで、声でしりとりやクイズ', '遊び'], ['寝る前のお話', '子どもの名前を入れた、その日だけのお話を読む', '遊び'], ['なぞなぞ・脳トレ', 'おじいちゃん・おばあちゃんとも楽しめる、声のなぞなぞ', '遊び'], ['ゲームの相棒', 'ゲームの攻略の相談や、いっしょに作戦を考える', '遊び'], ['推し語り', '好きなもの・推しの話を、とことん聞いてくれる', '遊び'], ['散歩・運動の声かけ', '歩きながら・体を動かしながら、声で応援', '遊び'], ['占い・おみくじ', '毎朝ひとこと、今日の運勢とラッキーなこと', '遊び'], ['ドライブの相棒', '運転中に声だけで、道すがらの話・音楽の話・寄り道の相談', '遊び'], ['眠気覚まし', '長い運転のとき、クイズや会話で眠くならないよう声をかける', '遊び']];
   const RO = ROLES.map(x => x[0]);
   const GYO = ['えらばない', '飲食', '宿・民泊', '美容・サロン', '小売・EC', '不動産', '建設・リフォーム', '医療・介護', '教育・習いごと', '士業・コンサル', 'イベント・エンタメ', 'IT・制作', '家庭・子育て'];
-  const mk = { s: 0, c: 4, r: 0, g: 0 };
+  const mk = { s: 0, c: 4, r: 0, g: 0, v: 1 };
+  const VOICES = [['eve', '元気・明るい'], ['ara', 'あたたかい（ハタボーイ）'], ['rex', 'はきはき・仕事向き'], ['sal', 'なめらか・落ちつき'], ['leo', '力強い'], ['liora', 'おだやか・やさしい'], ['carina', 'やわらかい'], ['orion', '深い・落ちつき'], ['luna', 'ふんわり'], ['atlas', 'どっしり']];
   const bot = (s, c) => '<svg viewBox="0 0 100 100"><path d="' + SH[s] + '" fill="' + CO[c] + '"/><circle cx="40" cy="50" r="5" fill="' + (c < 2 ? '#222' : '#fff') + '"/><circle cx="60" cy="50" r="5" fill="' + (c < 2 ? '#222' : '#fff') + '"/></svg>';
   function mkFill() { $('mkPrev').innerHTML = bot(mk.s, mk.c).replace('viewBox="0 0 100 100"', 'viewBox="0 0 100 100" style="width:150px;height:150px"');
     $('mkShapes').innerHTML = SH.map((_, i) => '<button type="button" data-s="' + i + '" class="' + (i === mk.s ? 'on' : '') + '">' + bot(i, 1) + '</button>').join('');
     $('mkColors').innerHTML = CO.map((c, i) => '<button type="button" data-c="' + i + '" class="' + (i === mk.c ? 'on' : '') + '" style="background:' + c + '" aria-label="色' + (i + 1) + '"></button>').join('');
-    $('mkRoles').innerHTML = '<p class="mkrole">役割<small>この愛棒が、なにをする係か</small></p>' + [...new Set(ROLES.map(x => x[2]))].map(g => '<p class="mkg">' + g + '</p>' + ROLES.map((x, i) => x[2] === g ? '<button type="button" data-ro="' + i + '" class="' + (i === mk.r ? 'on' : '') + '">' + x[0] + '</button>' : '').join('')).join('') + '<p class="mkhint">' + esc(ROLES[mk.r][1]) + '</p><p class="mkrole">業種・場面<small>えらぶだけ。その業種に合わせて話します（書かなくてOK）</small></p>' + GYO.map((g, i) => '<button type="button" data-gy="' + i + '" class="' + (i === mk.g ? 'on' : '') + '">' + g + '</button>').join('');
+    $('mkRoles').innerHTML = '<p class="mkrole">役割<small>この愛棒が、なにをする係か</small></p>' + [...new Set(ROLES.map(x => x[2]))].map(g => '<p class="mkg">' + g + '</p>' + ROLES.map((x, i) => x[2] === g ? '<button type="button" data-ro="' + i + '" class="' + (i === mk.r ? 'on' : '') + '">' + x[0] + '</button>' : '').join('')).join('') + '<p class="mkhint">' + esc(ROLES[mk.r][1]) + '</p><p class="mkrole">声<small>愛棒ごとに声を変えられます</small></p>' + VOICES.map((v, i) => '<button type="button" data-vo="' + i + '" class="' + (i === mk.v ? 'on' : '') + '">' + v[1] + '</button>').join('') + '<p class="mkrole">業種・場面<small>えらぶだけ。その業種に合わせて話します（書かなくてOK）</small></p>' + GYO.map((g, i) => '<button type="button" data-gy="' + i + '" class="' + (i === mk.g ? 'on' : '') + '">' + g + '</button>').join('');
     $('mkGo').disabled = !$('mkName').value.trim(); }
-  $('mkSheet').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; if (b.dataset.s) mk.s = +b.dataset.s; else if (b.dataset.c) mk.c = +b.dataset.c; else if (b.dataset.ro) mk.r = +b.dataset.ro; else if (b.dataset.gy) mk.g = +b.dataset.gy; else return; mkFill(); });
+  $('mkSheet').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; if (b.dataset.s) mk.s = +b.dataset.s; else if (b.dataset.c) mk.c = +b.dataset.c; else if (b.dataset.ro) mk.r = +b.dataset.ro; else if (b.dataset.gy) mk.g = +b.dataset.gy; else if (b.dataset.vo) mk.v = +b.dataset.vo; else return; mkFill(); });
   $('mkName').oninput = () => { $('mkGo').disabled = !$('mkName').value.trim(); };
   function railBots() { const B = LS.g('hbBots', []); $('railBots').innerHTML = B.map(b => '<button type="button" data-say="' + esc(b.role + 'として手伝って。あなたの名前は' + b.name) + '"><i style="background:transparent;box-shadow:none">' + bot(b.s, b.c) + '</i>' + esc(b.name.slice(0, 5)) + '</button>').join('');
     $('railBots').querySelectorAll('button').forEach((b, i) => b.onclick = () => openBot(B[i]));
@@ -919,12 +920,12 @@ body.feedfs #feed > .dash{display:none}
   // 作った愛棒をひらく：スレッドで、その愛棒との会話がはじまる
   // 役割：作った愛棒をひらくと、声の愛棒がその役割で話す（つないでいるときはすぐ、つないでいなければ、つないだときに）
   let curBot = null;
-  function sendRole() { if (!(ws && ready)) return; const x = curBot, r = x ? ROLES.find(y => y[0] === x.role) : null;
+  function sendRole() { if (!(ws && ready)) return; const x = curBot; send({ type: 'session.update', session: { voice: (x && x.voice) || 'ara' } }); const r = x ? ROLES.find(y => y[0] === x.role) : null;
     send({ type: 'conversation.item.create', item: { type: 'message', role: 'system', content: [{ type: 'input_text', text: x ? 'ここからは「' + x.name + '」という名前の愛棒として話す。役割は「' + x.role + '」：' + (r ? r[1] : '') + '。' + (x.gyo ? '業種・場面は「' + x.gyo + '」。例や言い方をこの業種に合わせる。' : '') + 'この役割に合うことを中心に、短く手伝う。役割の外のことを頼まれたら、ハタボーイにもどるよう一言すすめる。' : 'ここからは、いつものハタボーイにもどって話す。' }] } }); }
   function openBot(x) { curBot = x; sendRole(); setPartner(bot(x.s, x.c), x.name); plugGuide(x.role, x.name); tab('chat'); rows = { me: null, hb: null }; const d = document.createElement('div'); d.className = 'row hb'; d.innerHTML = '<b></b><span></span>'; d.lastChild.textContent = 'はじめまして、' + x.name + 'です。' + x.role + 'のことなら、まかせてください。何からはじめましょう？'; $('log').appendChild(d); $('log').scrollTop = 1e9; const t = $('txt'); if (t) { t.value = ''; t.placeholder = x.name + 'に文字でも話せます'; } }
-  $('mkBot').onclick = () => { mkFill(); openSheet('mkSheet'); };
-  document.querySelectorAll('#rail .slot').forEach(b => b.onclick = () => { const ri = RO.indexOf(b.dataset.mk), ci = CO.indexOf(b.dataset.col); mk.r = ri >= 0 ? ri : 0; if (ci >= 0) mk.c = ci; $('mkName').value = ''; mk.g = 0; mkFill(); openSheet('mkSheet'); });
-  $('mkGo').onclick = () => { const B = LS.g('hbBots', []), x = { name: $('mkName').value.trim().slice(0, 16), s: mk.s, c: mk.c, role: RO[mk.r], gyo: mk.g ? GYO[mk.g] : '' }; B.push(x); LS.s('hbBots', B.slice(-8)); $('mkName').value = ''; $('mkSheet').hidden = true; railBots(); openBot(x); };   // 作ったら、そのままスレッドで話しはじめる
+  $('mkBot').onclick = () => { const used = LS.g('hbBots', []).map(y => y.voice); mk.v = Math.max(0, VOICES.findIndex(v => v[0] !== 'ara' && !used.includes(v[0]))); mkFill(); openSheet('mkSheet'); };
+  document.querySelectorAll('#rail .slot').forEach(b => b.onclick = () => { const ri = RO.indexOf(b.dataset.mk), ci = CO.indexOf(b.dataset.col); mk.r = ri >= 0 ? ri : 0; if (ci >= 0) mk.c = ci; $('mkName').value = ''; mk.g = 0; const used = LS.g('hbBots', []).map(y => y.voice); mk.v = Math.max(0, VOICES.findIndex(v => v[0] !== 'ara' && !used.includes(v[0]))); mkFill(); openSheet('mkSheet'); });   // 声は、まだ使っていない声を先にえらんでおく
+  $('mkGo').onclick = () => { const B = LS.g('hbBots', []), x = { name: $('mkName').value.trim().slice(0, 16), s: mk.s, c: mk.c, role: RO[mk.r], gyo: mk.g ? GYO[mk.g] : '', voice: VOICES[mk.v][0] }; B.push(x); LS.s('hbBots', B.slice(-8)); $('mkName').value = ''; $('mkSheet').hidden = true; railBots(); openBot(x); };   // 作ったら、そのままスレッドで話しはじめる
   railBots();
   // QR：この検証ページのURL（つながる用）
   function qrFill() { const u = location.origin + location.pathname + (new URLSearchParams(location.search).get('t') ? '?t=' + new URLSearchParams(location.search).get('t') : '');
