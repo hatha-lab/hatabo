@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ハタボ 声の検証（Grok Voice）</title>
+<meta name="robots" content="noindex">
+<style>
+:root{--bg:#f4f6fb;--card:#fff;--ink:#1d2433;--sub:#5d6680;--line:#dde2ee;--hb:#1e3f7a;--hbd:#1e3f7a;--stop:#d9483b}
+@media (prefers-color-scheme:dark){:root{--bg:#11151f;--card:#1a2030;--ink:#e8ecf5;--sub:#a3abc0;--line:#2c3448;--hb:#3a64b0;--hbd:#9db8ec;--stop:#ef6b5f}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 -apple-system,"Hiragino Sans","Noto Sans JP",sans-serif}
+main{max-width:560px;margin:0 auto;padding:20px 16px 40px}
+h1{font-size:20px;margin:0 0 4px}
+.sub{color:var(--sub);font-size:13px;margin:0 0 18px}
+.talk{display:block;width:100%;border:0;border-radius:999px;padding:18px;font-size:18px;font-weight:700;background:var(--hb);color:#fff;cursor:pointer}
+.talk.on{background:var(--stop)}
+.talk:disabled{opacity:.6}
+.state{margin:12px 0 18px;text-align:center;color:var(--sub);font-size:14px;min-height:1.6em}
+.log{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;min-height:160px;max-height:50vh;overflow:auto}
+.row{margin:6px 0}
+.row b{display:inline-block;min-width:3.5em;color:var(--hbd)}
+.row.me b{color:var(--sub)}
+.row.brain{font-size:13px;color:var(--sub)}
+label{display:block;font-size:13px;color:var(--sub);margin-top:16px}
+input,select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);font-size:15px}
+.note{font-size:12px;color:var(--sub);margin-top:18px}
+</style>
+</head>
+<body>
+<main>
+  <h1>ハタボ 声の検証（Grok Voice）</h1>
+  <p class="sub">聞く・考える・話すは xAI の Grok Voice。むずかしい質問は Claude が考えて渡します。</p>
+  <button class="talk" id="talk" type="button">話しはじめる</button>
+  <div class="state" id="state">ボタンを押すと、マイクを使います</div>
+  <div class="log" id="log" aria-live="polite"></div>
+  <label for="voice">声</label>
+  <select id="voice"><option value="eve">eve</option><option value="ara">ara</option><option value="rex">rex</option><option value="sal">sal</option><option value="leo">leo</option></select>
+  <label for="name">あなたの呼び名（任意）</label>
+  <input id="name" autocomplete="off" placeholder="例：ヒロ">
+  <label for="key">合言葉</label>
+  <input id="key" type="password" autocomplete="off">
+  <p class="note">1回は15分まで。スピーカーの声をマイクが拾うときは、イヤホンで試してください。試したあとは「ここが遅い」「聞きまちがえた」を事務局に送ってください。</p>
+</main>
+<script>
+(() => {
+  const P = new URLSearchParams(location.search);
+  // つなぐサーバーは本番の Cloud Run だけ（手元の localhost で開いたときだけ localhost も）。?s= で別の所にされて、合言葉が送られないように
+  const HOST0 = 'butter-junior-722073142596.asia-northeast1.run.app', s0 = String(P.get('s') || '').replace(/^(wss?|https?):\/\//, '').replace(/\/.*$/, '');
+  const local = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) && /^(localhost|127\.0\.0\.1)(:\d+)?$/.test(s0);
+  const host = s0 && (s0 === HOST0 || local) ? s0 : HOST0;
+  const base = (local ? 'http://' : 'https://') + host;
+  const RATE = 24000;
+  const $ = id => document.getElementById(id);
+  const get = k => { try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } };
+  const put = (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} };
+  $('key').value = P.get('k') || get('liveKey'); $('name').value = get('liveName'); if (get('grokVoice')) $('voice').value = get('grokVoice');
+  let ws = null, ctx = null, mic = null, node = null, src = null, endTimer = null, playAt = 0, playing = [], rows = { me: null, hb: null }, turns = [], key = '', ready = false;
+  const state = t => { $('state').textContent = t; };
+  function say(who, t) {
+    if (!t) return;
+    const k = who === 'あなた' ? 'me' : 'hb';
+    if (!rows[k]) { const d = document.createElement('div'); d.className = 'row ' + k; d.innerHTML = '<b></b><span></span>'; d.firstChild.textContent = who; $('log').appendChild(d); rows[k] = d; rows[k === 'me' ? 'hb' : 'me'] = null; turns.push({ who, text: '' }); if (turns.length > 30) turns.shift(); }
+    rows[k].lastChild.textContent += t; turns[turns.length - 1].text += t; $('log').scrollTop = 1e9;
+  }
+  function note(t) { const d = document.createElement('div'); d.className = 'row brain'; d.textContent = t; $('log').appendChild(d); rows = { me: null, hb: null }; $('log').scrollTop = 1e9; }
+  const send = o => { try { if (ws && ws.readyState === 1) ws.send(JSON.stringify(o)); } catch (e) {} };
+  // 声：Float32 → 24kHz の PCM16 → base64
+  function toB64(f32, inRate) {
+    const n = inRate === RATE ? f32.length : Math.floor(f32.length * RATE / inRate);
+    const pcm = new Int16Array(n);
+    for (let i = 0; i < n; i++) { const x = inRate === RATE ? f32[i] : f32[Math.min(f32.length - 1, Math.floor(i * inRate / RATE))]; pcm[i] = Math.max(-1, Math.min(1, x)) * 0x7fff; }
+    let s = ''; const u = new Uint8Array(pcm.buffer);
+    for (let i = 0; i < u.length; i += 0x8000) s += String.fromCharCode.apply(null, u.subarray(i, i + 0x8000));
+    return btoa(s);
+  }
+  function play(b64) {
+    const bin = atob(b64), u = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i);
+    const pcm = new Int16Array(u.buffer, 0, u.length >> 1);
+    if (!pcm.length) return;
+    const buf = ctx.createBuffer(1, pcm.length, RATE), ch = buf.getChannelData(0);
+    for (let i = 0; i < pcm.length; i++) ch[i] = pcm[i] / 0x8000;
+    const s = ctx.createBufferSource(); s.buffer = buf; s.connect(ctx.destination);
+    playAt = Math.max(playAt, ctx.currentTime + 0.03); s.start(playAt); playAt += buf.duration;
+    playing.push(s); s.onended = () => { playing = playing.filter(x => x !== s); };
+  }
+  function hush() { playing.forEach(s => { try { s.stop(); } catch (e) {} }); playing = []; playAt = 0; }   // 相手が話しはじめたら、ハタボはだまる（割りこみ）
+  async function brain(callId, args) {
+    let question = ''; try { question = JSON.parse(args || '{}').question || ''; } catch (e) {}
+    note('（頭のClaudeに考えてもらっています）');
+    let answer = 'ごめんなさい、いまは答えが見つかりませんでした。';
+    try {
+      const talk = turns.slice(-14).map(x => x.who + '：' + x.text.trim()).join('\n');
+      const r = await fetch(base + '/grok/brain', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ k: key, question, talk, name: $('name').value.trim() }) });
+      const j = await r.json().catch(() => ({})); if (j.answer) answer = j.answer;
+    } catch (e) {}
+    send({ type: 'conversation.item.create', item: { type: 'function_call_output', call_id: callId, output: answer } });
+    send({ type: 'response.create' });
+  }
+  function onEvent(ev) {
+    const t = ev.type || '';
+    if (t === 'response.output_audio.delta' || t === 'response.audio.delta') { if (ev.delta) play(ev.delta); return; }
+    if (t === 'input_audio_buffer.speech_started') { hush(); return; }
+    if (t === 'conversation.item.input_audio_transcription.completed') { say('あなた', ev.transcript || ''); return; }
+    if (t === 'response.output_audio_transcript.delta' || t === 'response.audio_transcript.delta' || t === 'response.output_text.delta') { say('ハタボ', ev.delta || ''); return; }
+    if (t === 'response.function_call_arguments.done') { if (ev.name === 'ask_brain') brain(ev.call_id, ev.arguments); return; }
+    if (t === 'session.updated') { ready = true; state('話しかけてください'); return; }
+    if (t === 'error') { note('エラー：' + ((ev.error && ev.error.message) || ev.message || '')); return; }
+  }
+  async function start() {
+    key = $('key').value.trim(); if (!key) { state('合言葉を入れてください'); return; }
+    put('liveKey', key); put('liveName', $('name').value.trim()); put('grokVoice', $('voice').value);
+    $('talk').disabled = true; state('つないでいます…'); turns = []; ready = false;
+    try {
+      try { ctx = new AudioContext({ sampleRate: RATE }); } catch (e) { ctx = new AudioContext(); }
+      await ctx.resume();
+      mic = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } });
+      const r = await fetch(base + '/grok/session', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ k: key, voice: $('voice').value, name: $('name').value.trim() }) });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok || !j.token) throw new Error(j.error || ('つなげませんでした（' + r.status + '）'));
+      ws = new WebSocket('wss://api.x.ai/v1/realtime?model=' + encodeURIComponent(j.model || 'grok-voice-latest'), ['xai-client-secret.' + j.token]);
+      ws.onmessage = e => { let ev; try { ev = JSON.parse(e.data); } catch (x) { return; } onEvent(ev); };
+      ws.onclose = () => { if (ws) stop('おわりました'); };
+      ws.onerror = () => note('つながりが切れました');
+      await new Promise((ok, ng) => { ws.onopen = ok; setTimeout(() => ng(new Error('xAI につながりませんでした')), 10000); });
+      send({ type: 'session.update', session: { instructions: j.instructions, voice: j.voice, turn_detection: { type: 'server_vad' }, tools: j.tools || [],
+        audio: { input: { format: { type: 'audio/pcm', rate: RATE } }, output: { format: { type: 'audio/pcm', rate: RATE } } } } });
+      // マイク → 小分けにして送る
+      const code = 'class C extends AudioWorkletProcessor{constructor(){super();this.b=[];this.n=0}process(i){const c=i[0]&&i[0][0];if(c){this.b.push(new Float32Array(c));this.n+=c.length;if(this.n>=sampleRate/10){const o=new Float32Array(this.n);let p=0;for(const x of this.b){o.set(x,p);p+=x.length}this.port.postMessage(o,[o.buffer]);this.b=[];this.n=0}}return true}}registerProcessor("mic-chunks",C)';
+      await ctx.audioWorklet.addModule(URL.createObjectURL(new Blob([code], { type: 'text/javascript' })));
+      src = ctx.createMediaStreamSource(mic); node = new AudioWorkletNode(ctx, 'mic-chunks');
+      node.port.onmessage = e => { if (ready) send({ type: 'input_audio_buffer.append', audio: toB64(e.data, ctx.sampleRate) }); };
+      src.connect(node);
+      endTimer = setTimeout(() => stop('1回の上限（' + (j.maxMin || 15) + '分）になりました'), (j.maxMin || 15) * 60000);
+      $('talk').textContent = 'おわる'; $('talk').classList.add('on'); $('talk').disabled = false; state(ready ? '話しかけてください' : '準備しています…');
+      setTimeout(() => { if (!ready && ws) { ready = true; state('話しかけてください'); } }, 1500);   // session.updated が来ないときも、少し待ってから送りはじめる
+    } catch (e) { stop(String(e.message || e)); }
+  }
+  function stop(why) {
+    const w = ws; ws = null; clearTimeout(endTimer);
+    try { w && w.close(); } catch (e) {}
+    try { src && src.disconnect(); node && node.disconnect(); } catch (e) {}
+    if (mic) mic.getTracks().forEach(t => t.stop()); mic = null; src = null; node = null;
+    hush(); try { ctx && ctx.close(); } catch (e) {} ctx = null; ready = false;
+    $('talk').textContent = '話しはじめる'; $('talk').classList.remove('on'); $('talk').disabled = false;
+    state(why || 'おわりました');
+  }
+  $('talk').onclick = () => ws ? stop() : start();
+})();
+</script>
+</body>
+</html>
