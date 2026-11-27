@@ -3430,11 +3430,22 @@ html:has(> body.cl.av-hatabo), body.cl.av-hatabo { background-color: #0A1226; } 
   let actx = null;
   // iPhoneのマナーモード（消音スイッチ）でも声が出るように：音の使い方を「再生と録音」にする（対応している端末だけ）
   try { if (navigator.audioSession) navigator.audioSession.type = 'play-and-record'; } catch (e) {}
+  // 11/28 iPhone はマナーモードだと Web Audio の音が消える（LINE の中のブラウザでも）。声と効果音は <audio> から鳴らす（<audio> はマナーモードでも鳴る）。
+  // 画面に最初にふれたときに <audio> を鳴らしはじめ、鳴らせたときだけそちらへ流す（鳴らせないときは、これまでどおり）
+  let spkEl = null, spkDest = null, spkOk = false;
+  const SPK = a => { try { if (spkOk && spkDest) return spkDest; } catch (e) {} return a.destination; };
+  const spkStart = a => {
+    try {
+      if (!spkDest) { spkDest = a.createMediaStreamDestination(); spkEl = document.createElement('audio'); spkEl.setAttribute('playsinline', ''); spkEl.autoplay = true; spkEl.srcObject = spkDest.stream; }
+      if (!spkOk) spkEl.play().then(() => { spkOk = true; }).catch(() => {});
+    } catch (e) {}
+  };
   const AC = () => { try { if (navigator.audioSession && navigator.audioSession.type !== 'play-and-record') navigator.audioSession.type = 'play-and-record'; } catch (e) {} actx = actx || new (window.AudioContext || window.webkitAudioContext)(); if (actx.state === 'suspended') actx.resume(); return actx; };
   // 声の鍵あけ：スマホは、画面に一度ふれるまで声を出させてくれない。最初にふれたときに音の準備をして、待っている声を鳴らす
   const audioUnlock = () => {
     try { const a = AC(); if (a.state !== 'running') a.resume().catch(() => {});
-      const b = a.createBuffer(1, 1, 22050), s0 = a.createBufferSource(); s0.buffer = b; s0.connect(a.destination); s0.start(0);
+      spkStart(a);
+      const b = a.createBuffer(1, 1, 22050), s0 = a.createBufferSource(); s0.buffer = b; s0.connect(SPK(a)); s0.start(0);
     } catch (e) {}
     setTimeout(() => { if (actx && actx.state === 'running') document.dispatchEvent(new Event('audiounlocked')); }, 60);
   };
@@ -3444,14 +3455,14 @@ html:has(> body.cl.av-hatabo), body.cl.av-hatabo { background-color: #0A1226; } 
     o.type = type || 'triangle'; o.frequency.setValueAtTime(f, t0);
     if (slideTo) o.frequency.exponentialRampToValueAtTime(slideTo, t0 + len);
     g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(vol || 0.2, t0 + 0.015); g.gain.exponentialRampToValueAtTime(0.0001, t0 + len);
-    o.connect(g); g.connect(a.destination); o.start(t0); o.stop(t0 + len + 0.05);
+    o.connect(g); g.connect(SPK(a)); o.start(t0); o.stop(t0 + len + 0.05);
   }
   function noise(t0, len, vol, hp) {
     const a = AC(), n = Math.floor(a.sampleRate * len), buf = a.createBuffer(1, n, a.sampleRate), d = buf.getChannelData(0);
     for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / n);
     const src = a.createBufferSource(), f = a.createBiquadFilter(), g = a.createGain();
     src.buffer = buf; f.type = 'highpass'; f.frequency.value = hp || 1200; g.gain.value = vol || 0.2;
-    src.connect(f); f.connect(g); g.connect(a.destination); src.start(t0);
+    src.connect(f); f.connect(g); g.connect(SPK(a)); src.start(t0);
   }
   const sfx = {
     notes(fs, len, type, vol) { try { const t = AC().currentTime; fs.forEach((f, i) => tone(f, t + i * len, len * 1.6, type, vol)); } catch (e) {} },
@@ -4031,7 +4042,7 @@ html:has(> body.cl.av-hatabo), body.cl.av-hatabo { background-color: #0A1226; } 
     return new Promise(res => {
       try { if (curSrc) curSrc.stop(); } catch (e) {}
       const src = a.createBufferSource(), an = a.createAnalyser();
-      an.fftSize = 512; src.buffer = buf; src.connect(an); an.connect(a.destination);
+      an.fftSize = 512; src.buffer = buf; src.connect(an); an.connect(SPK(a));
       curSrc = src;
       const data = new Float32Array(an.fftSize);
       setState('speaking'); lipLive = true;
@@ -4510,7 +4521,8 @@ html:has(> body.cl.av-hatabo), body.cl.av-hatabo { background-color: #0A1226; } 
     try { const bin = atob(m.mp3), u8 = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i); buf = await a.decodeAudioData(u8.buffer); } catch (e) { jrDiag('声のデータを読めませんでした'); }
     if (!buf && m.gen === J.gen && !J.muted) { if (await playEl(m)) return; }   // 読めなかったときも、ふつうのプレーヤーで鳴らしてみる
     if (!buf || m.gen !== J.gen || J.muted) { J.playing = false; jrPump(); jrDrain(); return; }   // スピーカーを切っているときは鳴らさない
-    if (!J.gain) { J.gain = a.createGain(); J.an = a.createAnalyser(); J.an.fftSize = 512; J.gain.connect(J.an); J.an.connect(a.destination); }
+    if (!J.gain) { J.gain = a.createGain(); J.an = a.createAnalyser(); J.an.fftSize = 512; J.gain.connect(J.an); J.an.connect(SPK(a)); J.anOut = spkOk; }
+    if (J.anOut !== spkOk) { try { J.an.disconnect(); } catch (e) {} J.an.connect(SPK(a)); J.anOut = spkOk; }   // あとから <audio> が鳴らせるようになったら、つなぎ直す
     J.gain.gain.value = J.vol * autoVol();
     const src = a.createBufferSource(); src.buffer = buf; src.connect(J.gain); J.src = src;
     setState('speaking'); lipLive = true;
