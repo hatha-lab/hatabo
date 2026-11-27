@@ -4831,8 +4831,8 @@ html:has(> body.cl.av-hatabo), body.cl.av-hatabo { background-color: #0A1226; } 
   const HB_PRICE = {
     starter: [['ハタボ', '返事300回分＋声5分'], ['ハタボ エース', '返事2,000回分＋声10分'], ['ハタボ ワークス', '最初の10人まで、1人あたり返事450回分＋声1分（会社のみんなで使えます）']],
     models: [['X', 'ふだんのおしゃべり', '1回分'], ['G', '相談や長い文章', '5回分'], ['Z', 'むずかしい相談や調べもの', '10回分']],
-    toppings: [['返事100回分', '300円', '210円'], ['返事500回分', '1,300円', '910円'], ['返事2,000回分', '4,800円', '3,360円'], ['声10分', '500円', '350円'], ['声をつくる', '980円', '490円'], ['1日使い放題', 'X 330円\nG 550円\nZ 1,100円', '3割引']],
-    members: [['ハタボ会員', '月480円', 'トッピングがすべて3割引、毎月ガチャ1回無料、声をつくるのが半額、高い音質の声、トッピングの自動購入'], ['ハタボ エース会員', '月2,980円', 'トッピングがすべて3割引、LINE公式アカウントとの連携、トッピングの自動購入'], ['ハタボ ワークス会員', '1席 月300円', 'トッピングがすべて3割引、トッピングの自動購入']]
+    toppings: [['返事100回分', '300円'], ['返事500回分', '1,300円'], ['返事2,000回分', '4,800円'], ['声10分', '500円'], ['声をつくる', '980円'], ['1時間使い放題（いちばん賢いAI）', '3,000円'], ['3時間使い放題（いちばん賢いAI）', '6,500円'], ['1日使い放題（いちばん賢いAI）', '15,000円']],   // 11/28：会員の割引はなし
+    members: [['ハタボ Free', '0円', 'はじめのトッピングつき。足りない分はトッピングで'], ['ハタボ Pro', '月2,980円', 'いちばん賢いAIが1日5回、毎月ガチャ1回無料、高い音質の声、トッピングの自動購入'], ['ハタボ Max', '月10,000円', 'いちばん賢いAIが1日15回、Proの内容すべて'], ['ハタボ エース Team', '月30,000円', 'お店・会社の窓口、LINE公式アカウントとの連携'], ['ハタボ エース Enterprise', '見積もり', '会社に合わせて、担当者がご提案します']]
   };
   /* 返事の残り（回分）。TODO(サーバー)：残りを「返事◯回分（d.left）」「声◯分（d.voiceMin）」「期限（d.until）」で返す。
      来るまでは、いまのサーバーの「1日の回数 − きょう使った数」＋「トッピングの回数」を出す（毎日の無料の回数は、11/22の設計ではなくす） */
@@ -5356,7 +5356,7 @@ html:has(> body.cl.av-hatabo), body.cl.av-hatabo { background-color: #0A1226; } 
       // ありがとうポイントでは、返事・声のトッピングを買えない（点検 金-03・設計 2.5・10章）。サーバーの ticket も pay: 'pt' をことわる
       const buy = id => `<div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end"><button type="button" class="hbtag gold hbbuy" data-tk="${id}" data-pay="yen" style="border:0;cursor:pointer">買う</button></div>`;
       body.innerHTML = `
-        ${HBP.limitHit ? `<div class="hbc" style="border-color:#C9A24A"><div class="k">LIMIT</div><h3>${HBP.limitHit === 'voice' ? '声のトッピング' : '返事のトッピング'}を使い切りました</h3><p>${HBP.limitHit === 'voice' ? 'いまは文字で返しています。声のトッピングを足すと、また声で話します。' : 'トッピングか1日使い放題を足すと、続けて話せます。'}友だちとのトークや投稿は、そのまま使えます。</p></div>` : ''}
+        ${HBP.limitHit ? `<div class="hbc" style="border-color:#C9A24A"><div class="k">LIMIT</div><h3>${HBP.limitHit === 'voice' ? '声のトッピング' : '返事のトッピング'}を使い切りました</h3><p>${HBP.limitHit === 'voice' ? 'いまは文字で返しています。声のトッピングを足すと、また声で話します。' : 'トッピングか使い放題を足すと、続けて話せます。'}友だちとのトークや投稿は、そのまま使えます。</p></div>` : ''}
         <div class="hbc"><div class="k">TOPPING</div><h3>トッピング</h3><p>愛棒の返事と声は、トッピングで足します。友だちとのトーク・伝言・投稿は、トッピングから減りません。</p>
           <div class="hbsum"><span>返事のトッピング</span><b>${yen(d.tickets)}回分</b></div>
           <div class="hbsum"><span>声のトッピング</span><b>${d.voiceMin != null ? yen(d.voiceMin) + '分' : yen(d.voiceTickets) + '回分'}</b></div>
@@ -5367,8 +5367,8 @@ html:has(> body.cl.av-hatabo), body.cl.av-hatabo { background-color: #0A1226; } 
           <p style="font-size:11.5px">買ったトッピングは、90日使えます。1回の返事で減る量は、モデルXが1回分・Gが5回分・Zが10回分です。</p></div>
         <div class="hbc"><div class="k">VOICE</div><h3>声を足す</h3>${vpacks.map(k => `<div class="hbplan"><div><b>声 ${k.n}分</b><span>${yen(k.yen)}円（税込）</span></div>${buy(k.id)}</div>`).join('')}
           <p style="font-size:11.5px">買ったトッピングは、90日使えます。ふだんの会話の声は速さ重視、声をつくるときは表現力重視の声のしくみを、ハタボが最初から組みこんでいます。</p></div>
-        <div class="hbc"><div class="k">DAY PASS</div><h3>1日使い放題</h3><div class="hbplan"><div><b>きょう1日（${esc(dp.grade || 'X')}）</b><span>${yen(dp.yen)}円（税込） ・ 安全のため1日${yen(dp.cap || 100)}回まで</span></div>${dp.on ? '<span class="hbtag">きょうは使い放題</span>' : buy('day')}</div>
-          <p style="font-size:11.5px">1日使い放題は、モデルで値段がちがいます（X 330円・G 550円・Z 1,100円）。使い放題でも、たくさん使ったときには上限があります。</p></div>
+        <div class="hbc"><div class="k">PASS</div><h3>使い放題（いちばん賢いAI）</h3>${(d.wallet && d.wallet.dayPass && d.wallet.dayPass.until) ? `<p><span class="hbtag">${esc(d.wallet.dayPass.name || '使い放題')}：${new Date(d.wallet.dayPass.until).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })} まで</span></p>` : ''}${(d.passes || []).map(k => `<div class="hbplan"><div><b>${esc(k.name)}</b><span>${yen(k.yen)}円（税込）</span></div>${buy(k.id)}</div>`).join('')}
+          <p style="font-size:11.5px">買ったときから数えます。続けて買うと、時間がのびます。使い放題でも、たくさん使ったときには上限があります。${d.wallet && d.wallet.opusLeft ? 'いまのプランで、いちばん賢いAIがきょうあと' + d.wallet.opusLeft + '回使えます。' : ''}</p></div>
         <div class="hbc"><div class="k">MAKE</div><h3>声をつくる</h3><p>「やさしいおばあちゃんの声」のように言葉で頼んだり、本人の同意のうえで本人の声をうつしたりして、愛棒だけの声をつくれるようにします。<b>これから</b>（トッピングで足す形）。</p></div>
         <p style="font-size:11.5px;padding:0 4px">${d.payReady ? 'お支払いは、Stripeの安全なページで行います。' : 'お金での購入は準備中です。押すと申し込みになり、ハタラボ（HATHA LAB）からお支払いのご案内をします。'}ありがとうポイント（いま ${yen(d.pts)}pt）は、トッピングには使えません。オーナーのランクと愛棒ガチャに使えます。</p>`;
       HBP.tMsg = '';
@@ -5500,9 +5500,9 @@ html:has(> body.cl.av-hatabo), body.cl.av-hatabo { background-color: #0A1226; } 
           ${f.payFail ? '<p style="color:#E5675C"><b>お支払いができていません。</b>カードを確かめてください。</p>' : ''}${d.payReady && f.canPortal ? '<button type="button" class="hbbtn w" id="hbpPortal">お支払い方法・領収書</button>' : ''}<button type="button" class="hbbtn w" data-ask="会員の解約について相談したい">解約の相談</button></div>`;
       html += `<div class="hbc"><div class="k">STARTER</div><h3>はじめのトッピング</h3><p>新しく登録した人に、1回だけ付きます。使えるのは30日です。</p>${tbl(['ラインナップ', '中身'], PR.starter)}<p class="hbmuted" style="font-size:12px">はじめのトッピングは、1人1回までです。</p></div>
         <div class="hbc"><div class="k">MODEL</div><h3>AIのモデルと減り方</h3><p>X・G・Zは、返事をするAIのモデルのちがいです。料金のプランではありません。</p>${tbl(['モデル', '得意なこと', '1回の返事で減る量'], PR.models)}<p class="hbmuted" style="font-size:12px">声は、話した長さ（分）で減ります。モデルは「設定」の「AIのモデル」で見られます。</p></div>
-        <div class="hbc"><div class="k">TOPPING</div><h3>トッピング</h3><p class="hbmuted" style="font-size:12px;margin:0">値段はすべて税込です。</p>${tbl(['トッピング', '値段（税込）', '会員の値段（税込）'], PR.toppings)}<p class="hbmuted" style="font-size:12px">使い放題でも、たくさん使ったときには上限があります。買ったトッピングは90日使えます。</p><button type="button" class="hbbtn w" data-go="ticket">トッピングを足す</button></div>
-        <div class="hbc"><div class="k">MEMBER</div><h3>会員</h3><p>月額は「会員」だけです。会員になると、トッピングがすべて3割引になります（値段は税込）。</p>${PR.members.map(([nm1, yen1, perk]) => `<div class="hbmem"><div><b>${esc(nm1)}</b><em>${esc(yen1)}</em></div><p>${esc(perk)}</p></div>`).join('')}<p class="hbmuted" style="font-size:12px">会員の申し込みの画面は準備中です。先に知りたいときは、相談してください。</p><button type="button" class="hbbtn w" data-ask="会員について知りたい">会員について相談する</button></div>
-        <div class="hbc"><div class="k">FAMILY</div><h3>家族シェア</h3><p>家族5人まで、トッピングを分け合えます。代表の人が買ったトッピングを、家族みんなで使えます。代表が会員なら、家族全員が会員の値段になります。</p><p>子どもが使える量は、代表が月ごとに決められます。子どものガチャの上限は、決めていなければ <b>月1,000円（税込）</b> です。代表が変えられます。</p><p class="hbmuted" style="font-size:12px">家族シェアの画面は準備中です。</p></div>
+        <div class="hbc"><div class="k">TOPPING</div><h3>トッピング</h3><p class="hbmuted" style="font-size:12px;margin:0">値段はすべて税込です。</p>${tbl(['トッピング', '値段（税込）'], PR.toppings)}<p class="hbmuted" style="font-size:12px">トッピングは、どのプランでも同じ値段です。使い放題は、買ったときから数えます。</p><p class="hbmuted" style="font-size:12px">使い放題でも、たくさん使ったときには上限があります。買ったトッピングは90日使えます。</p><button type="button" class="hbbtn w" data-go="ticket">トッピングを足す</button></div>
+        <div class="hbc"><div class="k">MEMBER</div><h3>月額のプラン</h3><p>値段は税込です。Free・Pro・Max は個人、エースはお店・会社向けです。</p>${PR.members.map(([nm1, yen1, perk]) => `<div class="hbmem"><div><b>${esc(nm1)}</b><em>${esc(yen1)}</em></div><p>${esc(perk)}</p></div>`).join('')}<p class="hbmuted" style="font-size:12px">会員の申し込みの画面は準備中です。先に知りたいときは、相談してください。</p><button type="button" class="hbbtn w" data-ask="会員について知りたい">会員について相談する</button></div>
+        <div class="hbc"><div class="k">FAMILY</div><h3>家族シェア</h3><p>家族5人まで、トッピングを分け合えます。代表の人が買ったトッピングを、家族みんなで使えます。</p><p>子どもが使える量は、代表が月ごとに決められます。子どものガチャの上限は、決めていなければ <b>月1,000円（税込）</b> です。代表が変えられます。</p><p class="hbmuted" style="font-size:12px">家族シェアの画面は準備中です。</p></div>
         <div class="hbc"><div class="k">GOODS</div><h3>ぬいぐるみのハタボ</h3><p>ぬいぐるみにスマホを入れると、愛棒がペットのように話します。</p><div class="hbmem"><div><b>ぬいぐるみのパッケージ</b><em>9,800円（税込）</em></div><p>ぬいぐるみ（スマホを入れるポケットつき）・声の愛棒の設定・はじめのトッピングの上乗せ。<b>スマホは入っていません。</b>お手持ちのスマホを入れてお使いください。長い時間入れたままにしないでください。</p></div></div>
         <div class="hbc"><div class="k">FAQ</div><h3>お試し期間はありますか？</h3><p>お試し期間のかわりに、登録すると「はじめのトッピング」が付きます。使い切っても、料金は自動ではかかりません。</p>
           <p style="font-size:12px"><a href="https://www.hatha-lab.com/terms.html" target="_blank" rel="noopener">利用規約</a>・<a href="https://www.hatha-lab.com/tokushoho.html" target="_blank" rel="noopener">特定商取引法にもとづく表記</a>・<a href="https://www.hatha-lab.com/privacy.html" target="_blank" rel="noopener">プライバシーポリシー</a></p></div>`;
