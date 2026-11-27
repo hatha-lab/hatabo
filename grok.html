@@ -70,7 +70,7 @@ input,select{width:100%;padding:10px 12px;border:1px solid var(--line);border-ra
   <input id="name" autocomplete="off" required maxlength="20" placeholder="例：ヒロ">
   <label for="key">合言葉</label>
   <input id="key" type="password" autocomplete="off">
-  <p class="note">1回は15分まで。スピーカーの声をマイクが拾うときは、イヤホンで試してください。<br>試したら、①はじめましてからの流れ ②次に話したとき前の話を覚えているか ③答えの賢さ ④「黙ってて」「議事録とって」が効くか ⑤声・速さ・聞きまちがい を、気づいたぶんだけ事務局に送ってください。</p>
+  <p class="note">声が聞こえないときは、音量と、LINE の中ではなく Safari・Chrome で開いているかを確かめてください。1回は15分まで。スピーカーの声をマイクが拾うときは、イヤホンで試してください。<br>試したら、①はじめましてからの流れ ②次に話したとき前の話を覚えているか ③答えの賢さ ④「黙ってて」「議事録とって」が効くか ⑤声・速さ・聞きまちがい を、気づいたぶんだけ事務局に送ってください。</p>
   </div>
 </main>
 <script>
@@ -94,7 +94,7 @@ input,select{width:100%;padding:10px 12px;border:1px solid var(--line);border-ra
   const get = k => { try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } };
   const put = (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} };
   $('key').value = P.get('k') || get('liveKey'); $('name').value = get('liveName');
-  let ws = null, ctx = null, mic = null, node = null, src = null, out = null, endTimer = null, talkT = null, rows = { me: null, hb: null }, turns = [], all = [], key = '', ready = false, quiet = false, quietAfter = 0, minFrom = -1;
+  let ws = null, ctx = null, mic = null, node = null, src = null, out = null, endTimer = null, talkT = null, rows = { me: null, hb: null }, dest = null, spk = null, turns = [], all = [], key = '', ready = false, quiet = false, quietAfter = 0, minFrom = -1;
   const state = t => { $('state').textContent = t; };
   const HB = (s, lv) => { try { if (window.HB) { if (s) window.HB.setState(s); if (lv !== undefined) window.HB.setLevel(lv); } } catch (e) {} };   // 3Dのハタボーイ（読みこめなくても会話は続ける）
   function say(who, t) {
@@ -191,7 +191,10 @@ input,select{width:100%;padding:10px 12px;border:1px solid var(--line);border-ra
     put('liveKey', key); put('liveName', $('name').value.trim());
     $('talk').disabled = true; state('つないでいます…'); turns = []; ready = false; quiet = false; quietAfter = 0; minFrom = -1;
     try {
+      // iPhone はマナーモードだと Web Audio の音が消えるので、音は <audio> から鳴らす（<audio> はマナーモードでも鳴る）。押した直後に play しておく
+      try { if (navigator.audioSession) navigator.audioSession.type = 'play-and-record'; } catch (e) {}
       try { ctx = new AudioContext({ sampleRate: RATE }); } catch (e) { ctx = new AudioContext(); }
+      try { dest = ctx.createMediaStreamDestination(); spk = spk || Object.assign(document.createElement('audio'), { autoplay: true, playsInline: true }); spk.setAttribute('playsinline', ''); spk.srcObject = dest.stream; spk.play().catch(() => {}); } catch (e) { dest = null; }
       await ctx.resume();
       mic = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } });
       const r = await fetch(base + '/grok/session', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ k: key, name: $('name').value.trim() }) });
@@ -210,7 +213,8 @@ input,select{width:100%;padding:10px 12px;border:1px solid var(--line);border-ra
       await ctx.audioWorklet.addModule(URL.createObjectURL(new Blob([code], { type: 'text/javascript' })));
       const pcode = 'class P extends AudioWorkletProcessor{constructor(){super();this.q=[];this.b=null;this.i=0;this.f=0;this.step=' + RATE + '/sampleRate;this.n=0;this.e=0;this.port.onmessage=e=>{if(e.data==="clear"){this.q=[];this.b=null;this.i=0;this.f=0}else this.q.push(e.data)}}next(){if(this.b&&this.i<this.b.length)return this.b[this.i];if(this.b&&this.i>=this.b.length){this.i-=this.b.length;this.b=null}while(!this.b&&this.q.length){this.b=this.q.shift();if(this.i>=this.b.length){this.i-=this.b.length;this.b=null}}return this.b?this.b[this.i]:null}process(i,o){const ch=o[0][0];for(let k=0;k<ch.length;k++){const a=this.next();if(a===null){ch[k]=0;continue}let c=a;if(this.b&&this.i+1<this.b.length)c=this.b[this.i+1];else if(this.q.length)c=this.q[0][0];ch[k]=a+(c-a)*this.f;this.f+=this.step;while(this.f>=1){this.f-=1;this.i++}this.e=Math.max(this.e,Math.abs(ch[k]))}if(++this.n>=8){this.port.postMessage(this.e);this.n=0;this.e=0}return true}}registerProcessor("pcm-out",P)';
       await ctx.audioWorklet.addModule(URL.createObjectURL(new Blob([pcode], { type: 'text/javascript' })));
-      out = new AudioWorkletNode(ctx, 'pcm-out', { outputChannelCount: [1] }); out.connect(ctx.destination);
+      out = new AudioWorkletNode(ctx, 'pcm-out', { outputChannelCount: [1] }); out.connect(dest || ctx.destination);
+      if (dest && spk) spk.play().catch(() => { try { out.disconnect(); out.connect(ctx.destination); } catch (e) {} });   // <audio> が鳴らせないときは、ふつうに鳴らす
       out.port.onmessage = e => { const lv = Math.min(1, e.data * 1.6); if (lv > 0.03) { clearTimeout(talkT); HB('talk', lv); talkT = setTimeout(() => HB('idle', 0), 400); } };   // 声の大きさに合わせて、ハタボーイがはずむ
       src = ctx.createMediaStreamSource(mic); node = new AudioWorkletNode(ctx, 'mic-chunks');
       node.port.onmessage = e => { if (ready) send({ type: 'input_audio_buffer.append', audio: toB64(e.data, ctx.sampleRate) }); };
@@ -226,7 +230,7 @@ input,select{width:100%;padding:10px 12px;border:1px solid var(--line);border-ra
     try { src && src.disconnect(); node && node.disconnect(); out && out.disconnect(); } catch (e) {}
     out = null; clearTimeout(talkT);
     if (mic) mic.getTracks().forEach(t => t.stop()); mic = null; src = null; node = null;
-    hush(); try { ctx && ctx.close(); } catch (e) {} ctx = null; ready = false; HB('idle', 0);
+    hush(); try { if (spk) { spk.pause(); spk.srcObject = null; } } catch (e) {} dest = null; try { ctx && ctx.close(); } catch (e) {} ctx = null; ready = false; HB('idle', 0);
     $('talk').textContent = '話しはじめる'; $('talk').classList.remove('on'); $('talk').disabled = false;
     state(why || 'おわりました');
   }
