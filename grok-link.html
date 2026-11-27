@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>ハタボーイの検証URLをつくる</title>
+<style>
+body{margin:0;background:#0b1a5e;color:#eef2ff;font:16px/1.6 -apple-system,"Hiragino Sans","Noto Sans JP",sans-serif}
+main{max-width:560px;margin:0 auto;padding:20px 16px 40px}
+h1{font-size:20px;margin:0 0 4px}
+.sub{color:#bcc7ea;font-size:13px;margin:0 0 16px}
+label{display:block;font-size:13px;color:#bcc7ea;margin-top:14px}
+select,input,textarea{width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid rgba(160,180,240,.35);border-radius:10px;background:rgba(12,20,52,.8);color:#eef2ff;font-size:15px}
+textarea{min-height:64px}
+.out{margin-top:18px;background:rgba(12,20,52,.8);border:1px solid rgba(160,180,240,.35);border-radius:12px;padding:12px;word-break:break-all;font-size:14px}
+button{margin-top:10px;border:0;border-radius:999px;padding:12px 18px;font-size:15px;font-weight:700;background:#2f63d6;color:#fff;cursor:pointer}
+.note{font-size:12px;color:#bcc7ea;margin-top:14px}
+</style></head><body>
+<main>
+<h1>ハタボーイの検証URLをつくる</h1>
+<p class="sub">事務局用。業種と場面を選ぶと、開いた瞬間からその設定で話しはじめるURLを発行します。発行したURLは合言葉なしで使えて、URLごとに止められます。相手の名前や連絡先は入れません（呼び名は相手が自分で入れます）。</p>
+<label for="key">合言葉（発行するのに使います。URLには入りません）</label>
+<input id="key" type="password" autocomplete="off">
+<label for="label">このURLのメモ（だれ向けか。事務局だけが見ます）</label>
+<input id="label" maxlength="40" placeholder="例：マー君経由・宿の方">
+<label for="gyo">業種・立場</label>
+<select id="gyo"><option value="">（決めない）</option><option value="yado">宿・民泊</option><option value="inshoku">飲食店</option><option value="fudosan">不動産</option><option value="jutaku">住宅・リフォーム</option><option value="kaigo">介護</option><option value="kyoiku">教育・塾</option><option value="eigyo">営業職</option><option value="event">イベント・フェス</option><option value="jichitai">自治体・地域</option><option value="katei">家庭・子育て</option></select>
+<label for="scene">使う場面</label>
+<select id="scene"><option value="">（決めない）</option><option value="uketsuke">受付・問い合わせ</option><option value="yoyaku">予約の段取り</option><option value="gaikokugo">外国語の対応</option><option value="gijiroku">議事録・メモ</option><option value="roleplay">営業のロープレ</option><option value="tejun">新人への手順案内</option><option value="katei">家庭教師</option><option value="yotei">予定・段取りの整理</option><option value="oiwai">お祝いを伝える</option><option value="website">ウェブサイトの窓口</option><option value="rusuban">電話のお留守番</option><option value="tsukaikata">ハタボの使い方紹介</option></select>
+<label for="hogen">方言</label>
+<select id="hogen"><option value="">（標準語・相手に合わせて変える）</option><option value="hakata">博多弁</option><option value="kansai">関西弁</option><option value="hiroshima">広島弁</option><option value="nagoya">名古屋弁</option><option value="tohoku">東北のことば</option><option value="okinawa">沖縄のことば</option></select>
+<label for="tone">話し方</label>
+<select id="tone"><option value="">（ふつう）</option><option value="teinei">ていねい</option><option value="genki">元気</option><option value="ochitsuki">ゆっくり・やさしく</option><option value="kudake">友だちのように</option></select>
+<label for="ref">紹介者のコード（任意・感想が届いたら紹介者にも知らせます）</label>
+<input id="ref" maxlength="40" placeholder="例：Myハタボの紹介コード">
+<label for="msg">最初に伝えてほしいひとこと（任意・120字まで）</label>
+<textarea id="msg" maxlength="120" placeholder="例：お誕生日おめでとう！ヒロより"></textarea>
+<button id="make" type="button">URLを発行する</button>
+<div class="out" id="out">ここにURLが出ます</div>
+<button id="copy" type="button">コピー</button>
+<p class="note">URLを知っている人はだれでも使えるので、転送されて困るときは止めてください。感想が届くと、このURLのメモつきで事務局のLINEに知らせます。</p>
+<label for="stop">URLを止める（発行したURLをはりつけ）</label>
+<input id="stop" placeholder="https://…/grok.html?t=…">
+<button id="stopBtn" type="button">止める</button>
+<div class="out" id="stopOut" style="display:none"></div>
+</main>
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const API = 'https://butter-junior-722073142596.asia-northeast1.run.app';
+  try { $('key').value = localStorage.getItem('liveKey') || ''; } catch (e) {}
+  const call = async (path, body) => { const r = await fetch(API + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(Object.assign({ k: $('key').value.trim() }, body)) }); const j = await r.json().catch(() => ({})); if (!r.ok) throw new Error(j.error === 'key' ? '合言葉がちがいます' : (j.error || r.status)); return j; };
+  $('make').onclick = async () => {
+    $('out').textContent = '発行しています…';
+    try {
+      const body = {}; for (const k of ['gyo', 'scene', 'tone', 'hogen', 'ref', 'msg', 'label']) body[k] = $(k).value.trim();
+      const j = await call('/grok/link', body);
+      try { localStorage.setItem('liveKey', $('key').value.trim()); } catch (e) {}
+      $('out').textContent = new URL('grok.html?t=' + j.t, location.href).toString();
+    } catch (e) { $('out').textContent = 'できませんでした：' + e.message; }
+  };
+  $('copy').onclick = async () => { try { await navigator.clipboard.writeText($('out').textContent); $('copy').textContent = 'コピーしました'; setTimeout(() => $('copy').textContent = 'コピー', 1500); } catch (e) {} };
+  $('stopBtn').onclick = async () => {
+    const t = (($('stop').value.match(/[?&]t=([A-Za-z0-9_-]+)/) || [])[1]) || ''; $('stopOut').style.display = 'block';
+    if (!t) { $('stopOut').textContent = 'URLをはりつけてください'; return; }
+    try { await call('/grok/link/off', { t }); $('stopOut').textContent = '止めました。このURLではもう話せません。'; } catch (e) { $('stopOut').textContent = 'できませんでした：' + e.message; }
+  };
+})();
+</script>
+</body></html>
