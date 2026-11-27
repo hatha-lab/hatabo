@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>ハタボ 声の検証（Grok Voice）</title>
 <meta name="robots" content="noindex">
+<script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/" } }</script>
 <style>
 :root{--bg:#f4f6fb;--card:#fff;--ink:#1d2433;--sub:#5d6680;--line:#dde2ee;--hb:#1e3f7a;--hbd:#1e3f7a;--stop:#d9483b}
 @media (prefers-color-scheme:dark){:root{--bg:#11151f;--card:#1a2030;--ink:#e8ecf5;--sub:#a3abc0;--line:#2c3448;--hb:#3a64b0;--hbd:#9db8ec;--stop:#ef6b5f}}
@@ -24,6 +25,7 @@ h1{font-size:20px;margin:0 0 4px}
 .row.brain{font-size:13px;color:var(--sub)}
 label{display:block;font-size:13px;color:var(--sub);margin-top:16px}
 input,select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);font-size:15px}
+#stage{width:100%;max-width:320px;aspect-ratio:1/1;margin:0 auto 6px;touch-action:none}
 .note{font-size:12px;color:var(--sub);margin-top:18px}
 </style>
 </head>
@@ -31,6 +33,7 @@ input,select{width:100%;padding:10px 12px;border:1px solid var(--line);border-ra
 <main>
   <h1>ハタボ 声の検証（Grok Voice）</h1>
   <p class="sub">聞く・考える・話すは xAI の Grok Voice。むずかしい質問は Claude が考えて渡します。</p>
+  <div id="stage" aria-label="ハタボーイ"></div>
   <button class="talk" id="talk" type="button">話しはじめる</button>
   <div class="state" id="state">ボタンを押すと、マイクを使います</div>
   <div class="log" id="log" aria-live="polite"></div>
@@ -57,6 +60,7 @@ input,select{width:100%;padding:10px 12px;border:1px solid var(--line);border-ra
   $('key').value = P.get('k') || get('liveKey'); $('name').value = get('liveName'); if (get('grokVoice')) $('voice').value = get('grokVoice');
   let ws = null, ctx = null, mic = null, node = null, src = null, endTimer = null, playAt = 0, playing = [], rows = { me: null, hb: null }, turns = [], key = '', ready = false;
   const state = t => { $('state').textContent = t; };
+  const HB = (s, lv) => { try { if (window.HB) { if (s) window.HB.setState(s); if (lv !== undefined) window.HB.setLevel(lv); } } catch (e) {} };   // 3Dのハタボーイ（読みこめなくても会話は続ける）
   function say(who, t) {
     if (!t) return;
     const k = who === 'あなた' ? 'me' : 'hb';
@@ -82,13 +86,17 @@ input,select{width:100%;padding:10px 12px;border:1px solid var(--line);border-ra
     const buf = ctx.createBuffer(1, pcm.length, RATE), ch = buf.getChannelData(0);
     for (let i = 0; i < pcm.length; i++) ch[i] = pcm[i] / 0x8000;
     const s = ctx.createBufferSource(); s.buffer = buf; s.connect(ctx.destination);
-    playAt = Math.max(playAt, ctx.currentTime + 0.03); s.start(playAt); playAt += buf.duration;
-    playing.push(s); s.onended = () => { playing = playing.filter(x => x !== s); };
+    playAt = Math.max(playAt, ctx.currentTime + 0.03); s.start(playAt);
+    let e = 0; for (let i = 0; i < ch.length; i += 4) e = Math.max(e, Math.abs(ch[i]));
+    const lv = Math.min(1, e * 1.6), wait = Math.max(0, (playAt - ctx.currentTime) * 1000);
+    setTimeout(() => HB('talk', lv), wait);   // 声の大きさに合わせて、ハタボーイがはずむ
+    playAt += buf.duration;
+    playing.push(s); s.onended = () => { playing = playing.filter(x => x !== s); if (!playing.length) HB('idle', 0); };
   }
-  function hush() { playing.forEach(s => { try { s.stop(); } catch (e) {} }); playing = []; playAt = 0; }   // 相手が話しはじめたら、ハタボはだまる（割りこみ）
+  function hush() { playing.forEach(s => { try { s.stop(); } catch (e) {} }); playing = []; playAt = 0; HB('idle', 0); }   // 相手が話しはじめたら、ハタボはだまる（割りこみ）
   async function brain(callId, args) {
     let question = ''; try { question = JSON.parse(args || '{}').question || ''; } catch (e) {}
-    note('（頭のClaudeに考えてもらっています）');
+    note('（頭のClaudeに考えてもらっています）'); HB('think', 0);
     let answer = 'ごめんなさい、いまは答えが見つかりませんでした。';
     try {
       const talk = turns.slice(-14).map(x => x.who + '：' + x.text.trim()).join('\n');
@@ -101,7 +109,8 @@ input,select{width:100%;padding:10px 12px;border:1px solid var(--line);border-ra
   function onEvent(ev) {
     const t = ev.type || '';
     if (t === 'response.output_audio.delta' || t === 'response.audio.delta') { if (ev.delta) play(ev.delta); return; }
-    if (t === 'input_audio_buffer.speech_started') { hush(); return; }
+    if (t === 'input_audio_buffer.speech_started') { hush(); HB('listen', 0); return; }
+    if (t === 'input_audio_buffer.speech_stopped') { HB('idle', 0); return; }
     if (t === 'conversation.item.input_audio_transcription.completed') { say('あなた', ev.transcript || ''); return; }
     if (t === 'response.output_audio_transcript.delta' || t === 'response.audio_transcript.delta' || t === 'response.output_text.delta') { say('ハタボ', ev.delta || ''); return; }
     if (t === 'response.function_call_arguments.done') { if (ev.name === 'ask_brain') brain(ev.call_id, ev.arguments); return; }
@@ -142,12 +151,16 @@ input,select{width:100%;padding:10px 12px;border:1px solid var(--line);border-ra
     try { w && w.close(); } catch (e) {}
     try { src && src.disconnect(); node && node.disconnect(); } catch (e) {}
     if (mic) mic.getTracks().forEach(t => t.stop()); mic = null; src = null; node = null;
-    hush(); try { ctx && ctx.close(); } catch (e) {} ctx = null; ready = false;
+    hush(); try { ctx && ctx.close(); } catch (e) {} ctx = null; ready = false; HB('idle', 0);
     $('talk').textContent = '話しはじめる'; $('talk').classList.remove('on'); $('talk').disabled = false;
     state(why || 'おわりました');
   }
   $('talk').onclick = () => ws ? stop() : start();
 })();
+</script>
+<script type="module">
+import { mountHataboy } from './hataboy3d.js';
+try { window.HB = await mountHataboy(document.getElementById('stage'), { src: 'hataboy.glb' }); } catch (e) { document.getElementById('stage').style.display = 'none'; }
 </script>
 </body>
 </html>

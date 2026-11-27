@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ハタボーイ 3D</title>
+<meta name="robots" content="noindex">
+<script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/" } }</script>
+<style>
+:root{--bg:#f4f6fb;--ink:#1d2433;--sub:#5d6680;--line:#dde2ee;--hb:#1e3f7a}
+@media (prefers-color-scheme:dark){:root{--bg:#11151f;--ink:#e8ecf5;--sub:#a3abc0;--line:#2c3448;--hb:#9db8ec}}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(circle at 50% 35%,#ffffff 0,var(--bg) 70%);color:var(--ink);font:15px/1.6 -apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;min-height:100vh}
+@media (prefers-color-scheme:dark){body{background:radial-gradient(circle at 50% 35%,#24304a 0,var(--bg) 70%)}}
+main{max-width:520px;margin:0 auto;padding:16px}
+h1{font-size:18px;margin:4px 0 0;text-align:center;letter-spacing:.06em}
+#stage{width:100%;aspect-ratio:1/1;touch-action:none}
+.btns{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+button{border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:999px;padding:8px 14px;font-size:14px;cursor:pointer}
+button.on{background:var(--hb);color:#fff;border-color:var(--hb)}
+.msg{text-align:center;color:var(--sub);font-size:13px;min-height:1.6em}
+</style>
+</head>
+<body>
+<main>
+  <h1>HATHABOY</h1>
+  <div id="stage"></div>
+  <div class="msg" id="msg">読みこんでいます…</div>
+  <div class="btns">
+    <button data-s="idle" class="on">ふだん</button>
+    <button data-s="listen">聞く</button>
+    <button data-s="think">考える</button>
+    <button data-s="talk">話す</button>
+    <button id="mic">マイクで話す</button>
+  </div>
+</main>
+<script type="module">
+import { mountHataboy } from './hataboy3d.js';
+const $ = id => document.getElementById(id);
+let hb, talkT = null, micStream = null;
+try { hb = await mountHataboy($('stage'), { src: 'hataboy.glb' }); $('msg').textContent = '動かしてみてください'; }
+catch (e) { $('msg').textContent = '読みこめませんでした：' + (e.message || e); }
+const pick = s => { document.querySelectorAll('[data-s]').forEach(b => b.classList.toggle('on', b.dataset.s === s)); hb && hb.setState(s); };
+document.querySelectorAll('[data-s]').forEach(b => b.onclick = () => {
+  pick(b.dataset.s); clearInterval(talkT);
+  if (b.dataset.s === 'talk') talkT = setInterval(() => hb.setLevel(Math.random() > 0.25 ? 0.4 + Math.random() * 0.6 : 0), 110);   // 話しているふり
+  else hb && hb.setLevel(0);
+});
+$('mic').onclick = async () => {   // マイクの声の大きさで、話すうごきをためす
+  if (micStream) { micStream.getTracks().forEach(t => t.stop()); micStream = null; $('mic').classList.remove('on'); pick('idle'); hb.setLevel(0); return; }
+  try {
+    micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const ctx = new AudioContext(), an = ctx.createAnalyser(); an.fftSize = 512; ctx.createMediaStreamSource(micStream).connect(an);
+    const d = new Uint8Array(an.fftSize); $('mic').classList.add('on'); clearInterval(talkT); pick('talk');
+    (function loop() { if (!micStream) return ctx.close(); an.getByteTimeDomainData(d); let m = 0; for (const v of d) m = Math.max(m, Math.abs(v - 128)); hb.setLevel(Math.min(1, m / 50)); requestAnimationFrame(loop); })();
+  } catch (e) { $('msg').textContent = 'マイクが使えませんでした'; }
+};
+</script>
+</body>
+</html>
