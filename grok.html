@@ -31,8 +31,8 @@ input,select{width:100%;padding:10px 12px;border:1px solid var(--line);border-ra
 </head>
 <body>
 <main>
-  <h1>ハタボ 声の検証（Grok Voice）</h1>
-  <p class="sub">聞く・考える・話すは xAI の Grok Voice。むずかしい質問は Claude が考えて渡します。</p>
+  <h1>ハタボーイと話す（Grok Voice）</h1>
+  <p class="sub">ハタボの案内役ハタボーイ。聞く・話すは xAI の Grok Voice、むずかしい質問はうしろで Claude が考えます。</p>
   <div id="stage" aria-label="ハタボーイ"></div>
   <button class="talk" id="talk" type="button">話しはじめる</button>
   <div class="state" id="state">ボタンを押すと、マイクを使います</div>
@@ -133,7 +133,7 @@ input,select{width:100%;padding:10px 12px;border:1px solid var(--line);border-ra
       ws.onclose = () => { if (ws) stop('おわりました'); };
       ws.onerror = () => note('つながりが切れました');
       await new Promise((ok, ng) => { ws.onopen = ok; setTimeout(() => ng(new Error('xAI につながりませんでした')), 10000); });
-      send({ type: 'session.update', session: { instructions: j.instructions, voice: j.voice, turn_detection: { type: 'server_vad' }, tools: j.tools || [],
+      send({ type: 'session.update', session: { instructions: j.instructions, voice: j.voice, turn_detection: { type: 'server_vad' }, tools: j.tools || [], ...(j.reasoning ? { reasoning: j.reasoning } : {}),
         audio: { input: { format: { type: 'audio/pcm', rate: RATE } }, output: { format: { type: 'audio/pcm', rate: RATE } } } } });
       // マイク → 小分けにして送る
       const code = 'class C extends AudioWorkletProcessor{constructor(){super();this.b=[];this.n=0}process(i){const c=i[0]&&i[0][0];if(c){this.b.push(new Float32Array(c));this.n+=c.length;if(this.n>=sampleRate/10){const o=new Float32Array(this.n);let p=0;for(const x of this.b){o.set(x,p);p+=x.length}this.port.postMessage(o,[o.buffer]);this.b=[];this.n=0}}return true}}registerProcessor("mic-chunks",C)';
