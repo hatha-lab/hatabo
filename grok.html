@@ -187,6 +187,33 @@ main{max-width:none;padding:0;height:100dvh;display:flex;flex-direction:column}
 .dmap .mapbtn{width:auto;padding:5px 14px}
 .legend{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;color:var(--sub);font-size:11px}
 .legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px}
+.gate{position:fixed;inset:0;z-index:80;background:radial-gradient(circle at 50% 30%,#141a2e,#07080d 70%);display:grid;place-items:center;padding:24px}
+.gbox{max-width:380px;text-align:center}
+.gbox h2{margin:14px 0 8px;font-size:22px}
+.gbox p{color:var(--sub);font-size:14px;line-height:1.7}
+#gGoogle{width:100%;border:0;border-radius:999px;background:#f2f4fa;color:#111;font-size:17px;font-weight:800;padding:14px;margin:14px 0 6px;cursor:pointer}
+.first1{background:linear-gradient(135deg,#2a2140,#14223e);border:1px solid #5b4c8f;border-radius:14px;padding:14px;margin-bottom:10px;text-align:center}
+.first1 .pop{display:block;margin:4px auto 8px;border-radius:50%;animation:pop .7s cubic-bezier(.2,1.6,.4,1) both;filter:drop-shadow(0 0 18px #8fb0ff)}
+@keyframes pop{from{transform:scale(.1) rotate(-30deg);opacity:0}to{transform:none;opacity:1}}
+.first1 b{display:block;font-size:16px;margin-bottom:4px}.first1 small{color:var(--sub);font-size:12px}
+.cbar{display:flex;align-items:center;gap:8px;margin-top:8px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:5px}
+.cbar input{flex:1;min-width:0;background:transparent;border:0;outline:0;color:var(--ink);font-size:16px;padding:8px 4px}
+.cplus{width:38px;height:38px;border-radius:50%;border:0;background:#1d2130;color:var(--ink);font-size:22px;line-height:1;cursor:pointer;flex:0 0 38px}
+.cav{width:42px;height:42px;border-radius:50%;border:0;padding:0;background:transparent;cursor:pointer;flex:0 0 42px;display:grid;place-items:center;color:#fff}
+.cavi{display:grid;place-items:center;width:42px;height:42px;border-radius:50%;box-shadow:0 0 0 2px #3b6cf6;overflow:hidden;color:#fff;font-weight:800}
+.cavi img,.cavi svg{width:42px;height:42px;display:block}
+.cav svg{display:none;width:20px;height:20px}
+.cbar.typing .cav{background:var(--hb)}.cbar.typing .cavi{display:none}.cbar.typing .cav svg{display:block}
+.cmenu{background:var(--card2);border:1px solid var(--line);border-radius:14px;padding:10px;margin-top:8px}
+.chips2{display:flex;flex-wrap:wrap;gap:6px}
+.chips2 button{border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:999px;padding:6px 12px;font-size:13px;cursor:pointer}
+#pane-chat.chatv .lcol{display:flex !important;flex-direction:column;height:calc(100dvh - 150px);margin-top:6px}
+#pane-chat.chatv .lh{display:none}
+#pane-chat.chatv .log{flex:1;max-height:none;min-height:0;background:transparent;border:0;padding:4px 2px}
+@media (max-width:899px){.top .fs{display:none}.top .tr{grid-column:3}}   /* スマホは全画面ボタンを出さない */
+.paylinks{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.paylinks a{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:10px;color:var(--ink);text-decoration:none}
+.paylinks b{display:block;font-size:14px}.paylinks small{color:var(--sub);font-size:11px}
 .call{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:transparent;color:var(--ink);display:grid;place-items:center;cursor:pointer}
 .call svg{width:17px;height:17px}
 .call.on{background:var(--stop);border-color:var(--stop);color:#fff}
@@ -380,13 +407,13 @@ main{max-width:none;padding:0;height:100dvh;display:flex;flex-direction:column}
     <div class="lcol" id="lcol">
       <p class="h lh">相棒との会話</p>
     <div class="log" id="log" aria-live="polite"></div>
-    <form class="send" id="sendF"><input id="txt" autocomplete="off" placeholder="文字でも話せます（つないでいるとき）"><button type="submit">送る</button></form>
-    <p class="hint">「覚えて」「黙ってて」「議事録とって」「まとめて」「事務局に伝えて」も使えます。黙っているときは「ハタボーイ」と呼ぶと戻ります。</p>
+    <div class="cmenu" id="cMenu" hidden><p class="hint">押すと入力欄に入ります。黙っているときは「ハタボーイ」と呼ぶと戻ります。</p><div class="chips2"><button type="button" data-in="これを覚えて：">覚えて</button><button type="button" data-in="しばらく黙ってて">黙ってて</button><button type="button" data-in="議事録とって">議事録とって</button><button type="button" data-in="ここまでをまとめて">まとめて</button><button type="button" data-in="事務局に伝えて：">事務局に伝えて</button><button type="button" data-in="くわしく調べて：">くわしく調べる</button><button type="button" data-pl>プラグイン</button></div></div>
+    <form class="cbar" id="sendF"><button type="button" class="cplus" id="cPlus" aria-label="ほかの機能">＋</button><input id="txt" autocomplete="off" placeholder="文字でも話せます"><button type="submit" class="cav" id="cAv" aria-label="送る・声で話す"><span class="cavi" id="cAvI"><img src="hataboy-emblem.webp" alt=""></span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 20.5 21 12 3 3.5 3 10l12 2-12 2z"/></svg></button></form>
     <div id="mins"></div>
     </div>
   </section>
   <section class="pane" id="pane-feed">
-    <div class="fhead"><b>投稿</b><button type="button" class="newpost" id="newPost">＋ 投稿</button></div>
+    <div class="fhead"><b>Feed <small style="color:var(--sub);font-size:12px;font-weight:500">全体</small></b><button type="button" class="newpost" id="newPost">＋ 投稿</button></div>
     <div id="feed"></div>
     <p class="dash">検証している人どうしで、投稿・フォロー・いいねを試せます。呼び名ごとの投稿です。電話番号や住所は書かないでください。</p>
   </section>
@@ -399,6 +426,13 @@ main{max-width:none;padding:0;height:100dvh;display:flex;flex-direction:column}
     <div id="dmDraft" hidden><p class="note">相棒がこのトークを読んで、返信の下書きを作ります。送る前に、かならず自分で確かめてください。</p><button type="button" class="postbtn" id="dmMake">返信の下書きを作ってもらう</button><textarea id="dmDraftTxt" placeholder="ここに下書きが出ます"></textarea><div class="pbtns"><button type="button" id="dmDraftSend">この文面で送る</button><button type="button" id="dmDraftClear">やめる</button></div></div>
     <button type="button" class="dmvoice" id="dmVoice"><i class="pav" id="dmAv2">?</i><small id="dmVoiceL">声を聴く</small></button>
   </div>
+  <div class="gate" id="gate" hidden><div class="gbox">
+    <img src="hathabo-logo.webp" alt="" width="64" height="64">
+    <h2>ハタボーイの検証へようこそ</h2>
+    <p>はじめに、ログインしてください。あなたの相棒の記憶・トーク・投稿を、あなただけのものにするためです。カレンダーやGmailをつなぐときも、このログインを使います。</p>
+    <button type="button" id="gGoogle">Googleでログイン</button>
+    <p class="note">ハタボのアプリでGoogleを使っている人は、同じアカウントになります。</p>
+  </div></div>
   <div class="sheet" id="mapSheet" hidden>
     <div class="sh"><b>ご縁マップ</b><button type="button" class="close" data-close="mapSheet">閉じる</button></div>
     <p class="note">まん中があなた。近い輪ほど深いつながりです。人を押すとトークが開きます。</p>
@@ -418,7 +452,8 @@ main{max-width:none;padding:0;height:100dvh;display:flex;flex-direction:column}
       <div class="steps" id="steps"><span>はじめまして</span><span>しりあい</span><span>なかよし</span><span>相棒</span></div>
       <p class="note" id="growNote">覚えたこと 0</p>
     </div>
-    <div class="card gacha"><div class="gh"><b>ガチャ</b><small id="gLeft">無料 きょう あと1回</small></div><div class="caps"><i style="background:#7aa7ff"></i><i style="background:#e8a23a"></i><i style="background:#6bd59a"></i><i style="background:#a98bf5"></i></div><p class="note" id="gRes">着せかえ・限定スタンプ・ありがとうポイントが出ます（検証用・課金なし）</p><button type="button" class="gbtn" id="gDraw">引く（無料）</button></div>
+    <div class="first1" id="first1" hidden><b>ようこそ！はじめに、ガチャを1回引いてください</b><small>カプセルから、あなたの相棒が出てきます（むりょう）</small></div>
+<div class="card gacha"><div class="gh"><b>ガチャ</b><small id="gLeft">無料 きょう あと1回</small></div><div class="caps"><i style="background:#7aa7ff"></i><i style="background:#e8a23a"></i><i style="background:#6bd59a"></i><i style="background:#a98bf5"></i></div><p class="note" id="gRes">着せかえ・限定スタンプ・ありがとうポイントが出ます（検証用・課金なし）</p><button type="button" class="gbtn" id="gDraw">引く（無料）</button></div>
   </div>
   <div class="sheet light" id="mkSheet" hidden>
     <div class="sh"><button type="button" class="close x" data-close="mkSheet">✕</button><b class="mkt">新しい相棒をつくる</b></div>
@@ -446,7 +481,9 @@ main{max-width:none;padding:0;height:100dvh;display:flex;flex-direction:column}
       <p class="h">検証のお願い</p>
       <p class="note">声が聞こえないときは、音量と、LINE の中ではなく Safari・Chrome で開いているかを確かめてください。1回は15分まで、1日5回まで。スピーカーの声をマイクが拾うときは、イヤホンで試してください。<br>感想は、ハタボーイに話すと事務局に届けます。①はじめましてからの流れ ②前の話を覚えているか ③答えの賢さ ④「黙ってて」「議事録」が効くか ⑤声・速さ・聞きまちがい</p>
     </div>
+    <p class="note" style="text-align:center"><span id="pEmail"></span> <button type="button" class="mapbtn" id="pOut" style="display:inline;width:auto;padding:3px 12px">ログアウト</button></p>
     <div class="card set">
+      <p class="h">料金・お支払い</p><div class="paylinks"><a href="https://app.hatha-lab.com/?page=plan" target="_blank" rel="noopener"><b>料金・お支払い</b><small>基本料0円＋トッピング・会員</small></a><a href="https://app.hatha-lab.com/?page=ticket" target="_blank" rel="noopener"><b>トッピング</b><small>返事・声・1日使い放題を足す</small></a></div>
       <p class="h">設定（アカウント・通知・プライバシー・音声・テーマ・ヘルプ）とほかの機能（ハタボのアプリで開きます）</p>
       <a href="https://app.hatha-lab.com/?page=gacha" target="_blank" rel="noopener">愛棒ガチャ</a><a href="https://app.hatha-lab.com/?page=grow" target="_blank" rel="noopener">育てた愛棒・引きつぎ</a><a href="https://app.hatha-lab.com/?page=notes" target="_blank" rel="noopener">メモ・議事録</a><a href="https://app.hatha-lab.com/?page=inbox" target="_blank" rel="noopener">伝言</a><a href="https://app.hatha-lab.com/?page=share" target="_blank" rel="noopener">紹介する</a><a href="https://app.hatha-lab.com/?page=plan" target="_blank" rel="noopener">料金・お支払い</a><a href="https://app.hatha-lab.com/?page=aisai" target="_blank" rel="noopener">AISAI・愛祭</a><a href="https://app.hatha-lab.com/?page=settings" target="_blank" rel="noopener">設定</a>
     </div>
@@ -457,8 +494,8 @@ main{max-width:none;padding:0;height:100dvh;display:flex;flex-direction:column}
     <div class="pbtns"><button type="button" id="pPick">画像を選ぶ</button><button type="button" id="pVid" disabled title="動画はまだ選べません">動画を選ぶ（準備中）</button></div>
     <input type="file" id="pFile" accept="image/*" hidden>
     <div class="pimgs" id="pImgs"></div>
-    <div class="vis" id="vis"><span>公開範囲</span><button type="button" class="on" data-v="goen">ご縁のみ</button><button type="button" data-v="friends">友だち</button><button type="button" data-v="all">全体</button></div>
-    <p class="note">ご縁のみ＝おたがいフォローしている人／友だち＝あなたがフォローしている人／全体＝検証している人みんな。写真は1枚まで（小さくしてから送ります）。動画はまだ選べません。</p>
+    <div class="vis" id="vis"><span>公開範囲</span><button type="button" class="on" data-v="all">全体</button><button type="button" data-v="friends">友だち</button><button type="button" data-v="goen">ご縁のみ</button></div>
+    <p class="note">全体＝Feed（検証している人みんな）に出ます／友だち＝あなたがフォローしている人だけ／ご縁のみ＝おたがいフォローしている人だけ。写真は1枚まで（小さくしてから送ります）。動画はまだ選べません。</p>
     <button type="button" class="postbtn" id="pSend">投稿する</button>
     <p class="note" id="pMsg"></p>
   </div>
@@ -485,7 +522,9 @@ main{max-width:none;padding:0;height:100dvh;display:flex;flex-direction:column}
   const put = (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} };
   { const G = { yado: '宿・民泊', inshoku: '飲食店', fudosan: '不動産', jutaku: '住宅・リフォーム', kaigo: '介護', kyoiku: '教育・塾', eigyo: '営業職', event: 'イベント・フェス', jichitai: '自治体・地域', katei: '家庭・子育て' }, S = { uketsuke: '受付・問い合わせ', yoyaku: '予約の段取り', gaikokugo: '外国語の対応', gijiroku: '議事録・メモ', roleplay: '営業のロープレ', tejun: '新人への手順案内', katei: '家庭教師', yotei: '予定・段取りの整理', oiwai: 'お祝いを伝える', website: 'ウェブサイトの窓口', rusuban: '電話のお留守番', tsukaikata: 'ハタボの使い方紹介' };
     const t = [G[P.get('gyo')], S[P.get('scene')]].filter(Boolean).join(' × '); if (t) document.getElementById('preset').textContent = 'このページの設定：' + t; }
-  const tok = (P.get('t') || '').replace(/[^A-Za-z0-9_-]/g, '');   // 事務局が発行した検証URLなら、合言葉はいらない
+  const tok = (P.get('t') || '').replace(/[^A-Za-z0-9_-]/g, '');
+  // Googleでログインしてもどってきたら、鍵（#wt=）をこの端末にしまう
+  let WT = ''; try { const h = new URLSearchParams(location.hash.slice(1)).get('wt'); if (h) { localStorage.setItem('grokWt', h); history.replaceState(null, '', location.pathname + location.search); } WT = localStorage.getItem('grokWt') || ''; } catch (e) {}   // 事務局が発行した検証URLなら、合言葉はいらない
   if (tok) { $('key').style.display = 'none'; document.querySelector('label[for=key]').style.display = 'none'; }
   $('key').value = P.get('k') || get('liveKey'); $('name').value = get('liveName');
   let ws = null, ctx = null, mic = null, node = null, src = null, out = null, endTimer = null, talkT = null, rows = { me: null, hb: null }, spkMuted = false, aiboName = 'ハタボーイ', dest = null, spk = null, turns = [], all = [], key = '', ready = false, quiet = false, quietAfter = 0, minFrom = -1;
@@ -534,7 +573,7 @@ main{max-width:none;padding:0;height:100dvh;display:flex;flex-direction:column}
     const talk = all.slice(from).map(x => '[' + x.at + '] ' + x.who + '：' + x.text.trim()).join('\n');
     let said = 'ごめんなさい、まとめられませんでした。';
     try {
-      const r = await fetch(base + '/grok/minutes', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ k: key, t: tok, talk }) });
+      const r = await fetch(base + '/grok/minutes', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ k: key, t: tok, wt: WT, talk }) });
       const j = await r.json().catch(() => ({})); if (j.said) said = j.said;
       if (j.minutes) { const d = document.createElement('div'); d.className = 'mins'; d.textContent = j.minutes; const b = document.createElement('button'); b.textContent = 'コピー'; b.onclick = () => { try { navigator.clipboard.writeText(j.minutes); b.textContent = 'コピーしました'; } catch (e) {} }; d.appendChild(document.createElement('br')); d.appendChild(b); $('mins').prepend(d); }
     } catch (e) {}
@@ -549,7 +588,7 @@ main{max-width:none;padding:0;height:100dvh;display:flex;flex-direction:column}
     let a = {}; try { a = JSON.parse(args || '{}'); } catch (e) {}
     let said = '届けられませんでした。あとで事務局案内係に伝えてください。';
     try {
-      const r = await fetch(base + '/grok/feedback', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ k: key, t: tok, name: $('name').value.trim(), text: a.text || '', kind: a.kind || '', gyo: P.get('gyo') || '', scene: P.get('scene') || '', ref: P.get('ref') || '' }) });
+      const r = await fetch(base + '/grok/feedback', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ k: key, t: tok, wt: WT, name: $('name').value.trim(), text: a.text || '', kind: a.kind || '', gyo: P.get('gyo') || '', scene: P.get('scene') || '', ref: P.get('ref') || '' }) });
       if (r.ok) { said = '事務局に届けた。'; note('（事務局に届けました：' + (a.text || '') + '）'); }
     } catch (e) {}
     reply(callId, said);
@@ -558,7 +597,7 @@ main{max-width:none;padding:0;height:100dvh;display:flex;flex-direction:column}
     let nm = ''; try { nm = JSON.parse(args || '{}').name || ''; } catch (e) {}
     let said = '名前を覚えられませんでした。';
     try {
-      const r = await fetch(base + '/grok/name', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ k: key, t: tok, name: $('name').value.trim(), aibo: nm }) });
+      const r = await fetch(base + '/grok/name', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ k: key, t: tok, wt: WT, name: $('name').value.trim(), aibo: nm }) });
       const j = await r.json().catch(() => ({})); if (j.ok) { aiboName = j.aibo; nameSync(); rows = { me: null, hb: null }; note('（名前が「' + j.aibo + '」になりました）'); said = '名前を覚えた。これからは「' + j.aibo + '」と名のる。'; }
     } catch (e) {}
     reply(callId, said);
@@ -567,7 +606,7 @@ main{max-width:none;padding:0;height:100dvh;display:flex;flex-direction:column}
     let fact = '', layer = ''; try { const o = JSON.parse(args || '{}'); fact = o.fact || ''; layer = o.layer || ''; } catch (e) {}
     let said = '覚えました。';
     try {
-      const r = await fetch(base + '/grok/remember', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ k: key, t: tok, name: $('name').value.trim(), fact, layer }) });
+      const r = await fetch(base + '/grok/remember', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ k: key, t: tok, wt: WT, name: $('name').value.trim(), fact, layer }) });
       const j = await r.json().catch(() => ({})); if (!r.ok) said = '覚えられませんでした。'; else if (j.said) said = j.said; else { note('（覚えました：' + fact + '）'); memo = { n: j.n, stage: j.stage }; grow(); }
     } catch (e) { said = '覚えられませんでした。'; }
     reply(callId, said);
@@ -578,7 +617,7 @@ main{max-width:none;padding:0;height:100dvh;display:flex;flex-direction:column}
     let answer = 'ごめんなさい、いまは答えが見つかりませんでした。';
     try {
       const talk = turns.slice(-14).map(x => x.who + '：' + x.text.trim()).join('\n');
-      const r = await fetch(base + '/grok/brain', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ k: key, t: tok, question, talk, name: $('name').value.trim() }) });
+      const r = await fetch(base + '/grok/brain', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ k: key, t: tok, wt: WT, question, talk, name: $('name').value.trim() }) });
       const j = await r.json().catch(() => ({})); if (j.answer) answer = j.answer;
       if (j.sources && j.sources.length) { links(j.sources); answer += '\n（調べたページは画面にリンクで出した。URLは読み上げず、「画面にリンクを出しました」と一言だけ言う）'; }
     } catch (e) {}
@@ -613,7 +652,7 @@ main{max-width:none;padding:0;height:100dvh;display:flex;flex-direction:column}
       try { dest = ctx.createMediaStreamDestination(); spk = spk || Object.assign(document.createElement('audio'), { autoplay: true, playsInline: true }); spk.setAttribute('playsinline', ''); spk.srcObject = dest.stream; spk.play().catch(() => {}); } catch (e) { dest = null; }
       await ctx.resume();
       mic = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } });
-      const r = await fetch(base + '/grok/session', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ k: key, t: tok, name: $('name').value.trim(), gyo: P.get('gyo') || '', scene: P.get('scene') || '', tone: P.get('tone') || '', msg: P.get('msg') || '' }) });
+      const r = await fetch(base + '/grok/session', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ k: key, t: tok, wt: WT, name: $('name').value.trim(), gyo: P.get('gyo') || '', scene: P.get('scene') || '', tone: P.get('tone') || '', msg: P.get('msg') || '' }) });
       const j = await r.json().catch(() => ({}));
       if (!r.ok || !j.token) throw new Error(j.error || ('つなげませんでした（' + r.status + '）'));
       if (j.memo) { memo = j.memo; grow(); }
@@ -655,7 +694,7 @@ main{max-width:none;padding:0;height:100dvh;display:flex;flex-direction:column}
   $('talk').onclick = () => ws ? stop() : start();
   $('endBtn').onclick = () => { if (ws) stop(); };
   $('fsBtn').onclick = () => { try { if (document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen(); } catch (e) {} };
-  document.querySelectorAll('#rail button[data-r], #rail button[data-say]').forEach(b => b.onclick = () => { if (b.dataset.r) return tab(b.dataset.r); const role = b.textContent.replace(/[•\s]/g, ''); if (ROLEP[role]) plugGuide(role); if (sendText(b.dataset.say)) tab('voice'); });
+  document.querySelectorAll('#rail button[data-r], #rail button[data-say]').forEach(b => b.onclick = () => { if (b.dataset.r) { if (b.dataset.r === 'voice') setPartner('<img src="hataboy-emblem.webp" alt="">', ''); return tab(b.dataset.r); } const role = b.textContent.replace(/[•\s]/g, ''); const ic = b.querySelector('i'); setPartner('<span style="background:' + (ic ? ic.style.background : '#3a4257') + ';width:42px;height:42px;display:grid;place-items:center">••</span>', role + '愛棒'); if (ROLEP[role]) plugGuide(role); if (sendText(b.dataset.say)) tab('voice'); });
   $('tlAibo').onclick = () => { go('chat'); };
   $('rGrow').onclick = () => openSheet('growSheet');
   function nameSync() { $('aname').textContent = 'マイ愛棒（' + aiboName + '）'; $('aname2').textContent = aiboName; }
@@ -677,11 +716,11 @@ main{max-width:none;padding:0;height:100dvh;display:flex;flex-direction:column}
   document.querySelectorAll('[data-close]').forEach(b => b.onclick = () => { $(b.dataset.close).hidden = true; });
   $('avTop').onclick = () => openSheet('prof'); $('railProf').onclick = () => openSheet('prof');
   // Feed：見本の動画（ハタボ公式の CM）＋ 検証している人の投稿
-  let feedData = null, feedAt = 0, vis = 'goen';
+  let feedData = null, feedAt = 0, vis = 'all';   // Feed は全体フィード。ふつうは全体に出す
   const esc = t => String(t).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
   const ago = t => { const m = Math.round((Date.now() - t) / 60000); return m < 1 ? 'いま' : m < 60 ? m + '分前' : m < 1440 ? Math.round(m / 60) + '時間前' : Math.round(m / 1440) + '日前'; };
   const VIS = { all: '全体', friends: '友だち', goen: 'ご縁のみ' };
-  const api = (path, body) => fetch(base + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(Object.assign({ k: $('key').value.trim() || get('liveKey'), t: tok, name: $('name').value.trim() }, body)) }).then(r => r.json().catch(() => ({})).then(j => (j.status = r.status, j)));
+  const api = (path, body) => fetch(base + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(Object.assign({ k: $('key').value.trim() || get('liveKey'), t: tok, wt: WT, name: $('name').value.trim() }, body)) }).then(r => r.json().catch(() => ({})).then(j => (j.status = r.status, j)));
   async function loadFeed(force) {
     if (!force && feedData && Date.now() - feedAt < 20000) return renderFeed();
     if (!$('name').value.trim() || (!tok && !($('key').value.trim() || get('liveKey')))) { feedData = null; return renderFeed('先に Chat の面で、呼び名と合言葉を入れてください。'); }
@@ -744,8 +783,11 @@ main{max-width:none;padding:0;height:100dvh;display:flex;flex-direction:column}
   const GP = [['着せかえ', 5, ['金のマント', '星の王冠', '夜空のスカーフ']], ['限定スタンプ', 25, ['ありがとう', 'よろしく', 'ナイス']], ['ありがとうポイント', 70, ['5pt', '10pt', '20pt']]];
   function gFill() { const d = LS.g('hbGacha', {}); const left = d.day === today() ? 0 : 1; $('gLeft').textContent = '無料 きょう あと' + left + '回'; $('gDraw').disabled = !left; $('gDraw').textContent = left ? '引く（無料）' : 'またあした'; if (d.last) $('gRes').textContent = 'きのうまで：' + d.last + '　（出る確率 着せかえ5％・スタンプ25％・ポイント70％）'; }
   $('gDraw').onclick = () => { const caps = document.querySelector('.caps'); caps.classList.add('spin'); $('gDraw').disabled = true;
-    setTimeout(() => { caps.classList.remove('spin'); let r = Math.random() * 100, g = GP[2]; for (const x of GP) { if ((r -= x[1]) < 0) { g = x; break; } } const it = g[2][Math.floor(Math.random() * 3)];
-      LS.s('hbGacha', { day: today(), last: g[0] + '「' + it + '」' }); $('gRes').textContent = g[0] + '「' + it + '」が出ました！'; gFill(); $('gRes').textContent = g[0] + '「' + it + '」が出ました！'; }, 1200); };
+    setTimeout(() => { caps.classList.remove('spin');
+      if (!$('first1').hidden && !LS.g('hbGacha', {}).last) { LS.s('hbGacha', { day: today(), last: '相棒「ハタボーイ」' }); gFill(); $('gRes').textContent = '相棒「ハタボーイ」が出ました！';
+        $('first1').innerHTML = '<img class="pop" src="hataboy-emblem.webp" alt="" width="120" height="120"><b>ハタボーイが出てきた！</b><small>あなたの相棒です。話すほど、あなたのことを覚えて育ちます</small><button type="button" class="gbtn" id="firstGo">ハタボーイに話しかける</button>';
+        $('firstGo').onclick = () => { $('growSheet').hidden = true; go('chat'); document.querySelector('#cTabs [data-ct="aibo"]')?.click(); setTimeout(() => $('talk').click(), 400); }; return; } let r = Math.random() * 100, g = GP[2]; for (const x of GP) { if ((r -= x[1]) < 0) { g = x; break; } } const it = g[2][Math.floor(Math.random() * 3)];
+      LS.s('hbGacha', { day: today(), last: g[0] + '「' + it + '」' }); if (!$('first1').hidden) $('first1').innerHTML = '<b>おめでとう！' + esc(g[0] + '「' + it + '」') + 'が届きました</b><small>閉じて、相棒に話しかけてみてください。あしたも1回引けます</small>'; $('gRes').textContent = g[0] + '「' + it + '」が出ました！'; gFill(); $('gRes').textContent = g[0] + '「' + it + '」が出ました！'; }, 1200); };
   gFill();
   // 新しい相棒をつくる（形・色・役割を選ぶ。この端末に保存）
   const SH = ['M30 20h40a16 16 0 0 1 16 16v28a16 16 0 0 1-16 16H30a16 16 0 0 1-16-16V36a16 16 0 0 1 16-16z', 'M50 14a36 36 0 1 1 0 72a36 36 0 1 1 0-72z', 'M50 12l38 22v32L50 88 12 66V34z', 'M20 24h60v52H20z', 'M50 12C80 12 88 36 88 52S76 88 50 88 12 70 12 52 20 12 50 12z', 'M14 30a16 16 0 0 1 16-16h40a16 16 0 0 1 16 16v20c0 20-16 36-36 36S14 70 14 50z', 'M50 10l12 26 28 3-21 19 6 28-25-14-25 14 6-28L10 39l28-3z', 'M18 40c0-14 14-24 32-24s32 10 32 24v26H18z', 'M50 14l36 36-36 36-36-36z', 'M12 50c0-20 16-34 38-34 10 0 18 6 26 0 6 10 12 20 12 34 0 20-16 34-38 34S12 70 12 50z', 'M24 14h52l12 36-12 36H24L12 50z', 'M50 16c22 0 36 14 36 34 0 8-4 14-4 22 0 8-8 14-14 10-6-4-12-4-18-4s-12 0-18 4c-6 4-14-2-14-10 0-8-4-14-4-22 0-20 14-34 36-34z', 'M20 20h60l-6 60H26z'];
@@ -761,7 +803,7 @@ main{max-width:none;padding:0;height:100dvh;display:flex;flex-direction:column}
   $('mkSheet').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; if (b.dataset.s) mk.s = +b.dataset.s; else if (b.dataset.c) mk.c = +b.dataset.c; else if (b.dataset.ro) mk.r = +b.dataset.ro; else return; mkFill(); });
   $('mkName').oninput = () => { $('mkGo').disabled = !$('mkName').value.trim(); };
   function railBots() { const B = LS.g('hbBots', []); $('railBots').innerHTML = B.map(b => '<button type="button" data-say="' + esc(b.role + 'として手伝って。あなたの名前は' + b.name) + '"><i style="background:transparent;box-shadow:none">' + bot(b.s, b.c) + '</i>' + esc(b.name.slice(0, 5)) + '</button>').join('');
-    $('railBots').querySelectorAll('button').forEach((b, i) => b.onclick = () => { const x = B[i]; plugGuide(x.role, x.name); const t = $('txt'); if (t) { t.value = b.dataset.say; t.focus(); } }); }
+    $('railBots').querySelectorAll('button').forEach((b, i) => b.onclick = () => { const x = B[i]; setPartner(bot(x.s, x.c), x.name); plugGuide(x.role, x.name); const t = $('txt'); if (t) { t.value = b.dataset.say; t.focus(); } }); }
   $('mkBot').onclick = () => { mkFill(); openSheet('mkSheet'); };
   $('mkGo').onclick = () => { const B = LS.g('hbBots', []); B.push({ name: $('mkName').value.trim().slice(0, 16), s: mk.s, c: mk.c, role: RO[mk.r] }); LS.s('hbBots', B.slice(-8)); $('mkName').value = ''; $('mkSheet').hidden = true; railBots(); };
   railBots();
@@ -782,6 +824,8 @@ main{max-width:none;padding:0;height:100dvh;display:flex;flex-direction:column}
   const plugRow = k => { const p = PLUG[k]; return '<div class="plg"><i style="background:' + p[1] + '">' + p[2] + '</i><span><b>' + p[0] + '</b><small>' + p[3] + '</small></span><a href="' + APP + '" target="_blank" rel="noopener">つなぐ</a></div>'; };
   $('plugList').innerHTML = Object.keys(PLUG).map(plugRow).join('');
   $('rPlug').onclick = () => openSheet('plugSheet');
+  // チャットの右の相棒アイコンは、いま話している相棒（トークごとにちがう）
+  function setPartner(html, label) { $('cAvI').innerHTML = html; $('cAv').title = label || ''; $('txt').placeholder = (label ? label + 'に' : '') + '文字でも話せます'; }
   function plugGuide(role, name) {
     const ks = ROLEP[role] || []; go('chat'); document.querySelector('#cTabs [data-ct="chat"]')?.click();
     const d = document.createElement('div'); d.className = 'pcard';
@@ -806,6 +850,15 @@ main{max-width:none;padding:0;height:100dvh;display:flex;flex-direction:column}
   function mapMini() { const m = mapSvg(false); $('mapMini').innerHTML = m.svg; $('mapSum').textContent = 'つながり ' + m.n + '人（ご縁 ' + m.goen + '人）'; }
   document.querySelectorAll('.tomap').forEach(b => b.onclick = async () => { if (!feedData) await loadFeed(true).catch(() => {}); mapFill(); openSheet('mapSheet'); });
   setInterval(() => { if (feedData && wide()) mapMini(); }, 15000); setTimeout(() => { if (feedData) mapMini(); }, 3000);
+  // 先にログイン：ログインしていないときは、入口の画面を出す
+  (async () => {
+    const j = await api('/grok/me', {}).catch(() => ({}));
+    if (j.need && !j.login) { $('gate').hidden = false; return; }
+    try { if (!LS.g('hbGacha', {}).last && !LS.g('hbFirst', 0)) { LS.s('hbFirst', 1); $('first1').hidden = false; openSheet('growSheet'); } } catch (e) {}
+    if (j.login) { $('pEmail').textContent = j.email + ' でログイン中'; if (!$('name').value.trim() && j.names && j.names[0]) { $('name').value = j.names[0]; $('name').dispatchEvent(new Event('input')); } }
+  })();
+  $('gGoogle').onclick = () => { location.href = base + '/google/login?to=grok&back=' + encodeURIComponent(location.search.slice(1)); };
+  $('pOut').onclick = () => { try { localStorage.removeItem('grokWt'); } catch (e) {} location.reload(); };
   // 光る表示：声で話しているあいだ、どの面にいても右下についてくる。押すと Chat へ
   $('orb').onclick = () => go('chat');
   document.querySelector('.logo').onclick = () => { if (!wide()) go('talk'); };   // スマホ：上の HATHABO でトーク（左）
@@ -865,7 +918,15 @@ main{max-width:none;padding:0;height:100dvh;display:flex;flex-direction:column}
     send({ type: 'conversation.item.create', item: { type: 'message', role: 'user', content: [{ type: 'input_text', text: t }] } });
     send({ type: 'response.create' }); return true;
   }
-  $('sendF').onsubmit = e => { e.preventDefault(); const t = $('txt').value.trim(); if (t && sendText(t)) $('txt').value = ''; };
+  let pendT = '';
+  $('sendF').onsubmit = e => { e.preventDefault(); const t = $('txt').value.trim();
+    if (!t) { $('talk').click(); return; }   // 何も書いていないとき、右の相棒を押す＝声で話す
+    if (ws && ready) { if (sendText(t)) { $('txt').value = ''; $('sendF').classList.remove('typing'); } return; }
+    pendT = t; $('txt').value = ''; $('sendF').classList.remove('typing'); say('あなた', t); $('talk').click();   // まだつないでいないときは、つないでから送る
+    let n = 0; const iv = setInterval(() => { if (ws && ready && pendT) { const x = pendT; pendT = ''; clearInterval(iv); rows = { me: null, hb: null }; send({ type: 'conversation.item.create', item: { type: 'message', role: 'user', content: [{ type: 'input_text', text: x }] } }); send({ type: 'response.create' }); } else if (++n > 60) clearInterval(iv); }, 300); };
+  $('txt').addEventListener('input', () => $('sendF').classList.toggle('typing', !!$('txt').value.trim()));
+  $('cPlus').onclick = () => { $('cMenu').hidden = !$('cMenu').hidden; };
+  $('cMenu').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; if (b.hasAttribute('data-pl')) { $('cMenu').hidden = true; return openSheet('plugSheet'); } $('txt').value = b.dataset.in; $('txt').focus(); $('sendF').classList.add('typing'); $('cMenu').hidden = true; });
   [['家庭教師をしてほしい', '家庭教師'], ['今週の予定を整理したい', '予定の整理'], ['議事録をとってほしい', '議事録'], ['営業のロープレをしたい', '営業ロープレ'], ['英語で話す練習がしたい', '英語の練習'], ['お店の受付のデモを見せて', '受付のデモ'], ['電話のお留守番のデモを見せて', 'お留守番のデモ'], ['ハタボで何ができるか教えて', '何ができる？']].forEach(([t, l]) => {
     const b = document.createElement('button'); b.type = 'button'; b.textContent = l; b.onclick = () => { if (sendText(t)) { $('prof').hidden = true; go('chat'); } }; $('scenes').appendChild(b);
   });
