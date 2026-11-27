@@ -38,7 +38,7 @@ button.on{background:var(--hb);color:#fff;border-color:var(--hb)}
 import { mountHataboy } from './hataboy3d.js';
 const $ = id => document.getElementById(id);
 let hb, talkT = null, micStream = null;
-try { hb = await mountHataboy($('stage'), { src: 'hataboy.glb' }); $('msg').textContent = '動かしてみてください'; }
+try { hb = await mountHataboy($('stage'), { src: 'hataboy.glb', emblem: 'hataboy-emblem.webp' }); $('msg').textContent = '動かしてみてください'; }
 catch (e) { $('msg').textContent = '読みこめませんでした：' + (e.message || e); }
 const pick = s => { document.querySelectorAll('[data-s]').forEach(b => b.classList.toggle('on', b.dataset.s === s)); hb && hb.setState(s); };
 document.querySelectorAll('[data-s]').forEach(b => b.onclick = () => {

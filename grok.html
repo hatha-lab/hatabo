@@ -3,48 +3,84 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>ハタボ 声の検証（Grok Voice）</title>
+<title>ハタボーイの検証（Grok Voice）</title>
 <meta name="robots" content="noindex">
 <script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/" } }</script>
 <style>
-:root{--bg:#f4f6fb;--card:#fff;--ink:#1d2433;--sub:#5d6680;--line:#dde2ee;--hb:#1e3f7a;--hbd:#1e3f7a;--stop:#d9483b}
-@media (prefers-color-scheme:dark){:root{--bg:#11151f;--card:#1a2030;--ink:#e8ecf5;--sub:#a3abc0;--line:#2c3448;--hb:#3a64b0;--hbd:#9db8ec;--stop:#ef6b5f}}
+:root{--bg:#0b1a5e;--card:rgba(12,20,52,.78);--ink:#eef2ff;--sub:#bcc7ea;--line:rgba(160,180,240,.28);--hb:#2f63d6;--hbd:#a9c6ff;--stop:#e5554a;color-scheme:dark}
+/* 背景：青い宇宙・星・惑星・砂の丘（キャラはなし）。下の #sky に描く */
+#sky{position:fixed;inset:0;z-index:-1;background:linear-gradient(180deg,#071047 0%,#0d2a8c 45%,#2f6fd8 72%,#8fb8ee 82%,#e4b980 82.2%,#c98f56 100%);overflow:hidden}
+#sky svg{position:absolute;inset:0;width:100%;height:100%}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:4px 14px 14px;margin-top:16px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 -apple-system,"Hiragino Sans","Noto Sans JP",sans-serif}
+body{margin:0;background:transparent;color:var(--ink);font:16px/1.6 -apple-system,"Hiragino Sans","Noto Sans JP",sans-serif}
 main{max-width:560px;margin:0 auto;padding:20px 16px 40px}
-h1{font-size:20px;margin:0 0 4px}
-.sub{color:var(--sub);font-size:13px;margin:0 0 18px}
+h1{font-size:20px;margin:0 0 4px;text-shadow:0 1px 6px rgba(0,0,0,.5)}
+.sub{color:var(--sub);font-size:13px;margin:0 0 18px;text-shadow:0 1px 4px rgba(0,0,0,.6)}
 .talk{display:block;width:100%;border:0;border-radius:999px;padding:18px;font-size:18px;font-weight:700;background:var(--hb);color:#fff;cursor:pointer}
 .talk.on{background:var(--stop)}
 .talk:disabled{opacity:.6}
 .state{margin:12px 0 18px;text-align:center;color:var(--sub);font-size:14px;min-height:1.6em}
-.log{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;min-height:160px;max-height:50vh;overflow:auto}
+.log{backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;min-height:160px;max-height:50vh;overflow:auto}
 .row{margin:6px 0}
 .row b{display:inline-block;min-width:3.5em;color:var(--hbd)}
 .row.me b{color:var(--sub)}
 .row.brain{font-size:13px;color:var(--sub)}
+.row.brain a{color:var(--hbd);word-break:break-all}
 label{display:block;font-size:13px;color:var(--sub);margin-top:16px}
 input,select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);font-size:15px}
 #stage{width:100%;max-width:320px;aspect-ratio:1/1;margin:0 auto 6px;touch-action:none}
 .note{font-size:12px;color:var(--sub);margin-top:18px}
+.grow{text-align:center;font-size:13px;color:var(--hbd);margin:0 0 10px;min-height:1.4em}
+.mins{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-top:14px;white-space:pre-wrap;font-size:14px}
+.mins button{margin-top:8px;border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:999px;padding:6px 14px;cursor:pointer}
+.hint{font-size:12px;color:var(--sub);margin:8px 0 0;text-shadow:0 1px 4px rgba(0,0,0,.7)}
 </style>
 </head>
 <body>
+<div id="sky" aria-hidden="true"><svg viewBox="0 0 400 800" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <radialGradient id="pa" cx="35%" cy="35%" r="70%"><stop offset="0" stop-color="#e8f4ff"/><stop offset=".45" stop-color="#5f9fe0"/><stop offset="1" stop-color="#14306e"/></radialGradient>
+    <radialGradient id="pb" cx="35%" cy="35%" r="70%"><stop offset="0" stop-color="#d9f0e6"/><stop offset=".5" stop-color="#5d8f8a"/><stop offset="1" stop-color="#1c3346"/></radialGradient>
+    <radialGradient id="pc" cx="35%" cy="35%" r="70%"><stop offset="0" stop-color="#ffffff"/><stop offset=".55" stop-color="#9db7d8"/><stop offset="1" stop-color="#3a5784"/></radialGradient>
+    <radialGradient id="glow" r="50%"><stop offset="0" stop-color="#9cc8ff" stop-opacity=".35"/><stop offset="1" stop-color="#9cc8ff" stop-opacity="0"/></radialGradient>
+    <linearGradient id="d1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f0c88e"/><stop offset="1" stop-color="#d79c60"/></linearGradient>
+    <linearGradient id="d2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e2ad70"/><stop offset="1" stop-color="#b97a45"/></linearGradient>
+  </defs>
+  <g id="stars"></g>
+  <circle cx="40" cy="330" r="76" fill="url(#glow)"/><circle cx="40" cy="330" r="48" fill="url(#pa)"/>
+  <path d="M12 315 q18 -10 34 2 q10 8 26 2 M4 345 q20 8 40 -2 q14 -6 30 4" stroke="#ffffff" stroke-opacity=".35" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <circle cx="362" cy="215" r="60" fill="url(#glow)"/><circle cx="362" cy="215" r="36" fill="url(#pb)"/>
+  <circle cx="300" cy="150" r="13" fill="url(#pc)"/>
+  <path d="M0 662 C80 640 150 655 220 668 C290 680 350 660 400 650 L400 800 L0 800 Z" fill="url(#d1)"/>
+  <path d="M0 715 C90 690 170 705 240 720 C310 735 360 712 400 705 L400 800 L0 800 Z" fill="url(#d2)" opacity=".9"/>
+</svg></div>
 <main>
-  <h1>ハタボーイと話す（Grok Voice）</h1>
-  <p class="sub">ハタボの案内役ハタボーイ。聞く・話すは xAI の Grok Voice、むずかしい質問はうしろで Claude が考えます。</p>
+  <h1>ハタボーイの検証（Grok Voice）</h1>
+  <p class="sub">あなたの相棒ハタボーイ。話すほどあなたのことを覚えて育ちます。聞く・話すは xAI の Grok Voice、むずかしい質問はうしろで Claude が考えます。</p>
   <div id="stage" aria-label="ハタボーイ"></div>
+  <div class="grow" id="grow"></div>
   <button class="talk" id="talk" type="button">話しはじめる</button>
   <div class="state" id="state">ボタンを押すと、マイクを使います</div>
   <div class="log" id="log" aria-live="polite"></div>
-  <label for="voice">声</label>
-  <select id="voice"><option value="eve">eve</option><option value="ara">ara</option><option value="rex">rex</option><option value="sal">sal</option><option value="leo">leo</option></select>
-  <label for="name">あなたの呼び名（任意）</label>
-  <input id="name" autocomplete="off" placeholder="例：ヒロ">
+  <p class="hint">「覚えて」「黙ってて」「議事録とって」「まとめて」も使えます。黙っているときは「ハタボーイ」と呼ぶと戻ります。</p>
+  <div id="mins"></div>
+  <div class="panel">
+  <label for="name">あなたの呼び名（必須・この名前ごとに覚えます）</label>
+  <input id="name" autocomplete="off" required maxlength="20" placeholder="例：ヒロ">
   <label for="key">合言葉</label>
   <input id="key" type="password" autocomplete="off">
-  <p class="note">1回は15分まで。スピーカーの声をマイクが拾うときは、イヤホンで試してください。試したあとは「ここが遅い」「聞きまちがえた」を事務局に送ってください。</p>
+  <p class="note">1回は15分まで。スピーカーの声をマイクが拾うときは、イヤホンで試してください。<br>試したら、①はじめましてからの流れ ②次に話したとき前の話を覚えているか ③答えの賢さ ④「黙ってて」「議事録とって」が効くか ⑤声・速さ・聞きまちがい を、気づいたぶんだけ事務局に送ってください。</p>
+  </div>
 </main>
+<script>
+(() => {   // 星をまく（毎回同じ並び）
+  const g = document.getElementById('stars'); let x = 7, h = '';
+  const r = () => (x = (x * 16807) % 2147483647) / 2147483647;
+  for (let i = 0; i < 140; i++) { const sz = r() < .1 ? 1.6 : r() * .9 + .3; h += '<circle cx="' + (r() * 400).toFixed(1) + '" cy="' + (r() * 560).toFixed(1) + '" r="' + sz.toFixed(2) + '" fill="#fff" opacity="' + (r() * .6 + .3).toFixed(2) + '"/>'; }
+  g.innerHTML = h;
+})();
+</script>
 <script>
 (() => {
   const P = new URLSearchParams(location.search);
@@ -57,14 +93,14 @@ input,select{width:100%;padding:10px 12px;border:1px solid var(--line);border-ra
   const $ = id => document.getElementById(id);
   const get = k => { try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } };
   const put = (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} };
-  $('key').value = P.get('k') || get('liveKey'); $('name').value = get('liveName'); if (get('grokVoice')) $('voice').value = get('grokVoice');
-  let ws = null, ctx = null, mic = null, node = null, src = null, endTimer = null, playAt = 0, playing = [], rows = { me: null, hb: null }, turns = [], key = '', ready = false;
+  $('key').value = P.get('k') || get('liveKey'); $('name').value = get('liveName');
+  let ws = null, ctx = null, mic = null, node = null, src = null, out = null, endTimer = null, talkT = null, rows = { me: null, hb: null }, turns = [], all = [], key = '', ready = false, quiet = false, quietAfter = 0, minFrom = -1;
   const state = t => { $('state').textContent = t; };
   const HB = (s, lv) => { try { if (window.HB) { if (s) window.HB.setState(s); if (lv !== undefined) window.HB.setLevel(lv); } } catch (e) {} };   // 3Dのハタボーイ（読みこめなくても会話は続ける）
   function say(who, t) {
     if (!t) return;
     const k = who === 'あなた' ? 'me' : 'hb';
-    if (!rows[k]) { const d = document.createElement('div'); d.className = 'row ' + k; d.innerHTML = '<b></b><span></span>'; d.firstChild.textContent = who; $('log').appendChild(d); rows[k] = d; rows[k === 'me' ? 'hb' : 'me'] = null; turns.push({ who, text: '' }); if (turns.length > 30) turns.shift(); }
+    if (!rows[k]) { const d = document.createElement('div'); d.className = 'row ' + k; d.innerHTML = '<b></b><span></span>'; d.firstChild.textContent = who; $('log').appendChild(d); rows[k] = d; rows[k === 'me' ? 'hb' : 'me'] = null; const o = { who, text: '', at: new Date().toTimeString().slice(0, 5) }; turns.push(o); all.push(o); if (turns.length > 30) turns.shift(); if (all.length > 3000) all.shift(); }
     rows[k].lastChild.textContent += t; turns[turns.length - 1].text += t; $('log').scrollTop = 1e9;
   }
   function note(t) { const d = document.createElement('div'); d.className = 'row brain'; d.textContent = t; $('log').appendChild(d); rows = { me: null, hb: null }; $('log').scrollTop = 1e9; }
@@ -78,22 +114,48 @@ input,select{width:100%;padding:10px 12px;border:1px solid var(--line);border-ra
     for (let i = 0; i < u.length; i += 0x8000) s += String.fromCharCode.apply(null, u.subarray(i, i + 0x8000));
     return btoa(s);
   }
+  // 11/27 再生：小さなかたまりを1つずつ鳴らすと、つなぎ目で低い「ドゥーン」という音が出るので、1本の流れ（AudioWorklet）で切れ目なく鳴らす
   function play(b64) {
+    if (!out) return;
     const bin = atob(b64), u = new Uint8Array(bin.length);
     for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i);
-    const pcm = new Int16Array(u.buffer, 0, u.length >> 1);
-    if (!pcm.length) return;
-    const buf = ctx.createBuffer(1, pcm.length, RATE), ch = buf.getChannelData(0);
-    for (let i = 0; i < pcm.length; i++) ch[i] = pcm[i] / 0x8000;
-    const s = ctx.createBufferSource(); s.buffer = buf; s.connect(ctx.destination);
-    playAt = Math.max(playAt, ctx.currentTime + 0.03); s.start(playAt);
-    let e = 0; for (let i = 0; i < ch.length; i += 4) e = Math.max(e, Math.abs(ch[i]));
-    const lv = Math.min(1, e * 1.6), wait = Math.max(0, (playAt - ctx.currentTime) * 1000);
-    setTimeout(() => HB('talk', lv), wait);   // 声の大きさに合わせて、ハタボーイがはずむ
-    playAt += buf.duration;
-    playing.push(s); s.onended = () => { playing = playing.filter(x => x !== s); if (!playing.length) HB('idle', 0); };
+    const pcm = new Int16Array(u.buffer, 0, u.length >> 1), f = new Float32Array(pcm.length);
+    for (let i = 0; i < pcm.length; i++) f[i] = pcm[i] / 0x8000;
+    if (f.length) out.port.postMessage(f, [f.buffer]);
   }
-  function hush() { playing.forEach(s => { try { s.stop(); } catch (e) {} }); playing = []; playAt = 0; HB('idle', 0); }   // 相手が話しはじめたら、ハタボはだまる（割りこみ）
+  function hush() { if (out) out.port.postMessage('clear'); HB('idle', 0); }   // 相手が話しはじめたら、ハタボーイはだまる（割りこみ）
+  let memo = { n: 0, stage: '' };
+  function grow() { $('grow').textContent = (memo.stage ? '育ち具合：' + memo.stage + '（覚えたこと ' + memo.n + '）' : '') + (minFrom >= 0 ? '　議事録をとっています' : quiet ? '　静かにしています' : ''); }
+  const reply = (callId, output, speak) => { send({ type: 'conversation.item.create', item: { type: 'function_call_output', call_id: callId, output } }); if (speak !== false) send({ type: 'response.create' }); };
+  function hold(callId, why) { quietAfter = 2; note(why === 'quiet' ? '（静かにしています。「ハタボーイ」と呼ぶと戻ります）' : '（議事録をとっています。「ハタボーイ、まとめて」で終わります）'); reply(callId, why === 'quiet' ? '静かにしています。「はい」とだけ言う。' : '記録をはじめました。一言だけ伝える。'); }
+  async function minutes(callId, args) {
+    let action = ''; try { action = JSON.parse(args || '{}').action || ''; } catch (e) {}
+    if (action === 'start') { minFrom = all.length; return hold(callId, 'minutes'); }
+    const from = minFrom >= 0 ? minFrom : 0; minFrom = -1; grow();
+    note('（頭のClaudeが議事録をまとめています）'); HB('think', 0);
+    const talk = all.slice(from).map(x => '[' + x.at + '] ' + x.who + '：' + x.text.trim()).join('\n');
+    let said = 'ごめんなさい、まとめられませんでした。';
+    try {
+      const r = await fetch(base + '/grok/minutes', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ k: key, talk }) });
+      const j = await r.json().catch(() => ({})); if (j.said) said = j.said;
+      if (j.minutes) { const d = document.createElement('div'); d.className = 'mins'; d.textContent = j.minutes; const b = document.createElement('button'); b.textContent = 'コピー'; b.onclick = () => { try { navigator.clipboard.writeText(j.minutes); b.textContent = 'コピーしました'; } catch (e) {} }; d.appendChild(document.createElement('br')); d.appendChild(b); $('mins').prepend(d); }
+    } catch (e) {}
+    reply(callId, said);
+  }
+  function links(list) {   // 頭のClaudeが調べたページ（押すと新しいタブで開く）
+    const d = document.createElement('div'); d.className = 'row brain'; d.append('調べたページ：');
+    list.forEach((x, i) => { const a = document.createElement('a'); a.href = x.url; a.target = '_blank'; a.rel = 'noopener'; a.textContent = x.title; if (i) d.append('／'); d.append(a); });
+    $('log').appendChild(d); rows = { me: null, hb: null }; $('log').scrollTop = 1e9;
+  }
+  async function remember(callId, args) {   // 呼び名ごとに覚える
+    let fact = ''; try { fact = JSON.parse(args || '{}').fact || ''; } catch (e) {}
+    let said = '覚えました。';
+    try {
+      const r = await fetch(base + '/grok/remember', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ k: key, name: $('name').value.trim(), fact }) });
+      const j = await r.json().catch(() => ({})); if (!r.ok) said = '覚えられませんでした。'; else if (j.said) said = j.said; else { note('（覚えました：' + fact + '）'); memo = { n: j.n, stage: j.stage }; grow(); }
+    } catch (e) { said = '覚えられませんでした。'; }
+    reply(callId, said);
+  }
   async function brain(callId, args) {
     let question = ''; try { question = JSON.parse(args || '{}').question || ''; } catch (e) {}
     note('（頭のClaudeに考えてもらっています）'); HB('think', 0);
@@ -102,42 +164,54 @@ input,select{width:100%;padding:10px 12px;border:1px solid var(--line);border-ra
       const talk = turns.slice(-14).map(x => x.who + '：' + x.text.trim()).join('\n');
       const r = await fetch(base + '/grok/brain', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ k: key, question, talk, name: $('name').value.trim() }) });
       const j = await r.json().catch(() => ({})); if (j.answer) answer = j.answer;
+      if (j.sources && j.sources.length) { links(j.sources); answer += '\n（調べたページは画面にリンクで出した。URLは読み上げず、「画面にリンクを出しました」と一言だけ言う）'; }
     } catch (e) {}
     send({ type: 'conversation.item.create', item: { type: 'function_call_output', call_id: callId, output: answer } });
     send({ type: 'response.create' });
   }
   function onEvent(ev) {
     const t = ev.type || '';
+    if (t === 'response.created' && quiet) { send({ type: 'response.cancel' }); hush(); return; }   // 黙っている間は、返事を止める
+    if (t === 'response.done' && quietAfter && --quietAfter === 0) { quiet = true; grow(); return; }   // 道具を呼んだ返事と、そのあとの一言が終わってから黙る
+    if (quiet && /^response\.(output_audio|audio|output_audio_transcript|audio_transcript|output_text)\./.test(t)) return;
     if (t === 'response.output_audio.delta' || t === 'response.audio.delta') { if (ev.delta) play(ev.delta); return; }
     if (t === 'input_audio_buffer.speech_started') { hush(); HB('listen', 0); return; }
     if (t === 'input_audio_buffer.speech_stopped') { HB('idle', 0); return; }
-    if (t === 'conversation.item.input_audio_transcription.completed') { say('あなた', ev.transcript || ''); return; }
-    if (t === 'response.output_audio_transcript.delta' || t === 'response.audio_transcript.delta' || t === 'response.output_text.delta') { say('ハタボ', ev.delta || ''); return; }
-    if (t === 'response.function_call_arguments.done') { if (ev.name === 'ask_brain') brain(ev.call_id, ev.arguments); return; }
+    if (t === 'conversation.item.input_audio_transcription.completed') { const tx = ev.transcript || ''; say('あなた', tx);
+      if (quiet && /ハタボ|はたぼ|ハトボ|はとぼ|まとめて|議事録(おわ|終わ)/.test(tx)) { quiet = false; grow(); send({ type: 'response.create' }); }   // 名前を呼ばれたら戻る
+      return; }
+    if (t === 'response.output_audio_transcript.delta' || t === 'response.audio_transcript.delta' || t === 'response.output_text.delta') { say('ハタボーイ', ev.delta || ''); return; }
+    if (t === 'response.function_call_arguments.done') { if (ev.name === 'ask_brain') brain(ev.call_id, ev.arguments); else if (ev.name === 'remember') remember(ev.call_id, ev.arguments); else if (ev.name === 'quiet') hold(ev.call_id, 'quiet'); else if (ev.name === 'minutes') minutes(ev.call_id, ev.arguments); return; }
     if (t === 'session.updated') { ready = true; state('話しかけてください'); return; }
     if (t === 'error') { note('エラー：' + ((ev.error && ev.error.message) || ev.message || '')); return; }
   }
   async function start() {
     key = $('key').value.trim(); if (!key) { state('合言葉を入れてください'); return; }
-    put('liveKey', key); put('liveName', $('name').value.trim()); put('grokVoice', $('voice').value);
-    $('talk').disabled = true; state('つないでいます…'); turns = []; ready = false;
+    if (!$('name').value.trim()) { state('呼び名を入れてください'); $('name').focus(); return; }
+    put('liveKey', key); put('liveName', $('name').value.trim());
+    $('talk').disabled = true; state('つないでいます…'); turns = []; ready = false; quiet = false; quietAfter = 0; minFrom = -1;
     try {
       try { ctx = new AudioContext({ sampleRate: RATE }); } catch (e) { ctx = new AudioContext(); }
       await ctx.resume();
       mic = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } });
-      const r = await fetch(base + '/grok/session', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ k: key, voice: $('voice').value, name: $('name').value.trim() }) });
+      const r = await fetch(base + '/grok/session', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ k: key, name: $('name').value.trim() }) });
       const j = await r.json().catch(() => ({}));
       if (!r.ok || !j.token) throw new Error(j.error || ('つなげませんでした（' + r.status + '）'));
+      if (j.memo) { memo = j.memo; grow(); }
       ws = new WebSocket('wss://api.x.ai/v1/realtime?model=' + encodeURIComponent(j.model || 'grok-voice-latest'), ['xai-client-secret.' + j.token]);
       ws.onmessage = e => { let ev; try { ev = JSON.parse(e.data); } catch (x) { return; } onEvent(ev); };
       ws.onclose = () => { if (ws) stop('おわりました'); };
       ws.onerror = () => note('つながりが切れました');
       await new Promise((ok, ng) => { ws.onopen = ok; setTimeout(() => ng(new Error('xAI につながりませんでした')), 10000); });
       send({ type: 'session.update', session: { instructions: j.instructions, voice: j.voice, turn_detection: { type: 'server_vad' }, tools: j.tools || [], ...(j.reasoning ? { reasoning: j.reasoning } : {}),
-        audio: { input: { format: { type: 'audio/pcm', rate: RATE } }, output: { format: { type: 'audio/pcm', rate: RATE } } } } });
+        audio: { input: { format: { type: 'audio/pcm', rate: RATE }, ...(j.transcription ? { transcription: j.transcription } : {}) }, output: { format: { type: 'audio/pcm', rate: RATE } } } } });
       // マイク → 小分けにして送る
       const code = 'class C extends AudioWorkletProcessor{constructor(){super();this.b=[];this.n=0}process(i){const c=i[0]&&i[0][0];if(c){this.b.push(new Float32Array(c));this.n+=c.length;if(this.n>=sampleRate/10){const o=new Float32Array(this.n);let p=0;for(const x of this.b){o.set(x,p);p+=x.length}this.port.postMessage(o,[o.buffer]);this.b=[];this.n=0}}return true}}registerProcessor("mic-chunks",C)';
       await ctx.audioWorklet.addModule(URL.createObjectURL(new Blob([code], { type: 'text/javascript' })));
+      const pcode = 'class P extends AudioWorkletProcessor{constructor(){super();this.q=[];this.b=null;this.i=0;this.f=0;this.step=' + RATE + '/sampleRate;this.n=0;this.e=0;this.port.onmessage=e=>{if(e.data==="clear"){this.q=[];this.b=null;this.i=0;this.f=0}else this.q.push(e.data)}}next(){if(this.b&&this.i<this.b.length)return this.b[this.i];if(this.b&&this.i>=this.b.length){this.i-=this.b.length;this.b=null}while(!this.b&&this.q.length){this.b=this.q.shift();if(this.i>=this.b.length){this.i-=this.b.length;this.b=null}}return this.b?this.b[this.i]:null}process(i,o){const ch=o[0][0];for(let k=0;k<ch.length;k++){const a=this.next();if(a===null){ch[k]=0;continue}let c=a;if(this.b&&this.i+1<this.b.length)c=this.b[this.i+1];else if(this.q.length)c=this.q[0][0];ch[k]=a+(c-a)*this.f;this.f+=this.step;while(this.f>=1){this.f-=1;this.i++}this.e=Math.max(this.e,Math.abs(ch[k]))}if(++this.n>=8){this.port.postMessage(this.e);this.n=0;this.e=0}return true}}registerProcessor("pcm-out",P)';
+      await ctx.audioWorklet.addModule(URL.createObjectURL(new Blob([pcode], { type: 'text/javascript' })));
+      out = new AudioWorkletNode(ctx, 'pcm-out', { outputChannelCount: [1] }); out.connect(ctx.destination);
+      out.port.onmessage = e => { const lv = Math.min(1, e.data * 1.6); if (lv > 0.03) { clearTimeout(talkT); HB('talk', lv); talkT = setTimeout(() => HB('idle', 0), 400); } };   // 声の大きさに合わせて、ハタボーイがはずむ
       src = ctx.createMediaStreamSource(mic); node = new AudioWorkletNode(ctx, 'mic-chunks');
       node.port.onmessage = e => { if (ready) send({ type: 'input_audio_buffer.append', audio: toB64(e.data, ctx.sampleRate) }); };
       src.connect(node);
@@ -149,7 +223,8 @@ input,select{width:100%;padding:10px 12px;border:1px solid var(--line);border-ra
   function stop(why) {
     const w = ws; ws = null; clearTimeout(endTimer);
     try { w && w.close(); } catch (e) {}
-    try { src && src.disconnect(); node && node.disconnect(); } catch (e) {}
+    try { src && src.disconnect(); node && node.disconnect(); out && out.disconnect(); } catch (e) {}
+    out = null; clearTimeout(talkT);
     if (mic) mic.getTracks().forEach(t => t.stop()); mic = null; src = null; node = null;
     hush(); try { ctx && ctx.close(); } catch (e) {} ctx = null; ready = false; HB('idle', 0);
     $('talk').textContent = '話しはじめる'; $('talk').classList.remove('on'); $('talk').disabled = false;
@@ -160,7 +235,7 @@ input,select{width:100%;padding:10px 12px;border:1px solid var(--line);border-ra
 </script>
 <script type="module">
 import { mountHataboy } from './hataboy3d.js';
-try { window.HB = await mountHataboy(document.getElementById('stage'), { src: 'hataboy.glb' }); } catch (e) { document.getElementById('stage').style.display = 'none'; }
+try { window.HB = await mountHataboy(document.getElementById('stage'), { src: 'hataboy.glb', emblem: 'hataboy-emblem.webp' }); } catch (e) { document.getElementById('stage').style.display = 'none'; }
 </script>
 </body>
 </html>
