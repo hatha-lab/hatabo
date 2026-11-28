@@ -37,11 +37,11 @@ html.light .cug button.on{background:var(--card2) !important;color:var(--ink)}
 .dmap .dgacha i{font-style:normal;font-size:30px}.dmap .dgacha b{font-size:14px;white-space:nowrap}.dmap .dgacha small{font-size:11px;color:var(--sub);white-space:nowrap}
 .hidl .h small{display:block;font-weight:400;color:var(--sub);font-size:11.5px}.hidb{display:flex;align-items:center;gap:10px;width:100%;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:14px;padding:10px 12px;margin-top:6px;cursor:pointer;font-size:14px}.hidb .pav{width:30px;height:30px;font-size:13px}.hidb em{margin-left:auto;font-style:normal;color:var(--hbd);font-size:12.5px}
 /* パソコン：左上の愛棒（ハタボーイ）を押したら、ダッシュボードをしまって愛棒の画面を出す（前は下にかくれて、効かないように見えた） */
-@media (min-width:900px){ #pane-chat.vmode .dash2{display:none} #pane-chat.vmode .vv{display:flex;flex-direction:column;min-height:calc(100dvh - 140px)} #pane-chat.vmode .vv .ring,#pane-chat.vmode .vv .chip,#pane-chat.vmode .vv .aname,#pane-chat.vmode .vv .cap,#pane-chat.vmode .vv .wave{display:revert !important} #pane-chat.vmode .vv .chip{display:flex !important} #pane-chat.vmode .vv .wave{display:flex !important} #pane-chat.vmode .vv .ring{width:min(36vh,340px)} #vv:fullscreen .ring{width:min(62vh,620px) !important} #vv:fullscreen .aname{font-size:28px} #vv:fullscreen .cap{font-size:20px} }
+#sideAibo .prz{display:flex}
 .prz{position:absolute;right:12px;top:10px;z-index:6;display:flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:7px 14px;font-size:13px;font-weight:700;cursor:pointer}
-#vv{position:relative}#pane-chat:not(.vmode) .prz{display:none}
-#vv:fullscreen{background:radial-gradient(120% 80% at 50% 30%,#16204a,#07080d 70%);display:flex;flex-direction:column;justify-content:center;padding:4vh 6vw}
-#vv:fullscreen .dash2{display:none}#vv:fullscreen .prz{top:20px;right:20px}
+#vv{position:relative}
+#sideAibo:fullscreen{background:radial-gradient(120% 80% at 50% 30%,#16204a,#07080d 70%);display:flex;flex-direction:column;justify-content:center;padding:4vh 6vw}
+#sideAibo:fullscreen .prz{top:20px;right:20px}
 .howto{margin:8px 0 20px;padding-left:22px;display:flex;flex-direction:column;gap:14px;line-height:1.7;font-size:14px;color:var(--sub)}.howto b{display:block;color:var(--ink);font-size:15px;margin-bottom:2px}
 .keys{border-top:1px solid var(--line);padding-top:12px;margin-bottom:24px}.krow{display:flex;justify-content:space-between;padding:8px 2px;border-bottom:1px solid var(--line);font-size:14px}.krow .ok{color:#2f9e6e}.krow .ng{color:#c62f3e}
 /* 11/28 パソコンのホーム：話す前はホームだけ（下の黒い空きをなくす）。話しはじめたらスレッドだけ。左上のエンブレム／HATHABOでホームにもどる */
@@ -50,8 +50,8 @@ html.light .cug button.on{background:var(--card2) !important;color:var(--ink)}
   #pane-chat.home .tv{flex:0 0 auto !important}
   #pane-chat.home .lcol{flex:0 0 auto !important;height:auto !important}
   #pane-chat.home .vv{flex:1 1 auto !important;min-height:0;overflow-y:auto;max-height:none !important;height:auto !important}
-  #pane-chat:not(.home):not(.vmode) .vv{display:none !important}
-  #pane-chat:not(.home):not(.vmode) .tv{flex:1 1 auto}
+  #pane-chat:not(.home) .vv{display:none !important}
+  #pane-chat:not(.home) .tv{flex:1 1 auto}
 }
 .logo{cursor:pointer}
 .sheet.art{z-index:26}
@@ -62,6 +62,14 @@ html.light .cug button.on{background:var(--card2) !important;color:var(--ink)}
 .artcard i{font-style:normal;font-size:24px}.artcard span{display:flex;flex-direction:column;gap:2px}.artcard b{font-size:14px}.artcard small{color:var(--sub);font-size:11.5px}
 .rfold i{background:#f2f4fa !important;overflow:hidden}.rfold img{width:100%;height:100%;object-fit:cover}
 #dmSheet .seg2{display:none !important}
+/* 11/28 4つめの面（愛棒・パネル）。パソコンは列、スマホは左右にスワイプ */
+#pane-side{display:flex;flex-direction:column;gap:6px}
+#pane-side .sidetabs{align-self:center;width:min(240px,70%);flex:0 0 auto;margin:2px 0 6px}#pane-side .sidetabs button{flex:1;white-space:nowrap}
+#sideAibo{flex:1;min-height:0;display:flex;flex-direction:column;position:relative;overflow-y:auto}#sideAibo[hidden],#sidePanel[hidden]{display:none}
+#sidePanel{flex:1;min-height:0;overflow-y:auto}
+#sideAibo .ring{width:min(62vw,240px)}
+@media (min-width:900px){ #pane-side{border-left:1px solid var(--line)} #cTabs{display:none !important} }
+#cTabs{display:none !important}
 /* 11/28 パソコンで縦の動画・写真を大きく見るとき：スマホと同じ 9:16 の枠をまんなかに（横に引きのばさない）。まわりは黒 */
 @media (min-width:900px){ body.feedfs #feed .post{max-width:min(100%, calc(100dvh * 9 / 16));margin-left:auto;margin-right:auto} body.feedfs #feed{background:#000} }
 html.light .vtoast{background:var(--card2) !important;color:var(--ink)}
@@ -279,8 +287,7 @@ main{max-width:none;padding:0;height:100dvh;display:flex;flex-direction:column}
 .chips2{display:flex;flex-wrap:wrap;gap:6px}
 .chips2 button{border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:999px;padding:6px 12px;font-size:13px;cursor:pointer}
 #pane-chat .lcol{display:flex;flex-direction:column;height:calc(100dvh - 170px);margin-top:0}
-#pane-chat:not(.vmode) .vv{display:none}
-#pane-chat.vmode .tv{display:none}
+@media (max-width:899px){ #pane-chat .vv{display:none} }
 #cTabs{margin:0 auto 6px}
 .orb.vhide{display:none}
 #pane-chat .lh{display:none}
@@ -497,11 +504,7 @@ body.feedfs #feed > .dash{display:none}
 .cupay{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%}.cupay button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:14px;padding:12px 10px;display:flex;flex-direction:column;gap:3px;cursor:pointer;text-align:left}
 .cupay b{font-size:13px}.cupay small{font-size:10.5px;color:var(--sub)}.cupay button.on{background:#f2f4fa;color:#111;border-color:#f2f4fa}.cupay button.on small{color:#555}
 @media (min-width:900px){
-  body.nT #pane-talk, body.nC #pane-chat, body.nF #pane-feed{display:none !important}
-  body.nT .panes{grid-template-columns:minmax(360px,1fr) var(--wr,380px) !important}
-  body.nF .panes{grid-template-columns:var(--wl,380px) minmax(360px,1fr) !important}
-  body.nC .panes{grid-template-columns:var(--wl,380px) minmax(360px,1fr) !important}
-  body.nT.nF .panes, body.nT.nC .panes, body.nC.nF .panes{grid-template-columns:1fr !important}
+  body.nT #pane-talk, body.nC #pane-chat, body.nS #pane-side, body.nF #pane-feed{display:none !important}
   body.nT #rzL, body.nC #rzL, body.nC #rzR, body.nF #rzR{display:none !important}
   body.nC.nT #pane-feed, body.nC.nF #pane-talk{max-width:none}
   #avTop{display:none}
@@ -534,7 +537,6 @@ body.feedfs #feed > .dash{display:none}
 @media (max-width:899px){
   #pane-chat{display:flex;flex-direction:column;overflow:hidden;padding-bottom:calc(4px + env(safe-area-inset-bottom))}
   #pane-chat .tv{flex:1;min-height:0;display:flex;flex-direction:column}
-  #pane-chat.vmode .tv{display:none}
   #pane-chat .lcol{height:auto !important;flex:1;min-height:0;margin-top:0}
   #pane-chat .vv{flex:1;min-height:0;overflow-y:auto}
   #pane-chat .cbar{margin-bottom:0}
@@ -677,7 +679,7 @@ body.feedfs #feed > .dash{display:none}
     <div class="cmenu2" id="cMenu2" hidden><p>作成</p><button type="button" data-cm="talk"><i>💬</i>新しいトーク</button><button type="button" data-cm="friend"><i>＋</i>友だち追加</button><button type="button" data-cm="group"><i>👥</i>グループ作成<small>準備中</small></button><button type="button" data-cm="post"><i>📷</i>投稿</button><button type="button" data-cm="draft"><i>📝</i>新しいたたき台</button><button type="button" data-cm="aibo"><i>✦</i>愛棒の追加</button></div>
   </header>
   <div class="ttl" id="ttl" hidden>愛棒</div>
-  <nav class="dots" id="dots" aria-label="画面"><button type="button" data-p="talk">Talk</button><button type="button" class="on" data-p="chat">Chat</button><button type="button" data-p="feed">Feed</button></nav>
+  <nav class="dots" id="dots" aria-label="画面"><button type="button" data-p="talk">Talk</button><button type="button" class="on" data-p="chat">Chat</button><button type="button" data-p="side" id="dotSide">愛棒</button><button type="button" data-p="feed">Feed</button></nav>
 
 
 
@@ -756,6 +758,14 @@ body.feedfs #feed > .dash{display:none}
     <form class="cbar" id="sendF"><button type="button" class="cplus" id="cPlus" aria-label="ほかの機能">＋</button><input id="txt" autocomplete="off" placeholder="文字でも話せます"><button type="submit" class="cav" id="cAv" aria-label="送る・声で話す"><span class="cavi" id="cAvI"><img src="hataboy-face.webp" alt=""></span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 20.5 21 12 3 3.5 3 10l12 2-12 2z"/></svg></button></form>
     <div id="mins"></div>
     </div>
+    </div>
+  </section>
+  <section class="pane" id="pane-side">
+    <div class="seg2 sidetabs" id="sideTabs"><button type="button" class="on" data-sd="aibo">愛棒</button><button type="button" data-sd="panel">パネル</button></div>
+    <div class="sidev" id="sideAibo"></div>
+    <div class="sidev" id="sidePanel" hidden>
+      <div class="sh"><img src="folder-aibo.webp" alt="" style="border-radius:50%"><b id="artT">パネル</b><button type="button" class="close" id="artFold" aria-label="フォルダ愛棒">📁</button><button type="button" class="close" id="artWide" aria-label="大きくする">⤢</button><button type="button" class="close" id="artClose">閉じる</button></div>
+      <div id="artBody"><p class="note">愛棒と作ったもの（議事録・スタンプ・下書き・資料）が、ここに開きます。</p></div>
     </div>
   </section>
   <section class="pane" id="pane-feed">
@@ -902,10 +912,6 @@ body.feedfs #feed > .dash{display:none}
   g.innerHTML = h;
 })();
 </script>
-<div class="sheet art" id="artSheet" hidden>
-  <div class="sh"><img src="folder-aibo.webp" alt="" style="border-radius:50%"><b id="artT">作ったもの</b><button type="button" class="close" id="artWide" aria-label="大きくする">⤢</button><button type="button" class="close" data-close="artSheet">閉じる</button></div>
-  <div id="artBody"></div>
-</div>
 <script>
 (() => {
   const P = new URLSearchParams(location.search);
@@ -916,6 +922,10 @@ body.feedfs #feed > .dash{display:none}
   const base = (local ? 'http://' : 'https://') + host;
   const RATE = 24000;
   const $ = id => document.getElementById(id);
+  // 11/28 並び：トーク ⇄ スレッド ⇄ 愛棒（またはパネル＝作業スペース）⇄ フィード。愛棒の画面（キャラ・話しはじめる）を、スレッドとは別の面にうつす
+  function dashPlace() { const d = $('dash2'); if (!d) return; const pc = matchMedia('(min-width:900px)').matches; const to = pc ? $('vv') : $('sideAibo'); if (d.parentNode !== to) pc ? to.insertBefore(d, to.firstChild) : to.appendChild(d); }
+  matchMedia('(min-width:900px)').addEventListener('change', dashPlace);
+  { const vv = $('vv'), to = $('sideAibo'); [...vv.children].forEach(c => { if (c.id !== 'dash2' && c.id !== 'setup') to.appendChild(c); }); dashPlace(); }
   const get = k => { try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } };
   const put = (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} };
   { const G = { yado: '宿・民泊', inshoku: '飲食店', fudosan: '不動産', jutaku: '住宅・リフォーム', kaigo: '介護', kyoiku: '教育・塾', eigyo: '営業職', event: 'イベント・フェス', jichitai: '自治体・地域', katei: '家庭・子育て' }, S = { uketsuke: '受付・問い合わせ', yoyaku: '予約の段取り', gaikokugo: '外国語の対応', gijiroku: '議事録・メモ', roleplay: '営業のロープレ', tejun: '新人への手順案内', katei: '家庭教師', yotei: '予定・段取りの整理', oiwai: 'お祝いを伝える', website: 'ウェブサイトの窓口', rusuban: '電話のお留守番', tsukaikata: 'ハタボの使い方紹介' };
@@ -1132,15 +1142,17 @@ body.feedfs #feed > .dash{display:none}
   function who() { const n = $('name').value.trim(); $('who').textContent = n ? n + 'さん' : 'あなた'; $('meDot').textContent = $('avTop').textContent = n ? n.slice(0, 1) : 'あ'; $('avTop').classList.toggle('on', !!n); }
   $('name').addEventListener('input', who); who();
   // 画面の並び：トーク ← Chat → Feed。スマホは横にスワイプ（指を右へ＝トーク、左へ＝Feed）、パソコンは3列で全部見える
-  const PANES = ['talk', 'chat', 'feed'], panesEl = $('panes'), dotBtns = [...document.querySelectorAll('#dots button')];
+  const PANES = ['talk', 'chat', 'side', 'feed'], panesEl = $('panes'), dotBtns = [...document.querySelectorAll('#dots button')];
   const wide = () => matchMedia('(min-width:900px)').matches;
   function go(p, smooth) { const i = PANES.indexOf(p); if (i < 0) return; if (!wide()) panesEl.scrollTo({ left: i * panesEl.clientWidth, behavior: smooth === false ? 'auto' : 'smooth' }); dotOn(p); if (p === 'feed' || p === 'talk') loadFeed(); }
   function dotOn(p) { if (p === 'talk') { const d = document.querySelector('.dots [data-p="talk"]'); if (d) d.classList.remove('newdot'); } try { if (p !== 'feed' && sayPost) { sayPost = null; sayStop(); } } catch (e) {} if (!wide()) dotBtns.forEach(b => b.classList.toggle('on', b.dataset.p === p)); if (typeof orbSync === 'function') try { orbSync(); } catch (e) {} }
   panesEl.addEventListener('scroll', () => { if (document.body.classList.contains('feedfs')) return dotOn('feed');   // フィードを大きく見ているあいだは、上のタブは Feed のまま
     const i = Math.round(panesEl.scrollLeft / Math.max(1, panesEl.clientWidth)); const p = PANES.at(Math.max(0, Math.min(PANES.length - 1, i))); dotOn(p); if (p !== 'chat') loadFeed(); }, { passive: true });
   // パソコン：Talk・Chat・Feed を押すと、その列を出す／しまう（2つだけ・1つだけ＝全画面にもできる。少なくとも1つは出す）
-  const colKey = { talk: 'nT', chat: 'nC', feed: 'nF' };
+  const colKey = { talk: 'nT', chat: 'nC', side: 'nS', feed: 'nF' };
   function colsSync() { const h = LS.g('hbHideCols', []); Object.values(colKey).forEach(c => document.body.classList.toggle(c, wide() && h.includes(c)));
+    if (wide()) { const W = { talk: 'var(--wl,300px)', chat: 'minmax(340px,1fr)', side: document.body.classList.contains('sidewide') ? 'minmax(420px,1.2fr)' : 'var(--ws,360px)', feed: 'var(--wr,340px)' }, vis = PANES.filter(p => !h.includes(colKey[p]));
+      let t = vis.map(p => W[p]); if (!vis.includes('chat')) t[t.length - 1] = 'minmax(0,1fr)'; panesEl.style.setProperty('grid-template-columns', t.join(' '), 'important'); } else panesEl.style.removeProperty('grid-template-columns');
     if (wide()) dotBtns.forEach(b => b.classList.toggle('on', !h.includes(colKey[b.dataset.p]))); }
   dotBtns.forEach(b => b.onclick = () => { if (!wide()) return go(b.dataset.p);
     const c = colKey[b.dataset.p], h = LS.g('hbHideCols', []), nh = h.includes(c) ? h.filter(x => x !== c) : h.concat(c);
@@ -1150,10 +1162,12 @@ body.feedfs #feed > .dash{display:none}
   requestAnimationFrame(() => { renderFeed(); if (wide()) loadFeed(); });   // パソコンは Feed も最初から見える
   let nameT = 0; $('name').addEventListener('input', () => { clearTimeout(nameT); nameT = setTimeout(() => { feedData = null; if (wide()) loadFeed(true); profFill(); }, 800); });
   addEventListener('resize', () => { if (!wide()) { const a = dotBtns.find(b => b.classList.contains('on')); go(a ? a.dataset.p : 'chat', false); } });
-  function sub(v) { document.querySelectorAll('#cTabs button').forEach(x => x.classList.toggle('on', x.dataset.ct === v)); $('pane-chat').classList.toggle('vmode', v === 'aibo'); if (v === 'thread') $('log').scrollTop = 1e9; orbSync(); }
+  function sub(v) { if (v === 'aibo') { sideShow('aibo'); go('side'); } else { go('chat'); $('log').scrollTop = 1e9; } orbSync(); }   // 愛棒＝となりの面へ
+  function sideShow(m) { $('sideAibo').hidden = m !== 'aibo'; $('sidePanel').hidden = m !== 'panel'; document.querySelectorAll('#sideTabs button').forEach(b => b.classList.toggle('on', b.dataset.sd === m)); const d = $('dotSide'); if (d) d.textContent = m === 'panel' ? 'パネル' : '愛棒'; if (!wide()) { const a = dotBtns.find(b => b.classList.contains('on')); if (!a || a.dataset.p !== 'side') {} } }
+  document.querySelectorAll('#sideTabs button').forEach(b => b.onclick = () => { if (b.dataset.sd === 'panel' && !$('artBody').dataset.id && typeof artFolder === 'function') artFolder(); else sideShow(b.dataset.sd); });
   document.querySelectorAll('#cTabs button').forEach(b => b.onclick = () => sub(b.dataset.ct));
-  function orbSync() { const cur = (dotBtns.find(b => b.classList.contains('on')) || {}).dataset; $('orb').classList.toggle('vhide', !wide() && !!cur && cur.p === 'chat' && $('pane-chat').classList.contains('vmode')); }   // 愛棒の画面が見えているときは出さない
-  function tab(t) { if (t === 'voice' || t === 'aibo') { go('chat'); return sub('aibo'); } go(t === 'talk' ? 'talk' : 'chat'); if (t !== 'talk') sub('thread'); }
+  function orbSync() { const cur = (dotBtns.find(b => b.classList.contains('on')) || {}).dataset; $('orb').classList.toggle('vhide', !wide() && !!cur && cur.p === 'side'); }   // 愛棒の画面が見えているときは出さない
+  function tab(t) { if (t === 'voice' || t === 'aibo') return sub('aibo'); go(t === 'talk' ? 'talk' : 'chat'); if (t !== 'talk') sub('thread'); }
   function openSheet(id) { $(id).hidden = false; if (id === 'prof') { loadFeed(true); profFill(); } if (id === 'qrSheet') { $('qrName').textContent = ($('name').value.trim() || 'あなた') + 'さんのQR'; qrFill(); } }
   document.querySelectorAll('[data-close]').forEach(b => b.onclick = () => { $(b.dataset.close).hidden = true; });
   $('railProf').onclick = e => { e.stopPropagation(); $('avTop').onclick(e); };   // パソコンは左下（ChatGPT・Claude・Grok と同じ）、スマホは右上
@@ -1503,8 +1517,8 @@ body.feedfs #feed > .dash{display:none}
   themeSync(); try { matchMedia('(prefers-color-scheme: light)').addEventListener('change', themeSync); } catch (e) {}
   $('goenGacha').onclick = () => openSheet('growSheet');   // パソコン：ご縁マップのとなりから、ガチャ
   // 愛棒の画面：プレゼン＝愛棒だけを画面いっぱいに（もう一度押すか Esc でもどる）
-  $('przBtn').onclick = () => { const v = $('vv'); try { if (document.fullscreenElement) { document.exitFullscreen(); return; } (v.requestFullscreen || v.webkitRequestFullscreen).call(v); } catch (e) {} };
-  document.addEventListener('fullscreenchange', () => { const on = document.fullscreenElement === $('vv'); $('przBtn').querySelector('span').textContent = on ? 'プレゼンをやめる' : 'プレゼン'; });
+  $('przBtn').onclick = () => { const v = $('sideAibo'); try { if (document.fullscreenElement) { document.exitFullscreen(); return; } (v.requestFullscreen || v.webkitRequestFullscreen).call(v); } catch (e) {} };
+  document.addEventListener('fullscreenchange', () => { const on = document.fullscreenElement === $('sideAibo'); $('przBtn').querySelector('span').textContent = on ? 'プレゼンをやめる' : 'プレゼン'; });
   $('rHelp').onclick = async () => { openSheet('helpSheet'); const j = await api('/grok/keys', {}).catch(() => ({})); const b = $('keysBox');   // 事務局のアカウントのときだけ、つなぎ先の鍵が入っているかを出す
     if (!j.keys) { b.hidden = true; return; } b.hidden = false; b.innerHTML = '<p class="h">事務局：つなぎ先の鍵</p>' + Object.entries(j.keys).map(([k, v]) => '<div class="krow"><span>' + esc(k) + '</span><b class="' + (v ? 'ok' : 'ng') + '">' + (v ? '入っている' : 'まだ') + '</b></div>').join(''); };   // 使い方：プラグインのとなり（スマホ・パソコンとも左下）
   // 11/28 作ったもの（右側の作業エリア＝アーティファクト）：議事録・スタンプ・下書きがここに開いて、フォルダにたまる（この端末に50件まで）
@@ -1515,16 +1529,16 @@ body.feedfs #feed > .dash{display:none}
     if (x.imgs) h += '<div class="stg">' + x.imgs.map(u => '<a href="' + esc(u) + '" target="_blank" rel="noopener"><img alt="" src="' + esc(u) + '"></a>').join('') + '</div><p class="note">長押しで保存できます（30日で消えます）</p>';
     if (x.text != null) h += '<textarea class="arttx" id="artTx">' + esc(x.text) + '</textarea>';
     h += '<div class="pbtns">' + (x.kind === 'draft' && x.to ? '<button type="button" id="artSend">この文面で送る</button>' : '') + (x.text != null ? '<button type="button" id="artCopy">コピー</button>' : '') + '<button type="button" id="artDel">フォルダ愛棒から消す</button></div>';
-    b.innerHTML = h; b.dataset.id = id; $('artSheet').hidden = false;
+    b.innerHTML = h; b.dataset.id = id; sideShow('panel'); if (!wide()) go('side');
     const tx = $('artTx'); if (tx) tx.oninput = () => { const A = LS.g('hbArts', []), y = A.find(z => z.id === id); if (y) { y.text = tx.value; LS.s('hbArts', A); } };
     if ($('artCopy')) $('artCopy').onclick = () => { try { navigator.clipboard.writeText($('artTx').value); $('artCopy').textContent = 'コピーしました'; } catch (e) {} };
-    if ($('artSend')) $('artSend').onclick = () => { const t = $('artTx').value.trim(); if (!t) return; if (dmWith !== x.to) openDm(x.to, x.toName || ''); setTimeout(() => dmLoad(t, true), dmWith === x.to ? 0 : 600); $('artSheet').hidden = true; };
+    if ($('artSend')) $('artSend').onclick = () => { const t = $('artTx').value.trim(); if (!t) return; if (dmWith !== x.to) openDm(x.to, x.toName || ''); setTimeout(() => dmLoad(t, true), dmWith === x.to ? 0 : 600); sideShow('aibo'); };
     $('artDel').onclick = () => { LS.s('hbArts', LS.g('hbArts', []).filter(z => z.id !== id)); artFolder(); }; }
   function artFolder() { const A = LS.g('hbArts', []); $('artT').textContent = 'フォルダ愛棒'; const b = $('artBody'); b.dataset.id = '';
     b.innerHTML = '<p class="note">フォルダ愛棒です。トークや愛棒との会話で作ったものを、ここにためておきます（この端末の中）。</p>' + (A.length ? Object.keys(ART_K).map(k => { const L = A.filter(x => x.kind === k); return L.length ? '<p class="h">' + ART_K[k][0] + ' ' + ART_K[k][1] + '</p>' + L.map(x => '<button type="button" class="artrow" data-art="' + x.id + '"><span>' + esc(x.title) + '</span><small>' + new Date(x.at).toLocaleDateString('ja-JP', { month: 'numeric', day: 'numeric' }) + '</small></button>').join('') : ''; }).join('') : '<p class="note" style="margin-top:20px">まだありません。議事録をとる・スタンプを作る・返信の下書きを作ると、ここに入ります。</p>');
-    $('artSheet').hidden = false; }
+    b.dataset.id = 'folder'; sideShow('panel'); if (!wide()) go('side'); }
   $('artBody').addEventListener('click', e => { const r = e.target.closest('[data-art]'); if (r) artOpen(r.dataset.art); });
-  $('artWide').onclick = () => $('artSheet').classList.toggle('wide');
+  $('artWide').onclick = () => { document.body.classList.toggle('sidewide'); colsSync(); }; $('artClose').onclick = () => sideShow('aibo'); $('artFold').onclick = () => artFolder();
   $('rFolder').onclick = artFolder;
   // 会話の中のカード（スマホは押すと全画面で開く。パソコンは右に開いている）
   function artCard(x, log) { const d = document.createElement('button'); d.type = 'button'; d.className = 'artcard'; d.dataset.art = x.id; d.innerHTML = '<i>' + ART_K[x.kind][0] + '</i><span><b>' + esc(x.title) + '</b><small>' + ART_K[x.kind][1] + '・押すと開く・フォルダ愛棒に入りました</small></span>'; (log || $('log')).appendChild(d); (log || $('log')).scrollTop = 1e9; if (wide()) artOpen(x.id); }
@@ -1648,7 +1662,7 @@ body.feedfs #feed > .dash{display:none}
   }
   function openDm(key, name) {
     dmWith = key; dmName = name; $('dmName').textContent = name; { const P = (feedData && feedData.people) || [], x = P.find(y => y.key === key); $('dmSub').textContent = x && x.follow && x.followsMe ? 'ご縁' : '友だち'; } $('dmAv').textContent = $('dmAv2').textContent = name.slice(0, 1); $('dmVoiceL').textContent = name + 'さんの声を聴く';
-    $('dmLog').innerHTML = ''; $('dmDraftTxt').value = ''; dmTab('talk'); $('dmSheet').hidden = false; dmLoad(); clearInterval(dmTimer); dmTimer = setInterval(() => { if ($('dmSheet').hidden) clearInterval(dmTimer); else dmLoad(); }, 5000);
+    $('dmLog').innerHTML = ''; $('dmDraftTxt').value = ''; dmTab('talk'); $('dmSheet').hidden = false; dmLoad(); if (wide()) { if (!$('artBody').dataset.id) artFolder(); else sideShow('panel'); } clearInterval(dmTimer); dmTimer = setInterval(() => { if ($('dmSheet').hidden) clearInterval(dmTimer); else dmLoad(); }, 5000);
   }
   function dmTab(t) { document.querySelectorAll('#dmTabs button').forEach(b => b.classList.toggle('on', b.dataset.dt === t)); $('dmTalk').hidden = t !== 'talk'; $('dmDraft').hidden = t !== 'draft'; }
   document.querySelectorAll('#dmTabs button').forEach(b => b.onclick = () => dmTab(b.dataset.dt));
