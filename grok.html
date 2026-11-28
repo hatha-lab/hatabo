@@ -1227,7 +1227,7 @@ body.feedfs #feed > .dash{display:none}
       return; }
     if (t === 'response.output_audio_transcript.delta' || t === 'response.audio_transcript.delta' || t === 'response.output_text.delta') { if (ev.delta) respShown = true; say(spkName(), ev.delta || ''); return; }
     if (t === 'response.function_call_arguments.done') { if (ev.name === 'ask_brain') brain(ev.call_id, ev.arguments); else if (ev.name === 'remember') remember(ev.call_id, ev.arguments); else if (ev.name === 'quiet') hold(ev.call_id, 'quiet'); else if (ev.name === 'set_name') rename(ev.call_id, ev.arguments); else if (ev.name === 'feedback') feedback(ev.call_id, ev.arguments); else if (ev.name === 'minutes') minutes(ev.call_id, ev.arguments); else if (ev.name === 'connect_card') connectCard(ev.call_id, ev.arguments); else if (ev.name === 'ui' || ev.name === 'navi') uiAct(ev.call_id, ev.arguments); return; }
-    if (t === 'session.updated') { ready = true; state('話しかけてください'); /* 11/28 画面のナビは声のAIの道具にしない（道具の更新で切れることがあった）。話した言葉をこのページで聞きとって動かす（naviVoice） */
+    if (t === 'session.updated') { ready = true; state('話しかけてください'); if (!uiAdded) { uiAdded = true; send({ type: 'session.update', session: { tools: baseTools.concat(UI_TOOL) } }); }   /* 11/28 ナビの道具は、声の設定が通ったあとに別で足す（断られても声は止まらない）。決まった言い方はページでも聞きとる（naviVoice） */
       if (curBot || myHogen()) sendRole(); return; }
     if (t === 'error') { const em = (ev.error && ev.error.message) || ev.message || ''; lastErr = em.slice(0, 160);
       if (!uiOff && /tool|function|schema|param|enum|invalid/i.test(em)) { uiOff = true; send({ type: 'session.update', session: { tools: baseTools } }); console.warn('ui tool off', em); return; }   // 11/28 画面を動かす道具が受けつけられなかったら、道具なしで話しつづける
@@ -1788,6 +1788,7 @@ body.feedfs #feed > .dash{display:none}
   function naviShow(el) { if (!el) return; document.querySelectorAll('.navihl').forEach(x => x.classList.remove('navihl')); el.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); el.classList.add('navihl'); setTimeout(() => el.classList.remove('navihl'), 6000); }
   function naviScroll(d) { const el = [$('pHome'), $('log'), $('feed'), $('sideAibo'), $('vv'), $('tlBody')].find(e => e && visEl(e) && e.scrollHeight > e.clientHeight + 10); if (el) el.scrollBy({ top: d * el.clientHeight * .7, behavior: 'smooth' }); return !!el; }
   function uiAct(callId, args) { let a = {}; try { a = JSON.parse(args || '{}'); } catch (e) {}
+    const key = String(a.action || '') + ':' + String(a.target || '').toLowerCase(); if (callId && naviLast.k === key && Date.now() - naviLast.at < 4000) { reply(callId, 'もう動かしてあります。短く「開きました」などと伝えて'); return; } naviLast = { k: key, at: Date.now() };
     const R = out => { if (callId) reply(callId, out); }, act = String(a.action || ''), tg = String(a.target || '').toLowerCase(), deckOn = $('deck') && !$('deck').hidden, sheet = id => { openSheet(id); };
     if (act === 'scroll') { const ok = naviScroll(tg === 'up' ? -1 : 1); return R(ok ? (tg === 'up' ? '上へもどしました' : '下へ進めました') : 'スクロールできるところがありません'); }
     if (act === 'back') { const c = [...document.querySelectorAll('.sheet:not([hidden]) [data-close]')].pop(); if (c) { c.click(); return R('閉じました'); } if (document.body.classList.contains('phome')) { phomeToggle(false); return R('ホームを閉じました'); } if (deckOn) { dkClose(); return R('プレゼンを閉じました'); } return R('閉じるものはありません'); }
@@ -1818,7 +1819,7 @@ body.feedfs #feed > .dash{display:none}
     }
     R('その画面はまだ開けません。show で近いボタンを光らせて案内して'); }
   // 11/28 声のナビ（このページで聞きとる）：「フィード開いて」「下にスクロール」「閉じて」「〇〇はどこ？」。送る・電話・購入・削除はしない（光らせるだけ）
-  let nvAt = 0;
+  let nvAt = 0, naviLast = { k: '', at: 0 };   // ページで聞きとって動かしたものを、愛棒の道具がもう一度やらないように
   const NV_OPEN = [[/トーク/, 'talk'], [/スレッド|チャット/, 'chat'], [/フィード/, 'feed'], [/パネル/, 'panel'], [/ホーム/, 'home'], [/ガチャ/, 'gacha'], [/マップ|地図/, 'map'], [/育て/, 'grow'], [/マーケット/, 'market'], [/設定/, 'settings'], [/公式/, 'official'], [/愛棒|相棒|あいぼう/, 'aibo']];
   function naviVoice(t) { if (Date.now() - nvAt < 1200 || (!$('deck').hidden)) return; const x = String(t).replace(/[\s。、！？!?「」]/g, ''); if (x.length > 30) return;
     const act = (o) => { nvAt = Date.now(); uiAct('', JSON.stringify(o)); };
