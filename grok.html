@@ -291,6 +291,8 @@ body.dmgroup #dmVoice, body.dmgroup #dmCall, body.dmgroup #dmGrp{display:none !i
 @media (min-width:900px){.gpill{display:none !important}}   /* パソコンは左の列の「使い方」がいつも見えるので、それが点灯するだけ */
 #rHelp.gon i{background:#2f6cff !important;color:#fff}#rHelp.gon{color:#7fa8ff}.hgrow{border:1px solid var(--line);border-radius:16px;background:var(--card);margin:4px 0 12px}
 @media (max-width:899px){ .rail #rPlug,.rail #rHelp{position:sticky;background:var(--bg);padding:4px 0;z-index:2} .rail #rPlug{bottom:70px} .rail #rHelp{bottom:0;margin-top:0} }
+/* 11/28 左の列：上の愛棒はスクロール、プラグインから下は線で区切って固定 */
+.rail #rPlug{position:sticky;align-self:stretch;border-top:1px solid var(--line);padding-top:10px !important;box-shadow:0 -10px 14px -6px var(--bg)}
 /* 11/28 パソコンの左の列：プラグイン・使い方・プロフィールは、いつもいちばん下に見える（愛棒がふえても下にかくれない） */
 @media (min-width:900px){ .rail #rPlug,.rail #rHelp,.rail #railProf{position:sticky;background:var(--bg);padding:4px 0;z-index:2;flex:0 0 auto} .rail #rPlug{bottom:144px} .rail #rHelp{bottom:72px;margin-top:0} .rail #railProf{bottom:0} }
 .rail .rp{margin-top:6px}
