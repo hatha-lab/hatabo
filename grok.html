@@ -285,6 +285,8 @@ main{max-width:none;padding:0;height:100dvh;display:flex;flex-direction:column}
 [hidden]{display:none !important}
 .kpis b#kStage{font-size:13px;line-height:1.6}
 .plugb{margin-top:auto}
+body.dmgroup #dmVoice, body.dmgroup #dmCall, body.dmgroup #dmGrp{display:none !important}
+#tlTeams .tl{margin-bottom:6px}.tl .pl.tg{font-style:normal;background:linear-gradient(135deg,#3b6cf6,#24d6c8);display:grid;place-items:center}
 .gpill{position:fixed;left:14px;bottom:calc(96px + env(safe-area-inset-bottom));z-index:30;width:46px;height:46px;border-radius:50%;border:0;background:#2f6cff;color:#fff;display:grid;place-items:center;cursor:pointer;box-shadow:0 0 0 6px rgba(47,108,255,.25),0 6px 20px rgba(0,0,0,.4);animation:gpl 1.8s ease-in-out infinite}.gpill[hidden]{display:none}@keyframes gpl{50%{box-shadow:0 0 0 11px rgba(47,108,255,.12),0 6px 20px rgba(0,0,0,.4)}}
 @media (min-width:900px){.gpill{display:none !important}}   /* パソコンは左の列の「使い方」がいつも見えるので、それが点灯するだけ */
 #rHelp.gon i{background:#2f6cff !important;color:#fff}#rHelp.gon{color:#7fa8ff}.hgrow{border:1px solid var(--line);border-radius:16px;background:var(--card);margin:4px 0 12px}
@@ -541,7 +543,7 @@ body.feedfs #feed > .dash{display:none}
 #callOv{position:fixed;inset:0;z-index:300;background:#0e141f}
 #callOv iframe{width:100%;height:100%;border:0;display:block}
 #callOv .callx{position:absolute;right:10px;top:calc(8px + env(safe-area-inset-top));z-index:2;border:0;background:rgba(255,255,255,.14);color:#fff;border-radius:999px;padding:7px 12px;font-size:13px;cursor:pointer}
-.setx{background:var(--bg)}.sgrp{background:var(--card);border:1px solid var(--line);border-radius:18px;margin:0 0 14px;overflow:hidden}
+.setx{background:var(--bg)}.tminp{width:100%;box-sizing:border-box;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:12px;padding:10px 12px;font:inherit;margin:4px 0 10px}.sgrp{background:var(--card);border:1px solid var(--line);border-radius:18px;margin:0 0 14px;overflow:hidden}
 .sgrp.plan{padding:14px 16px}.srow0{display:flex;justify-content:space-between;align-items:baseline;gap:8px}.srow0 b{font-size:16px}.srow0 small{color:var(--sub);font-size:12.5px}
 .sbar{height:6px;border-radius:9px;background:var(--card2);margin:10px 0 6px;overflow:hidden}.sbar i{display:block;height:100%;width:0;background:#2f6cff;border-radius:9px}
 .slink{border:0;background:none;color:#4d8bff;font-size:15px;font-weight:700;padding:8px 0 0;cursor:pointer;border-top:1px solid var(--line);width:100%;text-align:left;margin-top:8px}
@@ -783,6 +785,7 @@ body.feedfs #feed > .dash{display:none}
     <button class="tl" type="button" id="tlAibo" hidden><img src="hataboy-emblem.webp" alt=""><span><b>📌 マイ愛棒 <small>あなたの愛棒</small></b><small id="tlLast">声で話す・会話の記録を見る</small></span><em>いま</em></button>
     <div class="tlh top1"><b>トーク</b><small>つながっている友だち</small><button type="button" class="tladd" id="tlAdd" aria-label="友だちを追加">＋</button></div>
     <div class="search">名前・メッセージを検索</div>
+    <div id="tlTeams"></div>
     <div id="tlPeople"><p class="note">検証ページに来た人が、ここに友だちとして並びます。</p></div>
     <p class="sub2">追加</p>
     <button class="tl" type="button" id="addFriend"><i class="pl">＋</i><span><b>友だちを追加</b><small>QRを見せる・URLを送る。読んだ人とトークでつながります</small></span></button>
@@ -876,6 +879,7 @@ body.feedfs #feed > .dash{display:none}
       <button type="button" class="srow" data-st="plan"><span class="st"><b>料金・お支払い</b><small>プラン・トッピング・ポイント</small></span><i>›</i></button></div>
     <div class="sgrp"><button type="button" class="srow" data-st="plug"><em>🧩</em><span class="st"><b>アプリをつなぐ</b><small>プラグイン（カレンダー・メールなど）</small></span><i>›</i></button>
       <button type="button" class="srow" data-st="qr"><em>👥</em><span class="st"><b>友だちを追加</b><small>QR・URL</small></span><i>›</i></button>
+      <button type="button" class="srow" data-st="team" id="stTeam" hidden><em>👥</em><span class="st"><b>チームをつくる（事務局）</b><small>メールで招くと、ログインした時からグループでつながる</small></span><i>›</i></button>
       <button type="button" class="srow" data-st="android"><em>📱</em><span class="st"><b>Android の声の案内</b><small>ほかのアプリも、愛棒が案内（テスト版）</small></span><i>›</i></button></div>
     <p class="sgh">愛棒</p>
     <div class="sgrp"><button type="button" class="srow" data-st="tier"><em>🧠</em><span class="st"><b>AIのかしこさ</b><small>押すたびに X・G・Z</small></span><span class="sv" id="stTier">Z</span></button>
@@ -889,6 +893,13 @@ body.feedfs #feed > .dash{display:none}
       <button type="button" class="srow" data-st="help"><em>❓</em><span class="st"><b>使い方</b></span><i>›</i></button></div>
     <p class="note" id="stMsg"></p>
     <div class="sgrp"><button type="button" class="srow danger" data-st="out"><span class="st"><b>ログアウト</b></span></button></div>
+  </div>
+  <div class="sheet" id="teamSheet" hidden>
+    <div class="sh"><b>チームをつくる（事務局）</b><button type="button" class="close" data-close="teamSheet">閉じる</button></div>
+    <p class="note">チームの人の Google のメールアドレスを入れてください（1行に1人）。その人がこのページに Google でログインすると、そのときからみんなと友だちになっていて、グループのトークでつながります。メールアドレスは、ここに入れるだけにしてください（チャットやトークには書かない）。</p>
+    <label class="note" for="tmTitle">グループの名前</label><input id="tmTitle" class="tminp" maxlength="30" value="HATHABO チーム">
+    <label class="note" for="tmEmails">メールアドレス（あなたの分は入れなくても入ります）</label><textarea id="tmEmails" class="tminp" rows="5" placeholder="name@example.com"></textarea>
+    <button type="button" class="postbtn" id="tmGo">チームをつくる</button><p class="note" id="tmMsg"></p>
   </div>
   <div class="sheet" id="outSheet" hidden>
     <div class="sh"><img src="hathabo-logo.webp" alt=""><b>ログアウト</b><button type="button" class="close" data-close="outSheet">閉じる</button></div>
@@ -1471,6 +1482,13 @@ body.feedfs #feed > .dash{display:none}
       if (dx > 70) { const P = LS.g('hbPin', []); LS.s('hbPin', P.includes(k) ? P.filter(y => y !== k) : [k].concat(P)); peopleRows(); }
       else if (dx < -70) { LS.s('hbHide', LS.g('hbHide', []).concat(k)); peopleRows(); }
       if (Math.abs(dx) > 8) { b.dataset.sw = '1'; setTimeout(() => delete b.dataset.sw, 300); } }); }); }
+  // 11/28 チーム：事務局がメールで作ったグループ。ログインした人どうしは自動で友だち＋グループトーク
+  let teams = [];
+  async function teamsLoad() { const j = await api('/grok/teams', {}).catch(() => ({})); teams = j.teams || [];
+    $('tlTeams').innerHTML = teams.map(t => '<button class="tl tteam" type="button" data-team="' + esc(t.id) + '"><i class="pl tg">👥</i><span><b>' + esc(t.title) + ' <small>グループ・' + t.members.length + '人</small></b><small>' + esc(t.members.filter(m => m.joined).map(m => m.name).join('・')) + '</small></span></button>').join('');
+    if (teams.length) loadFeed(true).catch(() => {}); }
+  $('tlTeams').addEventListener('click', e => { const b = e.target.closest('[data-team]'); if (b) { const t = teams.find(x => x.id === b.dataset.team); if (t) openDm('g:' + t.id, t.title); } });
+  setTimeout(() => teamsLoad(), 2500); setInterval(() => { if (!document.hidden) teamsLoad(); }, 60000);
   function peopleRows() {
     const P = (feedData && feedData.people) || [];
     $('peopleList').innerHTML = P.length ? P.map(x => '<div class="prow"><i class="pav">' + esc(x.name.slice(0, 1)) + '</i><span>' + esc(x.name) + (x.followsMe ? '<small>あなたをフォロー</small>' : '') + '</span><button type="button" class="fol' + (x.follow ? ' on' : '') + '" data-fol="' + esc(x.key) + '">' + (x.follow ? 'フォロー中' : 'フォロー') + '</button></div>').join('') : '<p class="note">まだ投稿した人がいません。投稿した人がここに出ます。</p>';
@@ -1814,7 +1832,11 @@ body.feedfs #feed > .dash{display:none}
     const pts = ($('pPts').textContent || '').replace(/[^0-9]/g, ''); $('stUse').textContent = 'ありがとうポイント ' + (pts || 0) + ' pt';
     $('stBar').style.width = Math.min(100, (+pts || 0)) + '%'; $('stArea').textContent = AREA_HO();
     $('stGuide').classList.toggle('on', guideOn); $('stTheme').textContent = { dark: 'ダーク', light: 'ライト', auto: '端末に合わせる' }[LS.g('hbTheme', 'dark')] || 'ダーク'; }
-  function setOpen() { setFill(); $('stMsg').textContent = ''; openSheet('setSheet'); }
+  $('tmGo').onclick = async () => { $('tmGo').disabled = true; $('tmMsg').textContent = 'つくっています…';
+    const j = await api('/grok/team', { title: $('tmTitle').value.trim(), emails: $('tmEmails').value }).catch(() => ({}));
+    $('tmGo').disabled = false; $('tmMsg').textContent = j.ok ? 'できました（' + j.n + '人）。ログインした人から、トークの「' + ($('tmTitle').value.trim() || 'チーム') + '」でつながります。' : (j.error || 'つくれませんでした');
+    if (j.ok) { $('tmEmails').value = ''; teamsLoad(); } };
+  function setOpen() { setFill(); $('stMsg').textContent = ''; openSheet('setSheet'); api('/grok/keys', {}).then(j => { $('stTeam').hidden = !j.keys; }).catch(() => {}); }   // 事務局のアカウントのときだけ、チームをつくれる
   $('setSheet').addEventListener('click', e => { const b = e.target.closest('[data-st]'); if (!b) return; const a = b.dataset.st, close = () => { $('setSheet').hidden = true; };
     if (a === 'me') { close(); openSheet('prof'); } else if (a === 'plan') { close(); openSheet('planSheet'); } else if (a === 'plug') { close(); openSheet('plugSheet'); } else if (a === 'qr') { close(); openSheet('qrSheet'); }
     else if (a === 'help') { close(); if (!guideOn) $('rHelp').onclick(); }
@@ -1824,6 +1846,7 @@ body.feedfs #feed > .dash{display:none}
     else if (a === 'guide') { guideSet(!guideOn); setFill(); }
     else if (a === 'theme') { const n = { dark: 'light', light: 'auto', auto: 'dark' }[LS.g('hbTheme', 'dark')] || 'dark'; LS.s('hbTheme', n); themeSync(); setFill(); }
     else if (a === 'out') { close(); outOpen(); }
+    else if (a === 'team') { close(); openSheet('teamSheet'); }
     else $('stMsg').textContent = SETM[a] || ''; });
   $('avMenu').addEventListener('click', e => { const b = e.target.closest('[data-av]'); if (!b) return; $('avMenu').hidden = true; const a = b.dataset.av;
     if (a === 'guide') { guideSet(!guideOn); $('avMenu').hidden = false; return; }
@@ -1936,12 +1959,14 @@ body.feedfs #feed > .dash{display:none}
   let dmWith = '', dmName = '', dmMsgs = [], dmTimer = 0;
   let dmSpoken = 0;
   async function dmLoad(text, aibo, call) {
-    if (!dmWith) return; const j = await api('/grok/dm', { with: dmWith, text: text || '', aibo: !!aibo, call: !!call }).catch(() => ({}));
+    if (!dmWith) return; const grp = dmWith.startsWith('g:'), j = await api(grp ? '/grok/gdm' : '/grok/dm', grp ? { team: dmWith.slice(2), text: text || '', aibo: !!aibo } : { with: dmWith, text: text || '', aibo: !!aibo, call: !!call }).catch(() => ({}));
+    if (grp && j.msgs) j.msgs.forEach(m => { if (!m.mine && m.name) m.text = m.name + '：' + m.text; });   // グループは、だれの発言か名前をつける
     if (j.msgs) { dmMsgs = j.msgs; $('dmLog').innerHTML = j.msgs.map(m => '<div class="row ' + (m.mine ? 'me' : 'hb') + (m.aibo ? ' aibo' : '') + (m.rusu ? ' rusu' : '') + '" data-i="' + esc(String(dmName || '?').slice(0, 1)) + '"><span>' + (m.rusu ? '<small class="who">' + esc(dmName) + 'さんの愛棒（お留守番）</small>' : '') + (m.call ? '📞 ' : '') + esc(m.text) + (m.aibo && !m.rusu ? '\n（愛棒の下書きから）' : '') + '</span></div>').join('') || '<p class="note">まだメッセージがありません。最初のひとことを送ってみてください。</p>'; $('dmLog').scrollTop = 1e9; }
     else if (j.error) $('dmLog').innerHTML = '<p class="note">' + esc(j.error) + '</p>';
   }
   function openDm(key, name) {
-    dmWith = key; dmName = name; $('dmName').textContent = name; { const P = (feedData && feedData.people) || [], x = P.find(y => y.key === key); $('dmSub').textContent = x && x.follow && x.followsMe ? 'ご縁' : '友だち'; } $('dmAv').textContent = $('dmAv2').textContent = name.slice(0, 1); $('dmVoiceL').textContent = name + 'さんの声を聴く';
+    dmWith = key; dmName = name; $('dmName').textContent = name; { const P = (feedData && feedData.people) || [], x = P.find(y => y.key === key), t = key.startsWith('g:') && teams.find(y => 'g:' + y.id === key); $('dmSub').textContent = t ? 'グループ・' + t.members.length + '人' : x && x.follow && x.followsMe ? 'ご縁' : '友だち'; }
+    document.body.classList.toggle('dmgroup', key.startsWith('g:')); $('dmAv').textContent = $('dmAv2').textContent = name.slice(0, 1); $('dmVoiceL').textContent = name + 'さんの声を聴く';
     $('dmLog').innerHTML = ''; $('dmDraftTxt').value = ''; dmTab('talk'); $('dmSheet').hidden = false; dmLoad(); if (wide()) { if (!$('artBody').dataset.id) artFolder(); else sideShow('panel'); } clearInterval(dmTimer); dmTimer = setInterval(() => { if ($('dmSheet').hidden) clearInterval(dmTimer); else dmLoad(); }, 5000);
   }
   function dmTab(t) { document.querySelectorAll('#dmTabs button').forEach(b => b.classList.toggle('on', b.dataset.dt === t)); $('dmTalk').hidden = t !== 'talk'; $('dmDraft').hidden = t !== 'draft'; }
