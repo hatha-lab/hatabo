@@ -42,6 +42,7 @@ html.light .cug button.on{background:var(--card2) !important;color:var(--ink)}
 #vv{position:relative}
 #sideAibo:fullscreen{background:radial-gradient(120% 80% at 50% 30%,#16204a,#07080d 70%);display:flex;flex-direction:column;justify-content:center;padding:4vh 6vw}
 #sideAibo:fullscreen .prz{top:20px;right:20px}
+.andg{border-top:1px solid var(--line);padding:14px 2px 18px;font-size:14px;line-height:1.7;color:var(--sub)}.andg b{display:block;color:var(--ink);font-size:15px;margin-bottom:4px}.andg p{margin:0 0 8px}.andg .postbtn{width:100%}
 .howto{margin:8px 0 20px;padding-left:22px;display:flex;flex-direction:column;gap:14px;line-height:1.7;font-size:14px;color:var(--sub)}.howto b{display:block;color:var(--ink);font-size:15px;margin-bottom:2px}
 .keys{border-top:1px solid var(--line);padding-top:12px;margin-bottom:24px}.krow{display:flex;justify-content:space-between;padding:8px 2px;border-bottom:1px solid var(--line);font-size:14px}.krow .ok{color:#2f9e6e}.krow .ng{color:#c62f3e}
 /* 11/28 パソコンのホーム：話す前はホームだけ（下の黒い空きをなくす）。話しはじめたらスレッドだけ。左上のエンブレム／HATHABOでホームにもどる */
@@ -819,6 +820,9 @@ body.feedfs #feed > .dash{display:none}
       <li><b>アプリをつなぐ</b>左下の「プラグイン」で、カレンダーやメールなど、いつものツールとつなげます。</li>
       <li><b>自分のこと</b>スマホは右上、パソコンは左下のアイコンから。マイページ・方言・表示（ダーク／ライト）・料金・ログアウト。</li>
     </ol>
+    <div class="andg" id="andG"><b>Android の声の案内（テスト版）</b><p>Android のスマホなら、ほかのアプリ（LINE・地図・設定など）の画面も愛棒が読んで、「ここをタップしてね」と光る枠と声で案内します。「右にスワイプ」「右上のボタンを押して」と声でたのむと、一言予告してから代わりに操作します。送金・購入・削除・送信などの確定と文字の入力は、自分で押してもらいます。「自分で操作したい」と言えば案内だけになります。</p>
+      <p class="note">はじめにアプリでプライバシーの説明を読み、Android の設定で「ユーザー補助」をあなたの手でオンにします。画面の中身は案内を作るためだけに送り、保存しません。</p>
+      <button type="button" class="postbtn" id="andLink">Android の声の案内とつなぐ</button></div>
     <div class="keys" id="keysBox" hidden></div>
   </div>
   <div class="sheet" id="hajime" hidden>
@@ -1645,6 +1649,11 @@ body.feedfs #feed > .dash{display:none}
     if (!row || row === gLogLast) return; gLogLast = row; const who = (row.firstChild && row.firstChild.textContent) || '', t = ((row.querySelector('span') || row).textContent || '').trim().slice(0, 180);
     if (t) guideSay((who === 'あなた' ? 'あなたは、' : '') + t, '', true); }, 700); }, { passive: true });
   document.addEventListener('fullscreenchange', () => { const on = document.fullscreenElement === $('sideAibo'); $('przBtn').querySelector('span').textContent = on ? 'プレゼンをやめる' : 'プレゼン'; });
+  // 11/28 使い方 → Android の声の案内アプリへ、ログインをわたす（hathabo://link#wt=… ／ # のあとはサーバーに送られない）
+  $('andLink').onclick = () => { if (!/Android/i.test(navigator.userAgent)) return tip('Android のスマホで、このページを開いてから押してください');
+    if (!WT) return tip('先に Google でログインしてください');
+    location.href = 'hathabo://link#wt=' + encodeURIComponent(WT) + '&name=' + encodeURIComponent(($('name').value || '').trim().slice(0, 20));
+    setTimeout(() => { if (!document.hidden) tip('アプリが入っていないようです（テスト版は事務局から配っています）'); }, 1800); };
   $('rHelp').onclick = async () => { openSheet('helpSheet'); const j = await api('/grok/keys', {}).catch(() => ({})); const b = $('keysBox');   // 事務局のアカウントのときだけ、つなぎ先の鍵が入っているかを出す
     if (!j.keys) { b.hidden = true; return; } b.hidden = false; b.innerHTML = '<p class="h">事務局：つなぎ先の鍵</p>' + Object.entries(j.keys).map(([k, v]) => '<div class="krow"><span>' + esc(k) + '</span><b class="' + (v ? 'ok' : 'ng') + '">' + (v ? '入っている' : 'まだ') + '</b></div>').join(''); };   // 使い方：プラグインのとなり（スマホ・パソコンとも左下）
   // 11/28 作ったもの（右側の作業エリア＝アーティファクト）：議事録・スタンプ・下書きがここに開いて、フォルダにたまる（この端末に50件まで）
