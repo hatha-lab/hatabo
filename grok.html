@@ -424,6 +424,18 @@ body.feedfs #feed > .dash{display:none}
 .cug button.on{border-color:#3b6cf6;box-shadow:0 0 0 2px #3b6cf6 inset;background:#141c36}
 .cupay{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%}.cupay button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:14px;padding:12px 10px;display:flex;flex-direction:column;gap:3px;cursor:pointer;text-align:left}
 .cupay b{font-size:13px}.cupay small{font-size:10.5px;color:var(--sub)}.cupay button.on{background:#f2f4fa;color:#111;border-color:#f2f4fa}.cupay button.on small{color:#555}
+@media (min-width:900px){
+  body.nT #pane-talk, body.nC #pane-chat, body.nF #pane-feed{display:none !important}
+  body.nT .panes{grid-template-columns:minmax(360px,1fr) var(--wr,380px) !important}
+  body.nF .panes{grid-template-columns:var(--wl,380px) minmax(360px,1fr) !important}
+  body.nC .panes{grid-template-columns:var(--wl,380px) minmax(360px,1fr) !important}
+  body.nT.nF .panes, body.nT.nC .panes, body.nC.nF .panes{grid-template-columns:1fr !important}
+  body.nT #rzL, body.nC #rzL, body.nC #rzR, body.nF #rzR{display:none !important}
+  body.nC.nT #pane-feed, body.nC.nF #pane-talk{max-width:none}
+  #avTop{display:none}
+  .avmenu{top:auto !important;right:auto !important;left:12px;bottom:84px}
+  .dots button{position:relative}.dots button:not(.on){opacity:.55}
+}
 .vtoast{position:absolute;left:50%;top:45%;transform:translate(-50%,-50%);z-index:5;background:rgba(0,0,0,.6);color:#fff;font-style:normal;font-size:14px;padding:8px 14px;border-radius:999px;pointer-events:none}
 /* 友だちとのトーク（スレッドと同じ見た目） */
 .sheet.dmx{display:flex;flex-direction:column;padding-top:0}
@@ -533,7 +545,7 @@ body.feedfs #feed > .dash{display:none}
 /* パソコン：左（愛棒の帯＋トーク一覧）・真ん中（Chat）・右（Feed）を並べる。プロフィールは左下 */
 @media (min-width:900px){
   .top{position:relative;border-bottom:1px solid var(--line);padding:10px 20px;background:var(--bg)}
-  .dots{display:none}
+  .dots{display:flex;position:absolute;top:14px;left:calc(50% + 30px);padding:0;z-index:5;gap:4px}   /* パソコン：全画面ボタンの右に Talk・Chat・Feed（押すと列を出す／しまう） */
   .panes{display:grid;grid-template-columns:380px minmax(400px,1fr) 380px;overflow:hidden}
   .pane{border-right:1px solid var(--line);padding-top:12px}
   #pane-feed{border-right:0}
@@ -1017,9 +1029,16 @@ body.feedfs #feed > .dash{display:none}
   const PANES = ['talk', 'chat', 'feed'], panesEl = $('panes'), dotBtns = [...document.querySelectorAll('#dots button')];
   const wide = () => matchMedia('(min-width:900px)').matches;
   function go(p, smooth) { const i = PANES.indexOf(p); if (i < 0) return; if (!wide()) panesEl.scrollTo({ left: i * panesEl.clientWidth, behavior: smooth === false ? 'auto' : 'smooth' }); dotOn(p); if (p === 'feed' || p === 'talk') loadFeed(); }
-  function dotOn(p) { if (p === 'talk') { const d = document.querySelector('.dots [data-p="talk"]'); if (d) d.classList.remove('newdot'); } try { if (p !== 'feed' && sayPost) { sayPost = null; sayStop(); } } catch (e) {} dotBtns.forEach(b => b.classList.toggle('on', b.dataset.p === p)); if (typeof orbSync === 'function') try { orbSync(); } catch (e) {} }
+  function dotOn(p) { if (p === 'talk') { const d = document.querySelector('.dots [data-p="talk"]'); if (d) d.classList.remove('newdot'); } try { if (p !== 'feed' && sayPost) { sayPost = null; sayStop(); } } catch (e) {} if (!wide()) dotBtns.forEach(b => b.classList.toggle('on', b.dataset.p === p)); if (typeof orbSync === 'function') try { orbSync(); } catch (e) {} }
   panesEl.addEventListener('scroll', () => { const i = Math.round(panesEl.scrollLeft / Math.max(1, panesEl.clientWidth)); const p = PANES.at(Math.max(0, Math.min(PANES.length - 1, i))); dotOn(p); if (p !== 'chat') loadFeed(); }, { passive: true });
-  dotBtns.forEach(b => b.onclick = () => go(b.dataset.p));
+  // パソコン：Talk・Chat・Feed を押すと、その列を出す／しまう（2つだけ・1つだけ＝全画面にもできる。少なくとも1つは出す）
+  const colKey = { talk: 'nT', chat: 'nC', feed: 'nF' };
+  function colsSync() { const h = LS.g('hbHideCols', []); Object.values(colKey).forEach(c => document.body.classList.toggle(c, wide() && h.includes(c)));
+    if (wide()) dotBtns.forEach(b => b.classList.toggle('on', !h.includes(colKey[b.dataset.p]))); }
+  dotBtns.forEach(b => b.onclick = () => { if (!wide()) return go(b.dataset.p);
+    const c = colKey[b.dataset.p], h = LS.g('hbHideCols', []), nh = h.includes(c) ? h.filter(x => x !== c) : h.concat(c);
+    if (nh.length >= 3) return; LS.s('hbHideCols', nh); colsSync(); window.dispatchEvent(new Event('resize')); if (b.dataset.p === 'feed' || b.dataset.p === 'talk') loadFeed(); });
+  setTimeout(colsSync, 0); window.addEventListener('resize', () => { clearTimeout(window.__cs); window.__cs = setTimeout(colsSync, 150); });
   requestAnimationFrame(() => go('chat', false));   // 最初は真ん中の Chat
   requestAnimationFrame(() => { renderFeed(); if (wide()) loadFeed(); });   // パソコンは Feed も最初から見える
   let nameT = 0; $('name').addEventListener('input', () => { clearTimeout(nameT); nameT = setTimeout(() => { feedData = null; if (wide()) loadFeed(true); profFill(); }, 800); });
@@ -1030,7 +1049,7 @@ body.feedfs #feed > .dash{display:none}
   function tab(t) { if (t === 'voice' || t === 'aibo') { go('chat'); return sub('aibo'); } go(t === 'talk' ? 'talk' : 'chat'); if (t !== 'talk') sub('thread'); }
   function openSheet(id) { $(id).hidden = false; if (id === 'prof') { loadFeed(true); profFill(); } if (id === 'qrSheet') { $('qrName').textContent = ($('name').value.trim() || 'あなた') + 'さんのQR'; qrFill(); } }
   document.querySelectorAll('[data-close]').forEach(b => b.onclick = () => { $(b.dataset.close).hidden = true; });
-  $('railProf').onclick = () => openSheet('prof');
+  $('railProf').onclick = e => { e.stopPropagation(); $('avTop').onclick(e); };   // パソコンは左下（ChatGPT・Claude・Grok と同じ）、スマホは右上
   // Feed：見本の動画（ハタボ公式の CM）＋ 検証している人の投稿
   let feedData = null, feedAt = 0, vis = 'all';   // Feed は全体フィード。ふつうは全体に出す
   const esc = t => String(t).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -1056,14 +1075,18 @@ body.feedfs #feed > .dash{display:none}
   setInterval(async () => { if (document.visibilityState !== 'visible' || !$('name').value.trim() || !feedData) return; const j = await api('/grok/feed', {}).catch(() => ({})); if (!j.people) return; feedData.people = j.people; feedData.me = j.me; peopleRows(); try { frNotify(); } catch (e) {} }, 30000);   // 相手がQRを読んだら、30秒以内にお知らせが出る
   // 見本の投稿（ふだんのハタボと同じ見本）。全体フィードの、下へめくっていく体験を試すため
   const sLiked = new Set();
+  // 利用シーン（投稿が集まるまで、使い方が伝わるように。めくるたびに、ちがう声で読む）
   const FEED_SAMPLE = [
-    { id: 's-emb', logo: true, name: 'ハタボ公式', img: 'feed_emblem.jpg', text: 'ハタボのエンブレム。六つの光は、人と人のご縁が広がるしるしです。', likes: 64 },
-    { id: 's-1', name: 'みさき', aiName: 'モカ', img: 'https://picsum.photos/id/1060/900/900', text: '今日のモーニング。駅前の新しいカフェ、ラテがすごくおいしかった', likes: 23 },
-    { id: 's-2', name: 'けんた', aiName: 'ポチ', img: 'https://picsum.photos/id/1025/900/900', text: 'うちの子です。毛布にくるまって、ずっと寝てる', likes: 87 },
-    { id: 's-3', name: 'ゆうこ', aiName: 'ソラ', img: 'https://picsum.photos/id/1015/900/900', text: '週末は山へ。川の音を聞きながら、のんびり歩いてきました。', likes: 41 },
-    { id: 's-4', name: 'パティスリー花', aiName: 'ハナ', shop: true, img: 'https://picsum.photos/id/1080/900/900', text: '新メニュー「いちごのタルト」はじめました。数量限定です。ご予約は愛棒のハナまで。', likes: 56 },
-    { id: 's-5', name: '湯宿 みずほ', aiName: 'ミズホ', shop: true, img: 'https://picsum.photos/id/1036/900/900', text: '雪見の露天風呂、はじまりました。空室やご予約は、宿の愛棒が24時間お答えします。', likes: 38 },
-    { id: 's-6', name: 'たけし', aiName: 'ゲン', img: 'https://picsum.photos/id/1043/900/900', text: '新人さんの最初の1週間、愛棒が段取りを教えてくれて大助かり。議事録も勝手にまとまってる。', likes: 19 },
+    { id: 's-1', name: 'カフェで、朝の段取り', aiName: 'モカ', img: 'scenes/woman.jpg', text: '朝のカフェで「今日の予定、まとめて」。愛棒が予定と移動時間を整理して、空いた時間に入れる用事まで教えてくれる。', likes: 23 },
+    { id: 's-2', name: 'お店の予約、24時間', aiName: 'ハナ', shop: true, img: 'scenes/cafe.jpg', text: '閉店後も、予約やメニューの質問にはお店の愛棒が答えます。朝来たら、受けた予約がまとまっています。', likes: 54 },
+    { id: 's-3', name: 'はなれて暮らす家族', aiName: 'ソラ', img: 'scenes/family.jpg', text: 'おばあちゃんとのビデオ通話のあとに、愛棒が「次はいつ話す？」をそっと思い出させてくれる。', likes: 87 },
+    { id: 's-4', name: '宿の受付', aiName: 'ミズホ', shop: true, img: 'scenes/hotel.jpg', text: '夜中のチェックインも、外国のお客さまにも。宿の愛棒が、その国のことばで道案内とお風呂の時間を伝えます。', likes: 38 },
+    { id: 's-5', name: '会議は話すだけ', aiName: 'ゲン', img: 'scenes/team.jpg', text: '打ち合わせを愛棒が聞いていて、終わったら議事録とやることリストができあがり。だれが何をするかも、まとめてくれる。', likes: 41 },
+    { id: 's-6', name: 'メールの下書き', aiName: 'リン', img: 'scenes/corp.jpg', text: '「お礼のメール、ていねいに」と言うだけ。送る前に、自分で読んで直せます。', likes: 19 },
+    { id: 's-7', name: '話し相手、見守り', aiName: 'ポチ', img: 'scenes/bed.jpg', text: '声で話せるから、スマホが苦手でもだいじょうぶ。毎日の話し相手と、薬の時間のお知らせ。', likes: 66 },
+    { id: 's-8', name: '新人さんの最初の1週間', aiName: 'ナビ', img: 'scenes/cafe2.jpg', text: '新人さんの「これ、どうやるんだっけ？」に、会社の愛棒がいつでも答えます。教える人の時間が、ぐっと減りました。', likes: 33 },
+    { id: 's-9', name: '夜のお店の案内', aiName: 'ルナ', shop: true, img: 'scenes/ipad.jpg', text: 'お酒の説明もおすすめも、愛棒におまかせ。外国のお客さまには、その国のことばで。', likes: 29 },
+    { id: 's-10', name: '寝る前のふりかえり', aiName: 'ユメ', img: 'scenes/room.jpg', text: '「今日どうだった？」と聞いてくれて、話すだけで日記になる。明日やることも、ひとつだけ決めておく。', likes: 47 },
   ];
   // 声を聴く：xAI の声で読む（人ごとにちがう声）。作れないときだけ端末の声
   const VOI = ['ara', 'eve', 'rex', 'sal', 'leo', 'liora', 'carina', 'orion', 'luna', 'atlas'];
@@ -1080,7 +1103,7 @@ body.feedfs #feed > .dash{display:none}
     if (my !== sayN) return;   // とちゅうで次へめくったら読まない
     if (j.audio) { sayAud = sayEl; sayEl.onended = () => done && done(); sayEl.src = 'data:audio/mpeg;base64,' + j.audio; sayEl.play().catch(() => done && done()); return; }
     try { const u = new SpeechSynthesisUtterance(text); u.lang = 'ja-JP'; u.onend = () => done && done(); speechSynthesis.speak(u); } catch (e) { done && done(); } }
-  const VOX = { 's-cm': 'ara', 's-emb': 'ara', 's-1': 'eve', 's-2': 'leo', 's-3': 'liora', 's-4': 'carina', 's-5': 'sal', 's-6': 'rex' };   // 見本の投稿の声
+  const VOX = { 's-cm': 'ara', 's-1': 'eve', 's-2': 'luna', 's-3': 'carina', 's-4': 'sal', 's-5': 'leo', 's-6': 'rex', 's-7': 'liora', 's-8': 'ara', 's-9': 'atlas', 's-10': 'orion' };   // 利用シーンごとに、ちがう声
   // 右に縦のボタン：いいね・声を聴く・コメント（愛棒に聞く）・共有
   const paH = (attr, id, on, n, text) => '<div class="pa"><button type="button" class="' + (on ? 'on' : '') + '" ' + attr + '="' + esc(id) + '">いいね ' + n + '</button><button type="button" data-say="' + esc(String(text || '').slice(0, 200)) + '" data-voice="' + (VOX[id] || voiceOf(id)) + '">声を聴く</button><button type="button" data-ask="' + esc(String(text || '').slice(0, 80)) + '">コメント</button><button type="button" data-share="' + esc(String(text || '').slice(0, 120)) + '">共有</button></div>';
   document.addEventListener('click', e => { if (e.target.id === 'ffx') document.body.classList.remove('feedfs'); });
@@ -1102,7 +1125,7 @@ body.feedfs #feed > .dash{display:none}
   function renderFeed(msg) {
     let h = '<div class="post"><div class="ph"><img src="hathabo-logo.webp" alt=""><b>ハタボ公式</b><span class="badge">公式</span><small>見本</small></div><video src="feed_cm.mp4" poster="feed_cm.jpg" playsinline muted loop preload="metadata"></video><p class="pt" style="padding-top:10px">すべての人に、AIの愛棒を。ハタボのCMができました。話すだけで、あなたの代わりに動いてくれる愛棒です。</p>' + paH('data-slike', 's-cm', sLiked.has('s-cm'), 128 + (sLiked.has('s-cm') ? 1 : 0), 'すべての人に、AIの愛棒を。ハタボのCMができました。') + '</div>';
     if (msg) h += '<p class="dash">' + esc(msg) + '</p>';
-    const real = (feedData && feedData.posts) || [], sam = FEED_SAMPLE.map(x => '<div class="post"><div class="ph">' + (x.logo ? '<img src="hathabo-logo.webp" alt="">' : '<i class="pav">' + esc(x.name.slice(0, 1)) + '</i>') + '<b>' + esc(x.name) + '</b>' + (x.shop ? '<span class="badge">お店</span>' : '') + '<small>' + esc(x.aiName ? x.aiName + '（愛棒）' : '') + '・見本</small></div><img class="pimg" loading="lazy" alt="" src="' + x.img + '"><p class="pt" style="padding-top:10px">' + esc(x.text) + '</p>' + paH('data-slike', x.id, sLiked.has(x.id), x.likes + (sLiked.has(x.id) ? 1 : 0), x.text) + '</div>');
+    const real = (feedData && feedData.posts) || [], sam = FEED_SAMPLE.map(x => '<div class="post"><div class="ph">' + (x.logo ? '<img src="hathabo-logo.webp" alt="">' : '<i class="pav">' + esc(x.name.slice(0, 1)) + '</i>') + '<b>' + esc(x.name) + '</b>' + (x.shop ? '<span class="badge">お店</span>' : '') + '<small>' + esc(x.aiName ? x.aiName + '（愛棒）' : '') + '・利用シーン</small></div><img class="pimg" loading="lazy" alt="" src="' + x.img + '"><p class="pt" style="padding-top:10px">' + esc(x.text) + '</p>' + paH('data-slike', x.id, sLiked.has(x.id), x.likes + (sLiked.has(x.id) ? 1 : 0), x.text) + '</div>');
     let si = 0;
     let ri = 0;
     for (const p of real) { h += '<div class="post' + (p.img ? '' : ' tx') + '"><div class="ph"><i class="pav">' + esc(p.name.slice(0, 1)) + '</i><b>' + esc(p.name) + '</b><small>' + ago(p.at) + '・' + VIS[p.vis] + '</small>' + (p.mine ? '' : '<button type="button" class="fol' + (p.follow ? ' on' : '') + '" data-fol="' + esc(p.by) + '">' + (p.follow ? 'フォロー中' : 'フォロー') + '</button>') + '</div>' + (p.img ? '<img class="pimg" loading="lazy" alt="" src="' + base + '/feed/img/' + encodeURIComponent(p.img) + '">' : '') + (p.text ? '<p class="pt">' + esc(p.text) + '</p>' : '') + paH('data-like', p.id, p.liked, p.likes, p.text) + '</div>'; if (++ri % 2 === 0 && si < sam.length) h += sam[si++]; }   // 2つごとに見本を1つ
@@ -1349,7 +1372,7 @@ body.feedfs #feed > .dash{display:none}
   $('pOut').onclick = outOpen; $('outGo').onclick = outNow;
   // 右上のアイコン：マイページ・料金・ログアウト
   $('avTop').onclick = e => { e.stopPropagation(); $('avWho').textContent = ($('name').value.trim() || 'アカウント') + ($('pEmail').textContent ? '・' + $('pEmail').textContent.replace(' でログイン中', '') : ''); $('avMenu').hidden = !$('avMenu').hidden; };
-  document.addEventListener('click', e => { if (!e.target.closest('#avMenu,#avTop')) $('avMenu').hidden = true; });
+  document.addEventListener('click', e => { if (!e.target.closest('#avMenu,#avTop,#railProf')) $('avMenu').hidden = true; });
   $('avMenu').addEventListener('click', e => { const b = e.target.closest('[data-av]'); if (!b) return; $('avMenu').hidden = true; const a = b.dataset.av;
     if (a === 'me') openSheet('prof'); else if (a === 'area') { hjA = LS.g('hbArea', ''); hajimeOpen(null); } else if (a === 'plan') openSheet('planSheet'); else outOpen(); });
 
