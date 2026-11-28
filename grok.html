@@ -1168,16 +1168,29 @@ body.feedfs #feed > .dash{display:none}
   const sLiked = new Set();
   // 利用シーン（投稿が集まるまで、使い方が伝わるように。めくるたびに、ちがう声で読む）
   const FEED_SAMPLE = [
-    { id: 's-1', name: 'カフェで、朝の段取り', aiName: 'モカ', img: 'scenes/woman.jpg', text: '朝のカフェで「今日の予定、まとめて」。愛棒が予定と移動時間を整理して、空いた時間に入れる用事まで教えてくれる。', likes: 23 },
-    { id: 's-2', name: 'お店の予約、24時間', aiName: 'ハナ', shop: true, img: 'scenes/cafe.jpg', text: '閉店後も、予約やメニューの質問にはお店の愛棒が答えます。朝来たら、受けた予約がまとまっています。', likes: 54 },
-    { id: 's-3', name: 'はなれて暮らす家族', aiName: 'ソラ', img: 'scenes/family.jpg', text: 'おばあちゃんとのビデオ通話のあとに、愛棒が「次はいつ話す？」をそっと思い出させてくれる。', likes: 87 },
-    { id: 's-4', name: '宿の受付', aiName: 'ミズホ', shop: true, img: 'scenes/hotel.jpg', text: '夜中のチェックインも、外国のお客さまにも。宿の愛棒が、その国のことばで道案内とお風呂の時間を伝えます。', likes: 38 },
-    { id: 's-5', name: '会議は話すだけ', aiName: 'ゲン', img: 'scenes/team.jpg', text: '打ち合わせを愛棒が聞いていて、終わったら議事録とやることリストができあがり。だれが何をするかも、まとめてくれる。', likes: 41 },
-    { id: 's-6', name: 'メールの下書き', aiName: 'リン', img: 'scenes/corp.jpg', text: '「お礼のメール、ていねいに」と言うだけ。送る前に、自分で読んで直せます。', likes: 19 },
-    { id: 's-7', name: '話し相手、見守り', aiName: 'ポチ', img: 'scenes/bed.jpg', text: '声で話せるから、スマホが苦手でもだいじょうぶ。毎日の話し相手と、薬の時間のお知らせ。', likes: 66 },
-    { id: 's-8', name: '新人さんの最初の1週間', aiName: 'ナビ', img: 'scenes/cafe2.jpg', text: '新人さんの「これ、どうやるんだっけ？」に、会社の愛棒がいつでも答えます。教える人の時間が、ぐっと減りました。', likes: 33 },
-    { id: 's-9', name: '夜のお店の案内', aiName: 'ルナ', shop: true, img: 'scenes/ipad.jpg', text: 'お酒の説明もおすすめも、愛棒におまかせ。外国のお客さまには、その国のことばで。', likes: 29 },
-    { id: 's-10', name: '寝る前のふりかえり', aiName: 'ユメ', img: 'scenes/room.jpg', text: '「今日どうだった？」と聞いてくれて、話すだけで日記になる。明日やることも、ひとつだけ決めておく。', likes: 47 },
+    { id: 's-1', name: '朝の身じたくに、今日の予定', aiName: 'モカ', img: 'scenes/morning.jpg', pos: '25% 50%', text: '歯をみがきながら「今日の予定は？」。愛棒が声で読みあげて、移動の時間まで教えてくれる。', likes: 23 },
+    { id: 's-2', name: '宿の受付、5つのことば', aiName: 'ミズホ', shop: true, img: 'scenes/ryokan.jpg', pos: '50% 50%', text: '夜中のチェックインも、外国のお客さまにも。宿の愛棒が、その国のことばで手続きと周りの案内をします。', likes: 38 },
+    { id: 's-3', name: '会議は話すだけ', aiName: 'ゲン', img: 'scenes/meeting.jpg', pos: '50% 50%', text: '打ち合わせを愛棒が聞いていて、終わったら議事録とやることリストができあがり。だれが何をするかも、まとめてくれる。', likes: 41 },
+    { id: 's-4', name: 'はなれて暮らす家族', aiName: 'ソラ', img: 'scenes/family.jpg', pos: '30% 50%', text: '孫とのビデオ通話も、声で「つないで」だけ。話したあとは、愛棒が「次はいつ話す？」をそっと思い出させてくれる。', likes: 87 },
+    { id: 's-5', name: '料理中、手がふさがっていても', aiName: 'ハナ', img: 'scenes/cooking.jpg', pos: '70% 50%', text: '「次は何を入れるんだっけ？」と聞くだけ。手がふさがっていても、愛棒がレシピを声で教えてくれる。', likes: 54 },
+    { id: 's-6', name: '家庭教師の愛棒', aiName: 'ナビ', img: 'scenes/tutor.jpg', pos: '40% 50%', text: '子どものペースで、ゲームみたいに問題を出してくれる。わからないところは、何度でもやさしく。', likes: 33 },
+    { id: 's-7', name: 'お風呂で、明日の段取り', aiName: 'ユメ', img: 'scenes/bath.jpg', pos: '40% 50%', text: 'お風呂につかりながら、明日の予定と、やることをひとつだけ決めておく。話すだけで、メモになる。', likes: 47 },
+    { id: 's-8', name: '走りながら、声のコーチ', aiName: 'レン', img: 'scenes/run.jpg', pos: '30% 50%', text: 'ペースや距離を、走りながら声で教えてくれる。「いいペース、そのまま！」の一言がうれしい。', likes: 29 },
+    { id: 's-9', name: '夜のお店の案内', aiName: 'ルナ', shop: true, img: 'scenes/bar.jpg', pos: '30% 50%', text: 'お酒の説明もおすすめも、愛棒におまかせ。外国のお客さまには、その国のことばで。', likes: 31 },
+    { id: 's-10', name: '見守り、話し相手', aiName: 'ポチ', img: 'scenes/watch.jpg', pos: '35% 50%', text: '声で話せるから、スマホが苦手でもだいじょうぶ。毎日の話し相手と、家族への「元気だよ」のお知らせ。', likes: 66 },
+    { id: 's-11', name: '電話のお留守番', aiName: 'リン', img: 'scenes/phone.jpg', pos: '30% 50%', text: '出られない電話には、自分の愛棒がお留守番。ご用件を聞いて、あとでまとめて教えてくれる。', likes: 19 },
+    { id: 's-12', name: 'みんなで話す、グループ通話', aiName: 'ルカ', img: 'scenes/group.jpg', pos: '28% 50%', text: '友だちや仲間と声でつながって、話したことは愛棒がやることリストにまとめてくれる。', likes: 44 },
+    { id: 's-13', name: 'おばあちゃんとビデオ通話', aiName: 'ソラ', img: 'scenes/grandma.jpg', text: '「お母さんにつないで」と言うだけ。子どももおばあちゃんも、ボタンをさがさなくていい。', likes: 92 },
+    { id: 's-14', name: 'スマホが苦手でも、声だけで', aiName: 'ゲンさん', img: 'scenes/senior.jpg', text: '文字を打たなくても、話しかけるだけ。天気も予定も、家族への連絡も、愛棒が手伝います。', likes: 58 },
+    { id: 's-15', name: '家族会議もオンラインで', aiName: 'ミナ', img: 'scenes/familymeet.jpg', text: 'はなれた家族もいっしょに相談。決まったことは、愛棒がみんなに送っておきます。', likes: 36 },
+    { id: 's-16', name: 'チームの打ち合わせに、愛棒も', aiName: 'ジョー', img: 'scenes/team2.jpg', pos: '50% 50%', text: '「最新の状況をまとめて」と言えば、チームの愛棒がすぐに答える。新しく入った人も、すぐ追いつける。', likes: 27 },
+    { id: 's-17', name: '仕事の「あの資料どこ？」', aiName: 'ケン', img: 'scenes/work.jpg', text: 'イヤホンで話しかけるだけで、会議の資料や前回の決めごとを探してくれる。', likes: 24 },
+    { id: 's-18', name: '孫といっしょに、調べもの', aiName: 'ポポ', img: 'scenes/grandpa.jpg', text: '孫といっしょに、気になったことを声で聞いてみる。答えは、やさしい声で読みあげてくれる。', likes: 71 },
+    { id: 's-19', name: 'お店の接客、となりに愛棒', aiName: 'サラ', shop: true, img: 'scenes/store.jpg', text: 'サイズの在庫や取り寄せも、お店の愛棒がその場で確かめます。スタッフはお客さまとの会話に集中。', likes: 33 },
+    { id: 's-20', name: '子どもの「なんで？」に', aiName: 'ピコ', img: 'scenes/kid.jpg', pos: '35% 50%', text: '子どもの「なんで？」に、何度でもやさしく答える。こたえは、子どもにわかることばで。', likes: 63 },
+    { id: 's-21', name: '予約の受付、文字でも声でも', aiName: 'アイ', shop: true, img: 'scenes/booking.jpg', pos: '35% 50%', text: '「明日10時、空いてますか？」にも、お店の愛棒がすぐ答えて、そのまま予約まで。', likes: 22 },
+    { id: 's-22', name: '毎日の話し相手', aiName: 'ハル', img: 'scenes/elder.jpg', pos: '30% 50%', text: '朝のあいさつから、昔の話まで。毎日話すうちに、愛棒がその人のことを覚えていきます。', likes: 49 },
+    { id: 's-23', name: 'お店の在庫、聞くだけ', aiName: 'モモ', shop: true, img: 'scenes/shop.jpg', pos: '35% 50%', text: '「この商品、あといくつ？」と聞くだけ。発注のタイミングも、愛棒が教えてくれる。', likes: 18 },
   ];
   // 声を聴く：xAI の声で読む（人ごとにちがう声）。作れないときだけ端末の声
   const VOI = ['ara', 'eve', 'rex', 'sal', 'leo', 'liora', 'carina', 'orion', 'luna', 'atlas'];
@@ -1194,7 +1207,7 @@ body.feedfs #feed > .dash{display:none}
     if (my !== sayN) return;   // とちゅうで次へめくったら読まない
     if (j.audio) { sayAud = sayEl; sayEl.onended = () => done && done(); sayEl.src = 'data:audio/mpeg;base64,' + j.audio; sayEl.play().catch(() => done && done()); return; }
     try { const u = new SpeechSynthesisUtterance(text); u.lang = 'ja-JP'; u.onend = () => done && done(); speechSynthesis.speak(u); } catch (e) { done && done(); } }
-  const VOX = { 's-cm': 'ara', 's-1': 'eve', 's-2': 'luna', 's-3': 'carina', 's-4': 'sal', 's-5': 'leo', 's-6': 'rex', 's-7': 'liora', 's-8': 'ara', 's-9': 'atlas', 's-10': 'orion' };   // 利用シーンごとに、ちがう声
+  const VOX = { 's-cm': 'ara', 's-1': 'eve', 's-2': 'sal', 's-3': 'leo', 's-4': 'carina', 's-5': 'luna', 's-6': 'ara', 's-7': 'liora', 's-8': 'rex', 's-9': 'atlas', 's-10': 'orion', 's-11': 'eve', 's-12': 'leo', 's-13': 'carina', 's-14': 'atlas', 's-15': 'luna', 's-16': 'rex', 's-17': 'sal', 's-18': 'liora', 's-19': 'eve', 's-20': 'ara', 's-21': 'luna', 's-22': 'orion', 's-23': 'carina' };   // 利用シーンごとに、ちがう声
   // 右に縦のボタン：いいね・声を聴く・コメント（愛棒に聞く）・共有
   const paH = (attr, id, on, n, text) => '<div class="pa"><button type="button" class="' + (on ? 'on' : '') + '" ' + attr + '="' + esc(id) + '">いいね ' + n + '</button><button type="button" data-say="' + esc(String(text || '').slice(0, 200)) + '" data-voice="' + (VOX[id] || voiceOf(id)) + '">話す</button><button type="button" data-ask="' + esc(String(text || '').slice(0, 80)) + '">コメント</button><button type="button" data-share="' + esc(String(text || '').slice(0, 120)) + '">共有</button></div>';
   document.addEventListener('click', e => { if (e.target.id === 'ffx') document.body.classList.remove('feedfs'); });
@@ -1216,7 +1229,7 @@ body.feedfs #feed > .dash{display:none}
   function renderFeed(msg) {
     let h = '<div class="post"><div class="ph"><img src="hathabo-logo.webp" alt=""><b>ハタボ公式</b><span class="badge">公式</span><small>見本</small></div><video src="feed_cm.mp4" poster="feed_cm.jpg" playsinline muted loop preload="metadata"></video><p class="pt" style="padding-top:10px">すべての人に、AIの愛棒を。ハタボのCMができました。話すだけで、あなたの代わりに動いてくれる愛棒です。</p>' + paH('data-slike', 's-cm', sLiked.has('s-cm'), 128 + (sLiked.has('s-cm') ? 1 : 0), 'すべての人に、AIの愛棒を。ハタボのCMができました。') + '</div>';
     if (msg) h += '<p class="dash">' + esc(msg) + '</p>';
-    const real = (feedData && feedData.posts) || [], sam = FEED_SAMPLE.map(x => '<div class="post"><div class="ph">' + (x.logo ? '<img src="hathabo-logo.webp" alt="">' : '<i class="pav">' + esc(x.name.slice(0, 1)) + '</i>') + '<b>' + esc(x.name) + '</b>' + (x.shop ? '<span class="badge">お店</span>' : '') + '<small>' + esc(x.aiName ? x.aiName + '（愛棒）' : '') + '・利用シーン</small></div><img class="pimg" loading="lazy" alt="" src="' + x.img + '"><p class="pt" style="padding-top:10px">' + esc(x.text) + '</p>' + paH('data-slike', x.id, sLiked.has(x.id), x.likes + (sLiked.has(x.id) ? 1 : 0), x.text) + '</div>');
+    const real = (feedData && feedData.posts) || [], sam = FEED_SAMPLE.map(x => '<div class="post"><div class="ph">' + (x.logo ? '<img src="hathabo-logo.webp" alt="">' : '<i class="pav">' + esc(x.name.slice(0, 1)) + '</i>') + '<b>' + esc(x.name) + '</b>' + (x.shop ? '<span class="badge">お店</span>' : '') + '<small>' + esc(x.aiName ? x.aiName + '（愛棒）' : '') + '・利用シーン</small></div><img class="pimg" loading="lazy" alt="" src="' + x.img + '"' + (x.pos ? ' style="object-position:' + x.pos + '"' : '') + '><p class="pt" style="padding-top:10px">' + esc(x.text) + '</p>' + paH('data-slike', x.id, sLiked.has(x.id), x.likes + (sLiked.has(x.id) ? 1 : 0), x.text) + '</div>');
     let si = 0;
     let ri = 0;
     for (const p of real) { h += '<div class="post' + (p.img ? '' : ' tx') + '"><div class="ph"><i class="pav">' + esc(p.name.slice(0, 1)) + '</i><b>' + esc(p.name) + '</b><small>' + ago(p.at) + '・' + VIS[p.vis] + '</small>' + (p.mine ? '' : '<button type="button" class="fol' + (p.follow ? ' on' : '') + '" data-fol="' + esc(p.by) + '">' + (p.follow ? 'フォロー中' : 'フォロー') + '</button>') + '</div>' + (p.img ? '<img class="pimg" loading="lazy" alt="" src="' + base + '/feed/img/' + encodeURIComponent(p.img) + '">' : '') + (p.text ? '<p class="pt">' + esc(p.text) + '</p>' : '') + paH('data-like', p.id, p.liked, p.likes, p.text) + '</div>'; if (++ri % 2 === 0 && si < sam.length) h += sam[si++]; }   // 2つごとに見本を1つ
