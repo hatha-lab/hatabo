@@ -66,7 +66,7 @@ html.light .cug button.on{background:var(--card2) !important;color:var(--ink)}
 /* 11/28 スレッドの上に、いま話している愛棒の顔と名前 */
 .thead{display:flex;align-items:center;gap:10px;padding:6px 4px 10px;border-bottom:1px solid var(--line);margin-bottom:6px;flex:0 0 auto}
 .thead .tav{width:40px;height:40px;border-radius:50%;overflow:hidden;flex:0 0 auto;display:grid;place-items:center;background:var(--card2)}.thead .tav img,.thead .tav svg{width:100%;height:100%;object-fit:cover}
-.thead .tnm{flex:1;min-width:0}.thead b{display:block;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.thead small{color:var(--sub);font-size:12px}
+.thead .tnm{flex:1;min-width:0}.thead .tvo[hidden]{display:none !important}.thead b{display:block;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.thead small{color:var(--sub);font-size:12px}
 .thead .tvo{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:6px 12px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap}
 .row.ob{flex-wrap:wrap}.row.ob .chips2{margin-top:8px;flex:0 0 100%;padding-left:40px;box-sizing:border-box}.row.ob .chips2 button{background:var(--card);font-weight:600}.row.ob .chips2 button.done{opacity:.45;pointer-events:none}
 /* 11/28 資料のプレゼン：スライドを全画面で出し、愛棒が1枚ずつ話してめくる */
@@ -79,6 +79,25 @@ html.light .cug button.on{background:var(--card2) !important;color:var(--ink)}
 /* 11/28 スレッドの上は帯にしない：小さな顔と名前だけ（Claude のアプリの見出しのように） */
 .thead{padding:0 2px 6px;border-bottom:0;margin-bottom:2px;gap:8px}.thead .tav{width:26px;height:26px}.thead b{font-size:14px}.thead small{display:none}
 .thead .tvo{padding:0;width:32px;height:32px;border-radius:50%;font-size:0;display:grid;place-items:center}.thead .tvo::before{content:'';width:16px;height:16px;background:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='M4 10v4M8 7v10M12 4v16M16 7v10M20 10v4'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='M4 10v4M8 7v10M12 4v16M16 7v10M20 10v4'/%3E%3C/svg%3E") center/contain no-repeat}
+/* 11/28 スマホ：上のボタンはすりガラスで浮かせて、スレッドはその後ろ（画面のいちばん上）まで通す。下の入力欄も浮かせる */
+#hdr{display:contents}
+@media (max-width:899px){
+  main{position:relative}
+  #hdr{display:block;position:absolute;top:0;left:0;right:0;z-index:15;padding-top:env(safe-area-inset-top);background:rgba(7,8,13,.62);background:color-mix(in srgb,var(--bg) 62%,transparent);-webkit-backdrop-filter:blur(18px) saturate(1.4);backdrop-filter:blur(18px) saturate(1.4)}
+  #hdr .top{background:none}
+  body:not(.ontalk) #hdr .logo span{display:none}   /* エンブレムはいつも、HATHABO の文字はトークのときだけ */
+  .pane{padding-top:calc(var(--hh,118px) + 4px)}
+  /* フィードは TikTok のように：投稿を画面のいちばん上から出して、上のボタンはその上に透けて重なる */
+  #pane-feed{padding-top:0;position:relative}
+  #pane-feed .fhead{position:absolute;top:calc(var(--hh,118px) + 6px);right:12px;z-index:6;margin:0}#pane-feed .fhead b{display:none}
+  #pane-feed .fbtns{top:calc(var(--hh,118px) + 56px)}
+  #pane-chat{padding-top:0;padding-bottom:0}
+  #pane-chat .lcol{position:relative}
+  #pane-chat .thead{position:absolute;top:var(--hh,118px);left:-16px;right:-16px;z-index:4;padding:6px 18px;background:rgba(7,8,13,.62);background:color-mix(in srgb,var(--bg) 62%,transparent);-webkit-backdrop-filter:blur(18px) saturate(1.4);backdrop-filter:blur(18px) saturate(1.4)}
+  #pane-chat .log{padding-top:calc(var(--hh,118px) + 48px);padding-bottom:calc(84px + env(safe-area-inset-bottom));scroll-padding-top:calc(var(--hh,118px) + 48px)}
+  #pane-chat .hello{padding-top:calc(var(--hh,118px) + 12px)}
+  #pane-chat .cbar{position:absolute;left:0;right:0;bottom:calc(6px + env(safe-area-inset-bottom));z-index:4;background:rgba(18,20,28,.78);background:color-mix(in srgb,var(--card) 78%,transparent);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px)}
+}
 /* 11/28 4つめの面（愛棒・パネル）。パソコンは列、スマホは左右にスワイプ */
 #pane-side{display:flex;flex-direction:column;gap:6px}
 #pane-side .sidetabs{align-self:center;width:min(300px,86%);flex:0 0 auto;margin:2px 0 6px}#pane-side .sidetabs button{flex:1;white-space:nowrap}
@@ -86,7 +105,7 @@ html.light .cug button.on{background:var(--card2) !important;color:var(--ink)}
 #sidePanel{flex:1;min-height:0;overflow-y:auto}
 #sideAibo .ring{width:min(62vw,240px)}
 @media (min-width:900px){ #pane-side{border-left:1px solid var(--line)} body.nS #pane-chat #cTabs{display:flex !important;margin:0 auto 8px} body:not(.nC) #sideTabs [data-cs=thread]{display:none} #sideTabs{width:min(240px,80%) !important} }
-@media (min-width:900px){ #dots [data-p=feed]{display:none} body.sfeed #pane-side{display:none !important} body:not(.sfeed) #pane-feed{display:none !important} #pane-feed #sideTabs{margin:0 auto 8px;display:flex} #pane-feed{border-left:1px solid var(--line)} }
+@media (min-width:900px){ body.nC #sideTabs{width:min(380px,92%) !important} #dots [data-p=feed]{display:none} body.sfeed #pane-side{display:none !important} body:not(.sfeed) #pane-feed{display:none !important} #pane-feed #sideTabs{margin:0 auto 8px;display:flex} #pane-feed{border-left:1px solid var(--line)} }
 @media (max-width:899px){ .csub [data-cs=feed]{display:none} #sideAibo .bnr{display:none} }
 @media (max-width:899px){ #sideTabs{display:none !important} #cTabs.inhead{display:flex;margin:0 auto 6px;width:min(300px,86%)} body:not(.onchat) #cTabs.inhead{display:none} }
 .csub{display:flex}#cTabs{align-self:center;width:min(300px,86%);flex:0 0 auto}.csub button{flex:1;white-space:nowrap}
@@ -288,6 +307,13 @@ main{max-width:none;padding:0;height:100dvh;display:flex;flex-direction:column}
 .map.mini{width:120px;margin:0;flex:0 0 120px}
 .dmap{display:flex;gap:12px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px;margin-bottom:12px}
 .dmap .mapbtn{width:auto;padding:5px 14px}
+/* 11/28 ご縁マップ・ご縁ガチャ・マーケット・育てる を、マーケットのように横に並べる */
+.dtiles{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}
+.dtile{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:16px;padding:12px 8px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;min-width:0;text-align:center}
+.dtile:hover{border-color:#3b6cf6}.dtile b{font-size:14px;white-space:nowrap}.dtile small{font-size:11px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.dtile .map.mini{width:64px !important;height:64px !important;min-height:0 !important;aspect-ratio:auto !important;flex:0 0 auto !important;border-radius:12px;overflow:hidden;margin:0}.dtile .map.mini svg{width:100%;height:100%}.dtile .dt-ic{font-style:normal;font-size:34px;line-height:64px;height:64px}
+.dt-egg{width:56px;height:56px;margin:4px 0;border-radius:50%;background:linear-gradient(#ff5d8f 0 50%,#eef0f6 50%);box-shadow:inset 0 -3px 0 rgba(0,0,0,.08),0 0 0 3px rgba(255,93,143,.15);animation:eggspin 3.2s cubic-bezier(.45,.05,.55,.95) infinite}
+@media (max-width:899px){.dtiles{grid-template-columns:repeat(2,1fr)}}
 .legend{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;color:var(--sub);font-size:11px}
 .legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px}
 .gate{position:fixed;inset:0;z-index:80;background:radial-gradient(circle at 50% 30%,#141a2e,#07080d 70%);display:grid;place-items:center;padding:24px}
@@ -437,13 +463,32 @@ body.feedfs #feed > .dash{display:none}
 .qacts button:hover i{border-color:#3b6cf6}
 .bnr{position:relative;border:1px solid var(--line);border-radius:22px;overflow:hidden;height:190px;margin-bottom:14px;background:#0d1020}
 .bslides{display:flex;height:100%;transition:transform .6s cubic-bezier(.3,.8,.3,1)}
-.bslide{flex:0 0 100%;display:grid;grid-template-columns:1fr 150px;align-items:center;gap:10px;padding:20px 26px;position:relative}
+/* 11/28 バナー＝ニュース：にじんだグラデーションの上に、まんなかで見出しとボタン（ElevenLabs のお知らせのように） */
+.bslide::before{content:'';position:absolute;inset:-20%;z-index:0;background:radial-gradient(45% 70% at 18% 30%,var(--b0) 0,transparent 70%),radial-gradient(50% 80% at 70% 80%,var(--b1) 0,transparent 70%),radial-gradient(40% 60% at 95% 10%,var(--b0) 0,transparent 70%),#05060c;filter:blur(18px) saturate(1.15);opacity:.9}
+.bslide::after{content:'';position:absolute;inset:0;z-index:0;opacity:.18;mix-blend-mode:overlay;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
+.bslide > div{position:relative;z-index:1;text-align:center}.bslide small{color:rgba(255,255,255,.75) !important}.bslide h3{color:#fff}.bslide p{color:rgba(255,255,255,.82) !important}
+.bslide{overflow:hidden}
+.bslide{flex:0 0 100%;display:grid;grid-template-columns:1fr;padding-right:190px !important;align-items:center;gap:10px;padding:20px 26px;position:relative}
 .bslide small{color:var(--sub);font-size:12px;letter-spacing:.08em}
 .bslide h3{margin:4px 0 6px;font-size:22px;line-height:1.3}
 .bslide p{margin:0 0 12px;color:var(--sub);font-size:13px;line-height:1.6}
 .bslide .bcta{display:inline-flex;gap:8px}
 .bslide .bcta button{border:0;border-radius:999px;padding:8px 16px;font-weight:800;font-size:13px;cursor:pointer;background:#f2f4fa;color:#111}
 .bslide .bcta button.s{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.begg{position:absolute;right:22px;top:50%;transform:translateY(-55%);z-index:3;border:0;background:none;color:var(--ink);display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;--ec:#ff5d8f}
+.begg .eggc{position:relative;width:116px;height:116px;border-radius:50%;overflow:hidden;display:block;animation:eggspin 3.2s cubic-bezier(.45,.05,.55,.95) infinite;box-shadow:0 0 34px color-mix(in srgb,var(--ec) 55%,transparent),inset -10px -12px 24px rgba(0,0,0,.25);transition:box-shadow .6s}
+.begg .capt{position:absolute;inset:0 0 50% 0;background:radial-gradient(circle at 32% 30%,#fff8 0 12%,transparent 13%),var(--ec);transition:background-color .6s}
+.begg .capb{position:absolute;inset:50% 0 0 0;background:linear-gradient(#f6f7fb,#d9dce6)}
+.begg .capl{position:absolute;left:0;right:0;top:calc(50% - 4px);height:8px;background:rgba(0,0,0,.18)}
+.begg .eggb{position:absolute;left:14%;top:14%;width:72%;height:72%;border-radius:50%;opacity:0;transform:scale(.3);transition:opacity .35s,transform .5s cubic-bezier(.2,1.6,.4,1);z-index:0}
+.begg .capt,.begg .capb,.begg .capl{z-index:1;transition:transform .5s cubic-bezier(.3,1.3,.5,1),opacity .4s}
+.begg.rolling .eggc{animation:eggshake .11s linear infinite}.begg.rolling .capt{transition:none}
+.begg.open .eggc{animation:none;overflow:visible}.begg.open .capt{transform:translateY(-70%) rotate(-25deg);opacity:0}.begg.open .capb{transform:translateY(60%);opacity:0}.begg.open .capl{opacity:0}.begg.open .eggb{opacity:1;transform:scale(1)}
+@keyframes eggshake{0%{transform:rotate(-14deg)}50%{transform:rotate(14deg)}100%{transform:rotate(-14deg)}}
+.begg b{font-size:13px;margin-top:6px}.begg small{color:var(--sub);font-size:11px}
+.begg:hover .eggc{animation-duration:.9s}
+@keyframes eggspin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+#vv .dmap .dgacha{display:none !important}
 .bslide .bart{width:150px;height:150px;border-radius:50%;filter:saturate(1.2);box-shadow:0 0 40px rgba(80,140,255,.35)}
 .bdots{position:absolute;left:0;right:0;bottom:10px;display:flex;justify-content:center;gap:6px}
 .bdots i{width:7px;height:7px;border-radius:50%;background:#3a3f52;cursor:pointer}.bdots i.on{background:#f2f4fa;width:18px;border-radius:4px}
@@ -751,10 +796,10 @@ body.feedfs #feed > .dash{display:none}
     <button type="button" class="prz" id="przBtn" aria-label="プレゼン"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M12 16v4M8 20h8"/></svg><span>プレゼン</span></button>
     <div class="dash2" id="dash2">
       <div class="qacts" id="qActs"><button type="button" data-qa="talk"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 10v4M8 7v10M12 4v16M16 7v10M20 10v4"/></svg></i>話す</button><button type="button" data-qa="thread"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"/></svg></i>スレッド</button><button type="button" data-qa="mk"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></i>愛棒をつくる</button><button type="button" data-qa="photo"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/></svg></i>写真</button><button type="button" data-qa="minutes"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M6 3h9l4 4v14H6z"/><path d="M9 12h7M9 16h5"/></svg></i>議事録</button><button type="button" data-qa="post"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M12 8v8M8 12h8"/></svg></i>投稿</button><button type="button" data-qa="plug"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 7V3M15 7V3M7 7h10v4a5 5 0 0 1-10 0zM12 16v5"/></svg></i>アプリ</button><button type="button" data-qa="gacha"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M4 12h16"/></svg></i>ガチャ</button></div>
-      <div class="bnr" id="bnr"><div class="bslides" id="bSlides"></div><div class="bdots" id="bDots"></div></div>
+      <div class="bnr" id="bnr"><div class="bslides" id="bSlides"></div><div class="bdots" id="bDots"></div><button type="button" class="begg" id="bEgg" aria-label="ご縁ガチャ"><i class="eggc"><img class="eggb" src="hataboy-face.webp" alt=""><i class="capt"></i><i class="capb"></i><i class="capl"></i></i><b>ご縁ガチャ</b><small>つながるほど、引ける</small></button></div>
       <h2 id="dHi">こんばんは</h2><p class="note">愛棒に話しかけるか、愛棒を選んでください</p>
       <div class="kpis"><div><b id="kMemo">0</b><small>覚えたこと</small></div><div><b id="kPosts">0</b><small>投稿</small></div><div><b id="kFol">0</b><small>フォロワー</small></div><div><b id="kPts">0</b><small>ポイント</small></div><div><b id="kStage">はじめまして</b><small>育ち</small></div></div>
-      <div class="dmap"><div class="map mini" id="mapMini"></div><div><b>ご縁マップ</b><p class="note" id="mapSum">つながり 0人</p><button type="button" class="mapbtn tomap">ひらく</button></div><button type="button" class="dgacha" id="goenGacha"><i>🎁</i><b>ご縁ガチャ</b><small>つながるほど、引ける</small></button></div>
+      <div class="dtiles"><button type="button" class="dtile tomap"><div class="map mini" id="mapMini"></div><b>ご縁マップ</b><small id="mapSum">つながり 0人</small></button><button type="button" class="dtile" id="goenGacha"><i class="dt-egg"></i><b>ご縁ガチャ</b><small>つながるほど、引ける</small></button><button type="button" class="dtile" data-qa="market"><i class="dt-ic">🛍</i><b>マーケット</b><small>愛棒・アプリをさがす</small></button><button type="button" class="dtile" data-qa="grow"><i class="dt-ic">🌱</i><b>育てる</b><small>話すほど、育つ</small></button></div>
       <p class="h">プリインストールの愛棒</p><div class="pre"><button type="button" data-say="お店の予約の段取りを手伝って"><i style="background:#3b6cf6">••</i><span><b>予約愛棒</b><small>お店・宿を予約</small></span></button><button type="button" data-say="英語で話す練習がしたい"><i style="background:#3fb37f">••</i><span><b>翻訳愛棒</b><small>多言語・方言</small></span></button><button type="button" data-say="今週の予定を整理したい"><i style="background:#e8a23a">••</i><span><b>スケジュール愛棒</b><small>予定を調整</small></span></button><button type="button" data-say="議事録をとってほしい"><i style="background:#7c5cf0">••</i><span><b>議事録愛棒</b><small>会議をまとめる</small></span></button></div></div>
     <div class="vcol">
     <div class="chip"><div class="me" id="meDot">あ</div><span class="pill" id="who">あなた</span></div>
@@ -785,7 +830,7 @@ body.feedfs #feed > .dash{display:none}
     <div class="tv" id="tv">
     <div class="lcol" id="lcol">
       <p class="h lh">愛棒との会話</p>
-    <div class="thead" id="tHead"><span class="tav" id="tHeadAv"><img src="hataboy-face.webp" alt=""></span><div class="tnm"><b id="tHeadN">ハタボーイ</b><small id="tHeadS">あなたの愛棒</small></div><button type="button" class="tvo" id="tHeadVo" aria-label="声で話す" title="声で話す">声で話す</button></div>
+    <div class="thead" id="tHead"><span class="tav" id="tHeadAv"><img src="hataboy-face.webp" alt=""></span><div class="tnm"><b id="tHeadN">ハタボーイ</b><small id="tHeadS">あなたの愛棒</small></div><button type="button" class="tvo" id="tHeadVo" hidden aria-label="声で話す">声で話す</button></div>
     <div class="hello" id="hello"><div class="hav" id="helloAv"><img src="hataboy-face.webp" alt=""></div><b id="helloT">こんにちは</b><small id="helloS">ハタボーイに、なんでも話しかけてください</small>
       <div class="hsug" id="hsug"></div></div>
     <div class="log" id="log" aria-live="polite"></div>
@@ -988,6 +1033,9 @@ body.feedfs #feed > .dash{display:none}
   const RATE = 24000;
   const $ = id => document.getElementById(id);
   // 11/28 並び：トーク ⇄ スレッド ⇄ 愛棒（またはパネル＝作業スペース）⇄ フィード。愛棒の画面（キャラ・話しはじめる）を、スレッドとは別の面にうつす
+  // スマホ：上（ロゴ・Talk/Chat/Feed・切りかえ）を1つにまとめて浮かせる。高さは --hh に
+  { const h = document.createElement('div'); h.id = 'hdr'; const top = document.querySelector('header.top'); top.parentNode.insertBefore(h, top); h.append(top, $('dots'));
+    const hh = () => document.documentElement.style.setProperty('--hh', h.getBoundingClientRect().height + 'px'); try { new ResizeObserver(hh).observe(h); } catch (e) {} hh(); }
   function csubPlace() { const c = $('cTabs'), pc = matchMedia('(min-width:900px)').matches; if (pc) { if (c.parentNode !== $('pane-chat')) $('pane-chat').insertBefore(c, $('pane-chat').firstChild); c.classList.remove('inhead'); } else { if (c.previousElementSibling !== $('dots')) $('dots').after(c); c.classList.add('inhead'); } }
   matchMedia('(min-width:900px)').addEventListener('change', csubPlace); csubPlace();
   function dashPlace() { const d = $('dash2'); if (!d) return; const pc = matchMedia('(min-width:900px)').matches; const to = pc ? $('vv') : $('sideAibo'); if (d.parentNode !== to) pc ? to.insertBefore(d, to.firstChild) : to.appendChild(d); }
@@ -1140,7 +1188,7 @@ body.feedfs #feed > .dash{display:none}
       try { dest = ctx.createMediaStreamDestination(); spk = spk || Object.assign(document.createElement('audio'), { autoplay: true, playsInline: true }); spk.setAttribute('playsinline', ''); spk.srcObject = dest.stream; spk.play().catch(() => {}); } catch (e) { dest = null; }
       await ctx.resume();
       mic = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } });
-      const r = await fetch(base + '/grok/session', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ k: key, t: tok, wt: WT, tier: TIER(), voice: (curBot && curBot.voice) || '', name: $('name').value.trim(), gyo: P.get('gyo') || '', scene: P.get('scene') || '', tone: P.get('tone') || '', msg: P.get('msg') || '' }) });
+      const r = await fetch(base + '/grok/session', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ k: key, t: tok, wt: WT, tier: TIER(), voice: (curBot && (curBot.voice || CO_VOICE[curBot.c])) || '', name: $('name').value.trim(), gyo: P.get('gyo') || '', scene: P.get('scene') || '', tone: P.get('tone') || '', msg: P.get('msg') || '' }) });
       const j = await r.json().catch(() => ({}));
       if (!r.ok || !j.token) throw new Error(j.error || ('つなげませんでした（' + r.status + '）'));
       if (j.memo) { memo = j.memo; grow(); }
@@ -1220,12 +1268,13 @@ body.feedfs #feed > .dash{display:none}
   const wide = () => matchMedia('(min-width:900px)').matches;
   function go(p, smooth) { const i = PANES.indexOf(p); if (i < 0) return; if (wide() && p === 'feed' && sideMode !== 'feed') return sideShow('feed'); if (!wide()) panesEl.scrollTo({ left: i * panesEl.clientWidth, behavior: smooth === false ? 'auto' : 'smooth' }); dotOn(p); if (p === 'feed' || p === 'talk') loadFeed(); }
   var curPane = 'chat';
-  function dotOn(p) { document.body.classList.toggle('onchat', p === 'chat' || p === 'side'); if (p === 'talk') { const d = document.querySelector('.dots [data-p="talk"]'); if (d) d.classList.remove('newdot'); } try { if (p !== 'feed' && sayPost) { sayPost = null; sayStop(); } } catch (e) {} if (!wide()) dotBtns.forEach(b => b.classList.toggle('on', b.dataset.p === (p === 'side' ? 'chat' : p))); curPane = p; try { csubSync(); } catch (e) {} if (typeof orbSync === 'function') try { orbSync(); } catch (e) {} }
+  function dotOn(p) { document.body.classList.toggle('onchat', p === 'chat' || p === 'side'); document.body.classList.toggle('ontalk', p === 'talk'); if (p === 'talk') { const d = document.querySelector('.dots [data-p="talk"]'); if (d) d.classList.remove('newdot'); } try { if (p !== 'feed' && sayPost) { sayPost = null; sayStop(); } } catch (e) {} if (!wide()) dotBtns.forEach(b => b.classList.toggle('on', b.dataset.p === (p === 'side' ? 'chat' : p))); curPane = p; try { csubSync(); } catch (e) {} if (typeof orbSync === 'function') try { orbSync(); } catch (e) {} }
   panesEl.addEventListener('scroll', () => { if (document.body.classList.contains('feedfs')) return dotOn('feed');   // フィードを大きく見ているあいだは、上のタブは Feed のまま
     const i = Math.round(panesEl.scrollLeft / Math.max(1, panesEl.clientWidth)); const p = PANES.at(Math.max(0, Math.min(PANES.length - 1, i))); dotOn(p); if (p !== 'chat') loadFeed(); }, { passive: true });
   // パソコン：Talk・Chat・Feed を押すと、その列を出す／しまう（2つだけ・1つだけ＝全画面にもできる。少なくとも1つは出す）
   const colKey = { talk: 'nT', chat: 'nC', side: 'nS', feed: 'nF' };
-  function colsSync() { const h = LS.g('hbHideCols', []).filter(x => !wide() || (x !== 'nS' && x !== 'nF'));   // パソコンの右の列（愛棒・パネル・フィード）は、しまわない Object.values(colKey).forEach(c => document.body.classList.toggle(c, wide() && h.includes(c)));
+  // パソコンの右の列（愛棒・パネル・フィード）は、しまわない
+  function colsSync() { const h = LS.g('hbHideCols', []).filter(x => !wide() || (x !== 'nS' && x !== 'nF')); Object.values(colKey).forEach(c => document.body.classList.toggle(c, wide() && h.includes(c)));
     if (wide()) { const W = { talk: 'var(--wl,300px)', chat: 'minmax(340px,1fr)', side: document.body.classList.contains('sidewide') ? 'minmax(420px,1.2fr)' : 'var(--ws,380px)', feed: 'var(--ws,380px)' }, vis = ['talk', 'chat', sideMode === 'feed' ? 'feed' : 'side'].filter(p => !h.includes(colKey[p]) || p === 'side' || p === 'feed');
       let t = vis.map(p => W[p]); if (!vis.includes('chat')) t[t.length - 1] = 'minmax(0,1fr)'; panesEl.style.setProperty('grid-template-columns', t.join(' '), 'important'); } else panesEl.style.removeProperty('grid-template-columns');
     if (wide()) dotBtns.forEach(b => b.classList.toggle('on', !h.includes(colKey[b.dataset.p]))); }
@@ -1468,6 +1517,7 @@ body.feedfs #feed > .dash{display:none}
   const myHogen = () => { const a = LS.g('hbArea', ''); const f = AREAS.find(x => x[0] === a); return LS.g('hbHogen', f ? f[1] : 0); };
   const hogenLine = (ho, sp) => (ho ? '話すときは「' + HOGEN[ho] + '」で、あたたかく自然に（大げさにしない。聞き取りやすく）。' : '') + (sp === 0 ? 'ゆっくり、区切って話す。' : sp === 2 ? 'テンポよく、はやめに話す。' : '');
   const mk = { s: 0, c: 4, r: 0, g: 0, v: 1, sp: 1, ho: 0 };   // 声はふだん ara（いちばんはじめの声）。えらべば変えられる
+  const CO_VOICE = ['luna', 'atlas', 'orion', 'sal', 'rex', 'eve', 'carina', 'leo', 'eve', 'ara', 'liora', 'orion', 'carina'];   // 11/28 色に合わせた声（色を選ぶと、声もその色の声に）
   const VOICES = [['eve', '元気・明るい'], ['ara', 'あたたかい（ハタボーイ）'], ['rex', 'はきはき・仕事向き'], ['sal', 'なめらか・落ちつき'], ['leo', '力強い'], ['liora', 'おだやか・やさしい'], ['carina', 'やわらかい'], ['orion', '深い・落ちつき'], ['luna', 'ふんわり'], ['atlas', 'どっしり']];
   const bot = (s, c) => '<svg viewBox="0 0 100 100"><path d="' + SH[s] + '" fill="' + CO[c] + '"/><circle cx="40" cy="50" r="5" fill="' + (c < 2 ? '#222' : '#fff') + '"/><circle cx="60" cy="50" r="5" fill="' + (c < 2 ? '#222' : '#fff') + '"/></svg>';
   // カスタマイズ（ふだんは、おすすめのまま作れる）。中でつなぐサービスの名前は出さない
@@ -1483,7 +1533,7 @@ body.feedfs #feed > .dash{display:none}
     $('mkColors').innerHTML = CO.map((c, i) => '<button type="button" data-c="' + i + '" class="' + (i === mk.c ? 'on' : '') + '" style="background:' + c + '" aria-label="色' + (i + 1) + '"></button>').join('');
     $('mkRoles').innerHTML = '<p class="mkrole">役割<small>この愛棒が、なにをする係か</small></p>' + '<div class="mktabs">' + GRPS.map(g => '<button type="button" data-gp="' + g[0] + '" class="' + (mkGrp() === g[0] ? 'on' : '') + '"><b>' + g[1] + '</b><small>' + g[2] + '</small></button>').join('') + '</div><div class="mkchips">' + ROLES.map((x, i) => x[2] === mkGrp() ? '<button type="button" data-ro="' + i + '" class="' + (i === mk.r ? 'on' : '') + '">' + x[0] + '</button>' : '').join('') + '</div>' + '<p class="mkhint">' + esc(ROLES[mk.r][1]) + '</p><p class="mkrole">声<small>愛棒ごとに声を変えられます</small></p>' + VOICES.map((v, i) => '<button type="button" data-vo="' + i + '" class="' + (i === mk.v ? 'on' : '') + '">' + v[1] + '</button>').join('') + '<p class="mkrole">話す速さ</p>' + SPEED.map((v, i) => '<button type="button" data-sp="' + i + '" class="' + (i === mk.sp ? 'on' : '') + '">' + v + '</button>').join('') + '<p class="mkrole">方言<small>住んでいる地域に合わせてあります。変えられます</small></p>' + HOGEN.map((v, i) => '<button type="button" data-ho="' + i + '" class="' + (i === mk.ho ? 'on' : '') + '">' + v + '</button>').join('') + '<p class="mkrole">業種・場面<small>えらぶだけ。その業種に合わせて話します（書かなくてOK）</small></p>' + GYO.map((g, i) => '<button type="button" data-gy="' + i + '" class="' + (i === mk.g ? 'on' : '') + '">' + g + '</button>').join('');
     $('mkGo').disabled = !$('mkName').value.trim(); }
-  $('mkSheet').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; if (b.dataset.s) mk.s = +b.dataset.s; else if (b.dataset.c) mk.c = +b.dataset.c; else if (b.dataset.gp) { mkG = b.dataset.gp; const f = ROLES.findIndex(x => x[2] === mkG); if (ROLES[mk.r][2] !== mkG && f >= 0) mk.r = f; } else if (b.dataset.ro) mk.r = +b.dataset.ro; else if (b.dataset.gy) mk.g = +b.dataset.gy; else if (b.dataset.vo) mk.v = +b.dataset.vo; else if (b.dataset.sp) mk.sp = +b.dataset.sp; else if (b.dataset.ho) mk.ho = +b.dataset.ho; else return; mkFill(); });
+  $('mkSheet').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; if (b.dataset.s) mk.s = +b.dataset.s; else if (b.dataset.c) { mk.c = +b.dataset.c; const vi = VOICES.findIndex(v => v[0] === CO_VOICE[mk.c]); if (vi >= 0) mk.v = vi; } else if (b.dataset.gp) { mkG = b.dataset.gp; const f = ROLES.findIndex(x => x[2] === mkG); if (ROLES[mk.r][2] !== mkG && f >= 0) mk.r = f; } else if (b.dataset.ro) mk.r = +b.dataset.ro; else if (b.dataset.gy) mk.g = +b.dataset.gy; else if (b.dataset.vo) mk.v = +b.dataset.vo; else if (b.dataset.sp) mk.sp = +b.dataset.sp; else if (b.dataset.ho) mk.ho = +b.dataset.ho; else return; mkFill(); });
   $('mkName').oninput = () => { $('mkGo').disabled = !$('mkName').value.trim(); };
   function railBots() { const B = LS.g('hbBots', []); $('railBots').innerHTML = B.map(b => '<button type="button" data-say="' + esc(b.role + 'として手伝って。あなたの名前は' + b.name) + '"><i style="background:transparent;box-shadow:none">' + bot(b.s, b.c) + '</i>' + esc(b.name.slice(0, 5)) + '</button>').join('');
     $('railBots').querySelectorAll('button').forEach((b, i) => b.onclick = () => openBot(B[i]));
@@ -1491,7 +1541,7 @@ body.feedfs #feed > .dash{display:none}
   // 作った愛棒をひらく：スレッドで、その愛棒との会話がはじまる
   // 役割：作った愛棒をひらくと、声の愛棒がその役割で話す（つないでいるときはすぐ、つないでいなければ、つないだときに）
   let curBot = null;
-  function sendRole() { if (!(ws && ready)) return; const x = curBot; send({ type: 'session.update', session: { voice: (x && x.voice) || 'ara' } }); const r = x ? ROLES.find(y => y[0] === x.role) : null;
+  function sendRole() { if (!(ws && ready)) return; const x = curBot; send({ type: 'session.update', session: { voice: (x && (x.voice || CO_VOICE[x.c])) || 'ara' } }); const r = x ? ROLES.find(y => y[0] === x.role) : null;
     send({ type: 'conversation.item.create', item: { type: 'message', role: 'system', content: [{ type: 'input_text', text: x ? 'ここからは「' + x.name + '」という名前の愛棒として話す。役割は「' + x.role + '」：' + (x.desc || (r ? r[1] : '')) + '。' + (x.gyo ? '業種・場面は「' + x.gyo + '」。例や言い方をこの業種に合わせる。' : '') + 'この役割に合うことを中心に、短く手伝う。役割の外のことを頼まれたら、ハタボーイにもどるよう一言すすめる。' + hogenLine(x.ho || 0, x.sp == null ? 1 : x.sp) : 'ここからは、いつものハタボーイで話す。' + hogenLine(myHogen(), 1) }] } }); }
   // スタンプ工房：アイデア（と写真）→ Kling AI で4案 → えらんで保存。カードはスレッドの中（更新しても残るので、押すしくみは log 全体で受ける）
   function stampCard() { const d = document.createElement('div'); d.className = 'pcard stampc'; d.innerHTML = '<b>🎨 スタンプ工房</b><small>どんなスタンプにしたいか、ひとことで。写真をもとにもできます</small><textarea class="stx" maxlength="200" placeholder="例：ハタボーイが笑顔で「ありがとう」"></textarea><label class="stph">📷 写真をもとにする（なくてもOK）<input type="file" accept="image/png,image/jpeg" hidden></label><button type="button" class="postbtn" data-stamp="go">4つの案を作る</button><div class="stout"></div>'; $('log').appendChild(d); $('log').scrollTop = 1e9; }
@@ -1510,7 +1560,7 @@ body.feedfs #feed > .dash{display:none}
     out.innerHTML = '<p class="note">時間がかかっています。少したってから、もう一度ためしてください</p>'; b.disabled = false; });
   function openBot(x) { curBot = x; sendRole(); setPartner(bot(x.s, x.c), x.name); plugGuide(x.role, x.name); tab('chat'); rows = { me: null, hb: null }; const d = document.createElement('div'); d.className = 'row hb'; d.innerHTML = '<b></b><span></span>'; d.lastChild.textContent = 'はじめまして、' + x.name + 'です。' + x.role + 'のことなら、まかせてください。何からはじめましょう？'; $('log').appendChild(d); if (x.role === 'スタンプ工房' || (x.cu && x.cu.stamp)) stampCard(); $('log').scrollTop = 1e9; const t = $('txt'); if (t) { t.value = ''; t.placeholder = x.name + 'に文字でも話せます'; } }
   $('mkBot').onclick = () => { mk.v = 1; mk.sp = 1; mk.ho = myHogen(); mk.cu = {}; mk.pay = 'pt'; $('mkCu').hidden = true; $('mkCuBtn').classList.remove('open'); mkG = ""; mkFill(); openSheet('mkSheet'); };
-  document.querySelectorAll('#rail .slot').forEach(b => b.onclick = () => { const ri = RO.indexOf(b.dataset.mk), ci = CO.indexOf(b.dataset.col); mk.r = ri >= 0 ? ri : 0; if (ci >= 0) mk.c = ci; $('mkName').value = ''; mk.g = 0; mk.v = 1; mk.sp = 1; mk.ho = myHogen(); mk.cu = {}; mk.pay = 'pt'; $('mkCu').hidden = true; $('mkCuBtn').classList.remove('open'); mkG = ""; mkFill(); openSheet('mkSheet'); });   // 声は、まだ使っていない声を先にえらんでおく
+  document.querySelectorAll('#rail .slot').forEach(b => b.onclick = () => { const ri = RO.indexOf(b.dataset.mk), ci = CO.indexOf(b.dataset.col); mk.r = ri >= 0 ? ri : 0; if (ci >= 0) mk.c = ci; $('mkName').value = ''; mk.g = 0; mk.v = Math.max(0, VOICES.findIndex(v => v[0] === CO_VOICE[mk.c])); mk.sp = 1; mk.ho = myHogen(); mk.cu = {}; mk.pay = 'pt'; $('mkCu').hidden = true; $('mkCuBtn').classList.remove('open'); mkG = ""; mkFill(); openSheet('mkSheet'); });   // 声は、まだ使っていない声を先にえらんでおく
   $('mkGo').onclick = () => { const B = LS.g('hbBots', []), x = { name: $('mkName').value.trim().slice(0, 16), s: mk.s, c: mk.c, role: RO[mk.r], gyo: mk.g ? GYO[mk.g] : '', voice: VOICES[mk.v][0], sp: mk.sp, ho: mk.ho, cu: Object.assign({}, mk.cu), pay: mk.pay }; B.push(x); LS.s('hbBots', B.slice(-8)); $('mkName').value = ''; $('mkSheet').hidden = true; railBots(); openBot(x); };   // 作ったら、そのままスレッドで話しはじめる
   railBots();
   // QR：この検証ページのURL（つながる用）
@@ -1582,7 +1632,7 @@ body.feedfs #feed > .dash{display:none}
     return { svg: '<svg viewBox="0 0 600 600">' + g + '</svg>', n: ring[0].length + ring[1].length + ring[2].length, goen: ring[0].length };
   }
   function mapFill() { const m = mapSvg(true); $('mapBox').innerHTML = m.svg; $('mapBox').querySelectorAll('.mp').forEach(e => e.onclick = () => { $('mapSheet').hidden = true; openDm(e.dataset.k, e.dataset.n); }); }
-  function mapMini() { const m = mapSvg(false); $('mapMini').innerHTML = m.svg; $('mapSum').textContent = 'つながり ' + m.n + '人（ご縁 ' + m.goen + '人）'; }
+  function mapMini() { const m = mapSvg(false); $('mapMini').innerHTML = m.svg; $('mapSum').textContent = 'つながり ' + m.n + '人・ご縁 ' + m.goen; }
   document.querySelectorAll('.tomap').forEach(b => b.onclick = async () => { if (!feedData) await loadFeed(true).catch(() => {}); mapFill(); openSheet('mapSheet'); });
   setInterval(() => { if (feedData && wide()) mapMini(); }, 15000); setTimeout(() => { if (feedData) mapMini(); }, 3000);
   // 先にログイン：ログインしていないときは、入口の画面を出す
@@ -1842,23 +1892,30 @@ body.feedfs #feed > .dash{display:none}
     $('rzL').ondblclick = $('rzR').ondblclick = () => { rs.removeProperty('--wl'); rs.removeProperty('--wr'); try { localStorage.removeItem('hbCols'); } catch (e) {} setTimeout(place, 50); };   // ダブルクリックで元の広さ
     load(); addEventListener('resize', place); setTimeout(place, 300); setInterval(place, 2000); })();
   // バナー（広告・最新情報）：6秒ごとに次へ。点を押すと、その1枚へ
+  // 11/28 バナー＝ニュース（新しい機能・お知らせ・広告）。右の丸は、いつも回っているご縁ガチャの卵
   const BNR = [
     { k: 'NEW', t: 'ハタボーイと、声で話そう', d: '話すほど、あなたのことを覚えて育つ愛棒。予約・予定・議事録も、話すだけ。', b: [['話しはじめる', 'talk']], c: ['#3b6cf6', '#24d6c8'] },
     { k: 'アプリを接続', t: 'いつものツールと、つながる', d: 'LINE公式アカウント・Googleドライブ ほか129のサービス。仕事が、声ひとつで回ります。', b: [['アプリを見る', 'plug']], c: ['#2ee6a6', '#3b6cf6'] },
     { k: '愛棒をつくる', t: '家でも、仕事でも、遊びでも', d: 'お店の窓口・電話のお留守番・家庭教師・お風呂の相手…45の役割から、あなたの愛棒を。', b: [['つくる', 'mk']], c: ['#e8a23a', '#e0517f'] },
     { k: '料金', t: 'Pro 月2,980円・Max 月10,000円', d: 'いちばん賢いAIを、毎日。足りない日は、1時間3,000円の使い放題を足すだけ。', b: [['料金を見る', 'plan']], c: ['#7c5cf0', '#24a7e0'] },
-    { k: 'ガチャ', t: '1日1回、無料でガチャ', d: '着せかえ・限定スタンプ・ありがとうポイントが当たります。', b: [['ガチャを引く', 'gacha']], c: ['#ff7aa8', '#e8a23a'] },
+    { k: 'お知らせ', t: '愛棒が、声で案内します', d: '左の「使い方」を押すと点灯。わからないところを触ると、愛棒が声で教えてくれます。Android の声の案内もテスト中。', b: [['ためす', 'guide']], c: ['#ff7aa8', '#e8a23a'] },
   ];
   let bI = 0;
-  $('bSlides').innerHTML = BNR.map(x => '<div class="bslide"><div><small>' + esc(x.k) + '</small><h3>' + esc(x.t) + '</h3><p>' + esc(x.d) + '</p><div class="bcta">' + x.b.map((y, i) => '<button type="button" class="' + (i ? 's' : '') + '" data-qa="' + y[1] + '">' + esc(y[0]) + '</button>').join('') + '</div></div><i class="bart" style="background:radial-gradient(circle at 30% 30%,' + x.c[1] + ',' + x.c[0] + ' 55%,#0b0d18 100%)"></i></div>').join('');
+  $('bSlides').innerHTML = BNR.map(x => '<div class="bslide" style="--b0:' + x.c[0] + ';--b1:' + x.c[1] + '"><div><small>' + esc(x.k) + '</small><h3>' + esc(x.t) + '</h3><p>' + esc(x.d) + '</p><div class="bcta">' + x.b.map((y, i) => '<button type="button" class="' + (i ? 's' : '') + '" data-qa="' + y[1] + '">' + esc(y[0]) + '</button>').join('') + '</div></div></div>').join('');   // 11/28 右の丸は、ずっと回っているガチャの卵（下の ご縁ガチャ をここへ）。スライドは、ちがう中身を入れていく
   $('bDots').innerHTML = BNR.map((_, i) => '<i data-bi="' + i + '"></i>').join('');
   const bGo = i => { bI = (i + BNR.length) % BNR.length; $('bSlides').style.transform = 'translateX(' + (-100 * bI) + '%)'; document.querySelectorAll('#bDots i').forEach((d, j) => d.classList.toggle('on', j === bI)); };
   $('bDots').onclick = e => { const d = e.target.closest('[data-bi]'); if (d) bGo(+d.dataset.bi); };
   bGo(0); setInterval(() => { if (!document.hidden && wide()) bGo(bI + 1); }, 6000);
+  { const EGGV = [['#ff5d8f', 'carina', 'やわらかい声'], ['#ffb547', 'eve', '元気な声'], ['#3bd18b', 'liora', 'やさしい声'], ['#3b8cff', 'rex', 'はきはきした声'], ['#a45cff', 'orion', '深い声'], ['#24d6c8', 'sal', 'なめらかな声'], ['#ff7a45', 'leo', '力強い声']], EGG = EGGV.map(x => x[0]); let ei = 0;   // 何色が出るかな：ひと回りごとに色がかわる。出た色で、生まれる愛棒の声がきまる
+    const egg = $('bEgg'); egg.style.setProperty('--ec', EGG[0]); egg.querySelector('.eggc').addEventListener('animationiteration', () => { ei = (ei + 1) % EGG.length; egg.style.setProperty('--ec', EGG[ei]); });
+    // 引いたら：色がくるくる変わって、卵が割れて、愛棒が生まれる → ガチャの画面へ
+    egg.onclick = () => { if (egg.classList.contains('rolling') || egg.classList.contains('open')) return; egg.classList.add('rolling'); let n = 0;
+      const iv = setInterval(() => { ei = (ei + 1) % EGG.length; egg.style.setProperty('--ec', EGG[ei]); if (++n > 14) { clearInterval(iv); egg.classList.remove('rolling'); egg.classList.add('open'); const g = EGGV[ei]; LS.s('hbEgg', { c: g[0], v: g[1], at: Date.now() }); egg.querySelector('small').textContent = g[2] + 'の愛棒が生まれた！'; speak('こんにちは！' + g[2] + 'で話すよ。よろしくね', g[1], () => {}); setTimeout(() => { egg.querySelector('small').textContent = 'つながるほど、引ける'; }, 5000);
+        setTimeout(() => { $('goenGacha').click(); setTimeout(() => egg.classList.remove('open'), 600); }, 1100); } }, 110); }; }
   // すぐ使うボタン・バナーのボタン
   document.addEventListener('click', e => { const b = e.target.closest('[data-qa]'); if (!b) return; const a = b.dataset.qa;
     if (a === 'talk') $('talk').click(); else if (a === 'thread') tab('chat'); else if (a === 'mk') $('mkBot').click(); else if (a === 'photo') $('attImg').click(); else if (a === 'minutes') { const t = $('txt'); t.value = '議事録とって'; t.focus(); $('sendF').classList.add('typing'); }
-    else if (a === 'post') $('newPost').click(); else if (a === 'plug') openSheet('plugSheet'); else if (a === 'gacha') openSheet('growSheet'); else if (a === 'plan') openSheet('planSheet'); });
+    else if (a === 'post') $('newPost').click(); else if (a === 'plug') openSheet('plugSheet'); else if (a === 'gacha' || a === 'grow') openSheet('growSheet'); else if (a === 'market') openSheet('plugSheet'); else if (a === 'guide') { if (!guideOn) $('rHelp').onclick(); } else if (a === 'plan') openSheet('planSheet'); });
 
   // 右上の「＋」：作成メニュー（新しいトーク・友だち追加・グループ作成・投稿・新しいたたき台・愛棒の追加）
   $('newM').onclick = e => { e.stopPropagation(); $('avMenu').hidden = true; $('cMenu2').hidden = !$('cMenu2').hidden; };   // ＋とアカウントのメニューは、片方だけ開く
