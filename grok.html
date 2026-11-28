@@ -8,9 +8,53 @@
 <link rel="icon" href="pwa-192.png"><link rel="apple-touch-icon" href="pwa-180.png">
 <meta name="theme-color" content="#07080d">
 <script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/" } }</script>
+<script>try{var t=localStorage.getItem('hbTheme');if(t==='"light"'||(t==='"auto"'&&matchMedia('(prefers-color-scheme: light)').matches))document.documentElement.classList.add('light')}catch(e){}</script>
 <style>
 /* 11/28 Figma「HATHABO — UI UX redesign」の 音声モード VM・愛棒トーク G・マイ愛棒 MD に合わせる（暗い画面・青のアクセント・HATHABO のロゴ） */
 :root{--bg:#07080d;--card:#12141c;--card2:#181b26;--ink:#f2f4fa;--sub:#9aa3b8;--line:#262a38;--hb:#3b6cf6;--hbd:#8fb0ff;--stop:#e5484d;color-scheme:dark}
+/* 11/28 ライトモード（右上・パソコンは左下のメニューから。ふだんはダーク）。文字が見えなくならないよう、色はすべてここの変数から */
+html.light{--bg:#f5f6fa;--card:#ffffff;--card2:#eceef4;--ink:#151821;--sub:#4f5769;--line:#d3d8e4;--hbd:#2448c4;color-scheme:light}
+html.light body{background:var(--bg);color:var(--ink)}
+/* ライトモード：暗い色を決め打ちしていたところを、ライトの色に（文字が見えなくならないように） */
+html.light .cb.off .c{background:var(--card2) !important;color:var(--ink)}
+html.light .row.me span{background:var(--card2) !important;color:var(--ink)}
+html.light .tl .pl{background:var(--card2) !important;color:var(--ink)}
+html.light .first1{background:var(--card2) !important;color:var(--ink)}
+html.light .cplus{background:var(--card2) !important;color:var(--ink)}
+html.light .ccard{background:var(--card2) !important;color:var(--ink)}
+html.light .attach button{background:var(--card2) !important;color:var(--ink)}
+html.light .abtn{background:var(--card2) !important;color:var(--ink)}
+html.light .mg button{background:var(--card2) !important;color:var(--ink)}
+html.light .cmenu2{background:var(--card2) !important;color:var(--ink)}
+html.light .cmenu2 button:hover{background:var(--card2) !important;color:var(--ink)}
+html.light .hav{background:var(--card2) !important;color:var(--ink)}
+html.light .ftoast{background:var(--card2) !important;color:var(--ink)}
+html.light .tl.pin{background:var(--card2) !important;color:var(--ink)}
+html.light .mkft button{background:var(--card2) !important;color:var(--ink)}
+html.light .mkcu{background:var(--card2) !important;color:var(--ink)}
+html.light .cug button.on{background:var(--card2) !important;color:var(--ink)}
+html.light .dgacha{margin-left:auto;align-self:center;display:flex;flex-direction:column;align-items:center;gap:4px;padding:14px 18px;border-radius:18px;border:1px solid #e8a23a;background:linear-gradient(160deg,rgba(232,162,58,.18),rgba(232,162,58,.04));color:var(--ink);cursor:pointer;min-width:120px}
+.dgacha i{font-style:normal;font-size:30px}.dgacha b{font-size:14px}.dgacha small{font-size:11px;color:var(--sub)}
+.hidl .h small{display:block;font-weight:400;color:var(--sub);font-size:11.5px}.hidb{display:flex;align-items:center;gap:10px;width:100%;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:14px;padding:10px 12px;margin-top:6px;cursor:pointer;font-size:14px}.hidb .pav{width:30px;height:30px;font-size:13px}.hidb em{margin-left:auto;font-style:normal;color:var(--hbd);font-size:12.5px}
+.vtoast{background:var(--card2) !important;color:var(--ink)}
+html.light .mkgo:disabled{background:var(--card2) !important;color:var(--ink)}
+html.light .post .pimg{background:var(--card2) !important;color:var(--ink)}
+html.light #pane-talk{background:var(--card2) !important;color:var(--ink)}
+html.light .bar{background:var(--card2) !important;color:var(--ink)}
+html.light .cug em{color:var(--hbd);border-color:var(--hbd)}
+html.light .rusu span, html.light .row.rusu .who{color:var(--hbd)}
+html.light .mkcu{background:linear-gradient(135deg,#dfe7ff,#ece4ff);color:#151821;border-color:#3b6cf6}html.light .mkcu small{color:#3a4257}
+html.light .mkft button{background:#eef2ff;color:var(--ink)}
+html.light .avmenu p, html.light .cmenu2 p, html.light .cmenu2 i{color:var(--sub)}
+html.light .hello b{color:var(--ink)}
+html.light .tl.pin{background:#e6ecff}
+html.light .logo span{color:var(--ink) !important;-webkit-text-fill-color:var(--ink);background:none !important;text-shadow:none !important}
+html.light .bnr, html.light .bnr h3, html.light .bnr b{color:#f2f4fa}html.light .bnr p, html.light .bnr small{color:#c3cad8}
+html.light .avmenu .danger, html.light .avmenu .danger i{color:#c62f3e}
+html.light .tlw .tl{background:var(--bg)}
+html.light .sheet{background:var(--bg);color:var(--ink)}
+html.light .top{background:var(--bg)}
+
 *{box-sizing:border-box}
 html,body{background:var(--bg)}
 body{margin:0;color:var(--ink);font:15px/1.6 -apple-system,"Hiragino Sans","Noto Sans JP",sans-serif}
@@ -268,7 +312,7 @@ body.feedfs #pane-feed .fhead{display:none}
 body.feedfs #feed{margin:0;border-radius:0}
 body.feedfs .ffx{display:grid;place-items:center;position:fixed;left:16px;top:calc(16px + env(safe-area-inset-top));z-index:62;width:46px;height:46px;border-radius:50%;border:0;background:rgba(255,255,255,.18);color:#fff;font-size:20px;backdrop-filter:blur(6px)}
 body.feedfs .ffh{display:block;position:fixed;left:0;right:0;bottom:calc(6px + env(safe-area-inset-bottom));z-index:62;text-align:center;color:#ddd;font-size:12px;margin:0;pointer-events:none}
-body.logged #setup{display:none !important}
+#setup{display:none !important}   /* 11/28 ログインだけにしたので、呼び名・合言葉の入力は出さない（中の値はそのまま使う） */
 .mkrole{width:100%;text-align:left;font-size:17px;font-weight:800;margin:4px 0 0}
 .mkrole small{display:block;color:var(--sub);font-size:12px;font-weight:500}
 .mkg{width:100%;text-align:left;color:var(--sub);font-size:11px;font-weight:700;margin:8px 0 0;letter-spacing:.05em}
@@ -436,6 +480,7 @@ body.feedfs #feed > .dash{display:none}
   .avmenu{top:auto !important;right:auto !important;left:12px;bottom:84px}
   .dots button{position:relative}.dots button:not(.on){opacity:.55}
 }
+.hjskip{width:100%;margin-top:2px}
 .vtoast{position:absolute;left:50%;top:45%;transform:translate(-50%,-50%);z-index:5;background:rgba(0,0,0,.6);color:#fff;font-style:normal;font-size:14px;padding:8px 14px;border-radius:999px;pointer-events:none}
 /* 友だちとのトーク（スレッドと同じ見た目） */
 .sheet.dmx{display:flex;flex-direction:column;padding-top:0}
@@ -642,7 +687,7 @@ body.feedfs #feed > .dash{display:none}
       <div class="bnr" id="bnr"><div class="bslides" id="bSlides"></div><div class="bdots" id="bDots"></div></div>
       <h2 id="dHi">こんばんは</h2><p class="note">愛棒に話しかけるか、愛棒を選んでください</p>
       <div class="kpis"><div><b id="kMemo">0</b><small>覚えたこと</small></div><div><b id="kPosts">0</b><small>投稿</small></div><div><b id="kFol">0</b><small>フォロワー</small></div><div><b id="kPts">0</b><small>ポイント</small></div><div><b id="kStage">はじめまして</b><small>育ち</small></div></div>
-      <div class="dmap"><div class="map mini" id="mapMini"></div><div><b>ご縁マップ</b><p class="note" id="mapSum">つながり 0人</p><button type="button" class="mapbtn tomap">ひらく</button></div></div>
+      <div class="dmap"><div class="map mini" id="mapMini"></div><div><b>ご縁マップ</b><p class="note" id="mapSum">つながり 0人</p><button type="button" class="mapbtn tomap">ひらく</button></div><button type="button" class="dgacha" id="goenGacha"><i>🎁</i><b>ご縁ガチャ</b><small>つながるほど、引ける</small></button></div>
       <p class="h">プリインストールの愛棒</p><div class="pre"><button type="button" data-say="お店の予約の段取りを手伝って"><i style="background:#3b6cf6">••</i><span><b>予約愛棒</b><small>お店・宿を予約</small></span></button><button type="button" data-say="英語で話す練習がしたい"><i style="background:#3fb37f">••</i><span><b>翻訳愛棒</b><small>多言語・方言</small></span></button><button type="button" data-say="今週の予定を整理したい"><i style="background:#e8a23a">••</i><span><b>スケジュール愛棒</b><small>予定を調整</small></span></button><button type="button" data-say="議事録をとってほしい"><i style="background:#7c5cf0">••</i><span><b>議事録愛棒</b><small>会議をまとめる</small></span></button></div></div>
     <div class="vcol">
     <div class="chip"><div class="me" id="meDot">あ</div><span class="pill" id="who">あなた</span></div>
@@ -696,7 +741,7 @@ body.feedfs #feed > .dash{display:none}
     <div id="dmTalk"><div class="log dmlog" id="dmLog"></div><form class="cbar dmbar" id="dmF"><input id="dmTxt" autocomplete="off" placeholder="メッセージ"><button type="submit" class="dmsend" aria-label="送る"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 20.5 21 12 3 3.5 3 10l12 2-12 2z"/></svg></button></form></div>
     <div id="dmDraft" hidden><p class="note">愛棒がこのトークを読んで、返信の下書きを作ります。送る前に、かならず自分で確かめてください。</p><button type="button" class="postbtn" id="dmMake">返信の下書きを作ってもらう</button><textarea id="dmDraftTxt" placeholder="ここに下書きが出ます"></textarea><div class="pbtns"><button type="button" id="dmDraftSend">この文面で送る</button><button type="button" id="dmDraftClear">やめる</button></div></div>
   </div>
-  <div class="cmenu2 avmenu" id="avMenu" hidden><p id="avWho">アカウント</p><button type="button" data-av="me"><i>👤</i>マイページ</button><button type="button" data-av="area"><i>🗾</i>地域・話し方（方言）</button><button type="button" data-av="plan"><i>💳</i>料金・トッピング</button><button type="button" data-av="out" class="danger"><i>⏻</i>ログアウト</button></div>
+  <div class="cmenu2 avmenu" id="avMenu" hidden><p id="avWho">アカウント</p><button type="button" data-av="me"><i>👤</i>マイページ</button><button type="button" data-av="area"><i>🗾</i>地域・話し方（方言）</button><button type="button" data-av="theme"><i>🌓</i><span id="avTheme">表示：ダーク</span></button><button type="button" data-av="plan"><i>💳</i>料金・トッピング</button><button type="button" data-av="out" class="danger"><i>⏻</i>ログアウト</button></div>
   <div class="sheet" id="outSheet" hidden>
     <div class="sh"><img src="hathabo-logo.webp" alt=""><b>ログアウト</b><button type="button" class="close" data-close="outSheet">閉じる</button></div>
     <div class="outb"><div class="pav big" id="outAv">あ</div><p class="pn" id="outName">あなた</p><p class="note" id="outMail"></p>
@@ -704,12 +749,12 @@ body.feedfs #feed > .dash{display:none}
       <button type="button" class="postbtn outgo" id="outGo">ログアウトする</button><button type="button" class="mapbtn" data-close="outSheet">やめる</button></div>
   </div>
   <div class="sheet" id="hajime" hidden>
-    <div class="sh"><img src="hathabo-logo.webp" alt=""><b>はじめに</b></div>
+    <div class="sh"><img src="hathabo-logo.webp" alt=""><b>はじめに</b><button type="button" class="close" id="hjX" aria-label="閉じる">閉じる</button></div>
     <div class="hjb"><div class="hav"><img src="hataboy-face.webp" alt=""></div><p class="hjt">ようこそ。ふたつだけ教えてください</p>
       <label class="hjl">呼び名（ニックネーム）<input id="hjName" maxlength="20" placeholder="例：ヒロ"></label>
       <p class="hjl">住んでいる地域<small>愛棒の話し方（方言）を合わせます。あとで変えられます</small></p><div class="hjarea" id="hjArea"></div>
       <p class="hjho" id="hjHo"></p>
-      <button type="button" class="postbtn" id="hjGo" disabled>はじめる</button></div>
+      <button type="button" class="postbtn" id="hjGo" disabled>はじめる</button><button type="button" class="mapbtn hjskip" id="hjSkip">スキップ（あとで決める）</button></div>
   </div>
   <div class="gate" id="gate" hidden><div class="gbox">
     <img src="hathabo-logo.webp" alt="" width="64" height="64">
@@ -775,6 +820,7 @@ body.feedfs #feed > .dash{display:none}
     <div class="pchips"><span class="pts" id="pPts">ありがとうポイント 0 pt</span></div>
     <div class="pbtns"><button type="button" id="pEdit">呼び名を変える</button><button type="button" id="pQr">友だちを追加（QR）</button><button type="button" id="pPeople">検証している人をフォロー</button></div>
     <div id="peopleList" hidden></div>
+    <div class="hidl" id="hidList"></div>
     <div class="mygrid" id="myGrid"></div>
     <div class="card">
       <p class="h">試してみる（押すとハタボーイに頼みます）</p>
@@ -1105,7 +1151,7 @@ body.feedfs #feed > .dash{display:none}
     try { const u = new SpeechSynthesisUtterance(text); u.lang = 'ja-JP'; u.onend = () => done && done(); speechSynthesis.speak(u); } catch (e) { done && done(); } }
   const VOX = { 's-cm': 'ara', 's-1': 'eve', 's-2': 'luna', 's-3': 'carina', 's-4': 'sal', 's-5': 'leo', 's-6': 'rex', 's-7': 'liora', 's-8': 'ara', 's-9': 'atlas', 's-10': 'orion' };   // 利用シーンごとに、ちがう声
   // 右に縦のボタン：いいね・声を聴く・コメント（愛棒に聞く）・共有
-  const paH = (attr, id, on, n, text) => '<div class="pa"><button type="button" class="' + (on ? 'on' : '') + '" ' + attr + '="' + esc(id) + '">いいね ' + n + '</button><button type="button" data-say="' + esc(String(text || '').slice(0, 200)) + '" data-voice="' + (VOX[id] || voiceOf(id)) + '">声を聴く</button><button type="button" data-ask="' + esc(String(text || '').slice(0, 80)) + '">コメント</button><button type="button" data-share="' + esc(String(text || '').slice(0, 120)) + '">共有</button></div>';
+  const paH = (attr, id, on, n, text) => '<div class="pa"><button type="button" class="' + (on ? 'on' : '') + '" ' + attr + '="' + esc(id) + '">いいね ' + n + '</button><button type="button" data-say="' + esc(String(text || '').slice(0, 200)) + '" data-voice="' + (VOX[id] || voiceOf(id)) + '">話す</button><button type="button" data-ask="' + esc(String(text || '').slice(0, 80)) + '">コメント</button><button type="button" data-share="' + esc(String(text || '').slice(0, 120)) + '">共有</button></div>';
   document.addEventListener('click', e => { if (e.target.id === 'ffx') document.body.classList.remove('feedfs'); });
   // 動画は、画面に出たら音なしで自動で流れる（スワイプで次へ行くと止まる）。押すと音が出る／もう一度押すと音を消す
   // 音ありのとき：動画は音つきで流れ、写真・文字の投稿は画面に出たら愛棒の声で読みあげる（めくると止まる）
@@ -1167,7 +1213,9 @@ body.feedfs #feed > .dash{display:none}
     if (j.ok) { $('pText').value = ''; pImg = ''; $('pImgs').innerHTML = ''; $('compose').hidden = true; go('feed'); loadFeed(true); } else $('pMsg').textContent = '投稿できませんでした：' + (j.error || j.status || '');
   };
   // プロフィール（インスタのような画面）：数・ポイント・育ち・試してみる・ほかの機能
-  function profFill() {
+  function hidFill() { const H = LS.g('hbHide', []), P = (feedData && feedData.people) || []; $('hidList').innerHTML = H.length ? '<p class="h">非表示の友だち<small>トークの一覧に出さない人。押すともどります</small></p>' + H.map(k => { const x = P.find(y => y.key === k); return '<button type="button" class="hidb" data-unhid="' + esc(k) + '"><i class="pav">' + esc((x ? x.name : k).slice(0, 1)) + '</i>' + esc(x ? x.name : k) + '<em>表示する</em></button>'; }).join('') : ''; }
+  $('hidList').addEventListener('click', e => { const b = e.target.closest('[data-unhid]'); if (!b) return; LS.s('hbHide', LS.g('hbHide', []).filter(k => k !== b.dataset.unhid)); hidFill(); peopleRows(); });
+  function profFill() { try { hidFill(); } catch (e) {} 
     const n = $('name').value.trim(), m = (feedData && feedData.me) || {};
     $('pAv').textContent = n ? n.slice(0, 1) : 'あ'; $('avRail').textContent = n ? n.slice(0, 1) : 'あ'; $('pName').textContent = n ? n + 'さん' : 'あなた（呼び名をまだ入れていません）';
     $('cPosts').textContent = m.posts || 0; $('cFollowers').textContent = m.followers || 0; $('cFollowing').textContent = m.following || 0;
@@ -1190,7 +1238,7 @@ body.feedfs #feed > .dash{display:none}
     $('peopleList').innerHTML = P.length ? P.map(x => '<div class="prow"><i class="pav">' + esc(x.name.slice(0, 1)) + '</i><span>' + esc(x.name) + (x.followsMe ? '<small>あなたをフォロー</small>' : '') + '</span><button type="button" class="fol' + (x.follow ? ' on' : '') + '" data-fol="' + esc(x.key) + '">' + (x.follow ? 'フォロー中' : 'フォロー') + '</button></div>').join('') : '<p class="note">まだ投稿した人がいません。投稿した人がここに出ます。</p>';
     const F = P.filter(x => x.talk || (x.follow && x.followsMe));
     const PIN = LS.g('hbPin', []), HID = LS.g('hbHide', []), G = F.filter(x => !HID.includes(x.key)).sort((a, b) => (PIN.includes(b.key) ? 1 : 0) - (PIN.includes(a.key) ? 1 : 0));
-    $('tlPeople').innerHTML = G.length ? G.map(x => { const pn = PIN.includes(x.key); return '<div class="tlw" data-k="' + esc(x.key) + '"><div class="tlact l"><b>' + (pn ? 'ピン留め\nはずす' : 'ピン留め') + '</b></div><div class="tlact r"><b>非表示</b></div><button class="tl' + (pn ? ' pin' : '') + '" type="button" data-dm="' + esc(x.key) + '" data-nm="' + esc(x.name) + '"><i class="pl">' + esc(x.name.slice(0, 1)) + '</i><span><b>' + esc(x.name) + ' <small>' + (x.follow && x.followsMe ? 'ご縁' : '友だち') + '</small></b><small>トークを開く</small></span>' + (pn ? '<em class="pinm">📌</em>' : '') + '</button></div>'; }).join('') + (HID.length ? '<button type="button" class="mapbtn" id="unhide">非表示にした ' + HID.length + '人 を表示する</button>' : '') + '<p class="note swn">右にスワイプでピン留め、左にスワイプで非表示</p>' : '<p class="note">検証ページに来た人が、ここに友だちとして並びます。</p>';
+    $('tlPeople').innerHTML = G.length ? G.map(x => { const pn = PIN.includes(x.key); return '<div class="tlw" data-k="' + esc(x.key) + '"><div class="tlact l"><b>' + (pn ? 'ピン留め\nはずす' : 'ピン留め') + '</b></div><div class="tlact r"><b>非表示</b></div><button class="tl' + (pn ? ' pin' : '') + '" type="button" data-dm="' + esc(x.key) + '" data-nm="' + esc(x.name) + '"><i class="pl">' + esc(x.name.slice(0, 1)) + '</i><span><b>' + esc(x.name) + ' <small>' + (x.follow && x.followsMe ? 'ご縁' : '友だち') + '</small></b><small>トークを開く</small></span>' + (pn ? '<em class="pinm">📌</em>' : '') + '</button></div>'; }).join('') + (HID.length ? '<button type="button" class="mapbtn" id="unhide">非表示にした ' + HID.length + '人 を表示する</button>' : '') + '<p class="note swn">右にスワイプでピン留め、左にスワイプで非表示</p>' : (HID.length ? '<button type="button" class="mapbtn" id="unhide">非表示にした ' + HID.length + '人 を表示する</button>' : '<p class="note">検証ページに来た人が、ここに友だちとして並びます。</p>');   // ぜんぶ非表示にしても、もどせるように
     tlSwipe();
   }
 
@@ -1356,6 +1404,8 @@ body.feedfs #feed > .dash{display:none}
   function hajimeOpen(next) { hjNext = next; $('hjName').value = $('name').value.trim(); hajimeFill(); openSheet('hajime'); }
   $('hjArea').addEventListener('click', e => { const b = e.target.closest('[data-ar]'); if (b) { hjA = b.dataset.ar; hajimeFill(); } });
   $('hjName').oninput = hajimeFill;
+  const hjEnd = () => { if (!LS.g('hbArea', '')) LS.s('hbArea', '-'); $('hajime').hidden = true; if (hjNext) { const f = hjNext; hjNext = null; f(); } };   // スキップ・閉じる：方言は標準語のまま。右上（パソコンは左下）のメニューから、あとで決められる
+  $('hjSkip').onclick = hjEnd; $('hjX').onclick = hjEnd;
   $('hjGo').onclick = () => { const n = $('hjName').value.trim().slice(0, 20); if (!n || !hjA) return; if (n !== $('name').value.trim()) { $('name').value = n; $('name').dispatchEvent(new Event('input')); }
     LS.s('hbArea', hjA); const f = AREAS.find(x => x[0] === hjA); LS.s('hbHogen', f ? f[1] : 0); $('hajime').hidden = true; document.body.classList.add('logged'); try { helloSync(); } catch (e) {} if (ws && ready) sendRole(); if (hjNext) hjNext(); };
   (async () => {
@@ -1369,12 +1419,15 @@ body.feedfs #feed > .dash{display:none}
   $('gGoogle').onclick = () => { location.href = base + '/google/login?to=grok&back=' + encodeURIComponent(location.search.slice(1)); };
   const outNow = () => { try { localStorage.removeItem('grokWt'); localStorage.removeItem('hbFr'); } catch (e) {} location.replace(location.pathname + (new URLSearchParams(location.search).get('t') ? '?t=' + new URLSearchParams(location.search).get('t') : '')); };
   function outOpen() { const n = $('name').value.trim() || 'あなた'; $('outName').textContent = n; $('outAv').textContent = n.slice(0, 1); $('outMail').textContent = $('pEmail').textContent || ''; document.querySelectorAll('.sheet').forEach(x => x.hidden = true); openSheet('outSheet'); }
+  function themeSync() { const t = LS.g('hbTheme', 'dark'), on = t === 'light' || (t === 'auto' && matchMedia('(prefers-color-scheme: light)').matches); document.documentElement.classList.toggle('light', on); const e = $('avTheme'); if (e) e.textContent = '表示：' + ({ dark: 'ダーク', light: 'ライト', auto: '端末に合わせる' }[t] || 'ダーク'); }
+  themeSync(); try { matchMedia('(prefers-color-scheme: light)').addEventListener('change', themeSync); } catch (e) {}
+  $('goenGacha').onclick = () => openSheet('growSheet');   // パソコン：ご縁マップのとなりから、ガチャ
   $('pOut').onclick = outOpen; $('outGo').onclick = outNow;
   // 右上のアイコン：マイページ・料金・ログアウト
-  $('avTop').onclick = e => { e.stopPropagation(); $('avWho').textContent = ($('name').value.trim() || 'アカウント') + ($('pEmail').textContent ? '・' + $('pEmail').textContent.replace(' でログイン中', '') : ''); $('avMenu').hidden = !$('avMenu').hidden; };
+  $('avTop').onclick = e => { e.stopPropagation(); $('avWho').textContent = ($('name').value.trim() || 'アカウント') + ($('pEmail').textContent ? '・' + $('pEmail').textContent.replace(' でログイン中', '') : ''); $('cMenu2').hidden = true; $('avMenu').hidden = !$('avMenu').hidden; };
   document.addEventListener('click', e => { if (!e.target.closest('#avMenu,#avTop,#railProf')) $('avMenu').hidden = true; });
   $('avMenu').addEventListener('click', e => { const b = e.target.closest('[data-av]'); if (!b) return; $('avMenu').hidden = true; const a = b.dataset.av;
-    if (a === 'me') openSheet('prof'); else if (a === 'area') { hjA = LS.g('hbArea', ''); hajimeOpen(null); } else if (a === 'plan') openSheet('planSheet'); else outOpen(); });
+    if (a === 'theme') { const n = { dark: 'light', light: 'auto', auto: 'dark' }[LS.g('hbTheme', 'dark')] || 'dark'; LS.s('hbTheme', n); themeSync(); $('avMenu').hidden = false; return; } if (a === 'me') openSheet('prof'); else if (a === 'area') { hjA = LS.g('hbArea', ''); hajimeOpen(null); } else if (a === 'plan') openSheet('planSheet'); else outOpen(); });
 
   // 料金・お支払い（このページの中で見せる。ハタボのアプリには飛ばない）・設定・お店を追加
   document.querySelectorAll('[data-sheet]').forEach(b => b.onclick = () => openSheet(b.dataset.sheet));
@@ -1458,7 +1511,7 @@ body.feedfs #feed > .dash{display:none}
     else if (a === 'post') $('newPost').click(); else if (a === 'plug') openSheet('plugSheet'); else if (a === 'gacha') openSheet('growSheet'); else if (a === 'plan') openSheet('planSheet'); });
 
   // 右上の「＋」：作成メニュー（新しいトーク・友だち追加・グループ作成・投稿・新しいたたき台・愛棒の追加）
-  $('newM').onclick = e => { e.stopPropagation(); $('cMenu2').hidden = !$('cMenu2').hidden; };
+  $('newM').onclick = e => { e.stopPropagation(); $('avMenu').hidden = true; $('cMenu2').hidden = !$('cMenu2').hidden; };   // ＋とアカウントのメニューは、片方だけ開く
   document.addEventListener('click', e => { if (!e.target.closest('#cMenu2,#newM')) $('cMenu2').hidden = true; });
   $('cMenu2').addEventListener('click', e => { const b = e.target.closest('[data-cm]'); if (!b) return; $('cMenu2').hidden = true; const a = b.dataset.cm;
     if (a === 'talk') { go('talk'); note2t('トークの友だちを押すと、その人と話せます。'); }
