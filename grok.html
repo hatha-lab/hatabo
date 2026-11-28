@@ -114,6 +114,11 @@ html.light .cug button.on{background:var(--card2) !important;color:var(--ink)}
 @media (max-width:899px){ .csub [data-cs=feed]{display:none} #sideAibo .bnr{display:none} }
 @media (max-width:899px){ #pHome{display:none} body.phome #pHome{display:block;position:fixed;left:0;right:0;top:var(--hh,118px);bottom:0;z-index:14;overflow-y:auto;background:var(--bg);padding:12px 16px calc(24px + env(safe-area-inset-bottom));animation:phin .22s ease-out} body.phome #pHome .dash2{display:block} body.phome #hdr .logo img{box-shadow:0 0 0 2px #3b6cf6;border-radius:50%} @keyframes phin{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}} }
 @media (max-width:899px){ #pane-side{padding-top:calc(var(--hh,118px) + 8px) !important}
+  /* 11/28 スマホのスレッド：上でも発言が透けて見えるように。愛棒の名前の帯は透明に、上のボタンのガラスもうすく */
+  body.onchat #hdr{background:color-mix(in srgb,var(--bg) 34%,transparent);-webkit-backdrop-filter:blur(8px) saturate(1.3);backdrop-filter:blur(8px) saturate(1.3)}
+  #pane-chat .thead{background:linear-gradient(180deg,color-mix(in srgb,var(--bg) 30%,transparent),transparent) !important;-webkit-backdrop-filter:none !important;backdrop-filter:none !important;pointer-events:none}
+  #pane-chat .thead > *{pointer-events:auto} #pane-chat .thead b{text-shadow:0 1px 6px rgba(0,0,0,.8)}
+  #pane-chat .log{padding-top:calc(var(--hh,118px) + 40px) !important}
   #pane-talk{padding-top:calc(var(--hh,118px) + 6px)}   /* 11/28 スマホ：トークの左の列・一覧が上のボタンの下にもぐらないように */
   #pane-pnl{padding-top:calc(var(--hh,118px) + 8px) !important;display:flex;flex-direction:column} #pane-pnl > #sidePanel{flex:1;min-height:0}
 }   /* 11/28 スマホ：愛棒・パネルが上のボタンの下にもぐらないように */
