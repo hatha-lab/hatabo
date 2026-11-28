@@ -318,7 +318,7 @@ body.dmgroup #dmVoice, body.dmgroup #dmCall, body.dmgroup #dmGrp{display:none !i
 .dtile{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:16px;padding:12px 8px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;min-width:0;text-align:center}
 .dtile:hover{border-color:#3b6cf6}.dtile b{font-size:14px;white-space:nowrap}.dtile small{font-size:11px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 .dtile .map.mini{width:64px !important;height:64px !important;min-height:0 !important;aspect-ratio:auto !important;flex:0 0 auto !important;border-radius:12px;overflow:hidden;margin:0}.dtile .map.mini svg{width:100%;height:100%}.dtile .dt-ic{font-style:normal;font-size:34px;line-height:64px;height:64px}
-.dt-egg{width:56px;height:56px;margin:4px 0;border-radius:50%;background:linear-gradient(#ff5d8f 0 50%,#eef0f6 50%);box-shadow:inset 0 -3px 0 rgba(0,0,0,.08),0 0 0 3px rgba(255,93,143,.15);animation:eggspin 3.2s cubic-bezier(.45,.05,.55,.95) infinite}
+.dt-egg{width:56px;height:56px;margin:4px 0;border-radius:50%;background:radial-gradient(circle at 30% 30%,#24d6c8,#3b6cf6 55%,#0b0d18 100%);filter:saturate(1.2);box-shadow:0 0 22px rgba(80,140,255,.4);animation:eggfloat 3.2s ease-in-out infinite}
 @media (max-width:899px){.dtiles{grid-template-columns:repeat(2,1fr)}}
 .legend{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;color:var(--sub);font-size:11px}
 .legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px}
@@ -481,18 +481,19 @@ body.feedfs #feed > .dash{display:none}
 .bslide .bcta{display:inline-flex;gap:8px}
 .bslide .bcta button{border:0;border-radius:999px;padding:8px 16px;font-weight:800;font-size:13px;cursor:pointer;background:#f2f4fa;color:#111}
 .bslide .bcta button.s{background:transparent;color:var(--ink);border:1px solid var(--line)}
-.begg{position:absolute;right:22px;top:50%;transform:translateY(-55%);z-index:3;border:0;background:none;color:var(--ink);display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;--ec:#ff5d8f}
-.begg .eggc{position:relative;width:116px;height:116px;border-radius:50%;overflow:hidden;display:block;animation:eggspin 3.2s cubic-bezier(.45,.05,.55,.95) infinite;box-shadow:0 0 34px color-mix(in srgb,var(--ec) 55%,transparent),inset -10px -12px 24px rgba(0,0,0,.25);transition:box-shadow .6s}
-.begg .capt{position:absolute;inset:0 0 50% 0;background:radial-gradient(circle at 32% 30%,#fff8 0 12%,transparent 13%),var(--ec);transition:background-color .6s}
-.begg .capb{position:absolute;inset:50% 0 0 0;background:linear-gradient(#f6f7fb,#d9dce6)}
-.begg .capl{position:absolute;left:0;right:0;top:calc(50% - 4px);height:8px;background:rgba(0,0,0,.18)}
+.begg{position:absolute;right:26px;top:50%;transform:translateY(-50%);z-index:3;border:0;background:none;color:var(--ink);display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;--ec:#ff5d8f}
+.begg .eggc{position:relative;width:104px;height:104px;border-radius:50%;display:block;--orb:radial-gradient(circle at 30% 30%,var(--ec2),var(--ec) 55%,#0b0d18 100%);filter:saturate(1.2);animation:eggfloat 3.2s ease-in-out infinite;box-shadow:0 0 40px color-mix(in srgb,var(--ec) 45%,transparent);transition:box-shadow .6s}   /* 11/28 声の丸（惑星みたいな色の玉）＝ガチャの卵 */
+.begg .capt{position:absolute;inset:0;border-radius:50%;clip-path:inset(0 0 50% 0);background:var(--orb)}
+.begg .capb{position:absolute;inset:0;border-radius:50%;clip-path:inset(50% 0 0 0);background:var(--orb)}
+.begg .capl{position:absolute;left:8%;right:8%;top:calc(50% - 1px);height:2px;background:rgba(255,255,255,.7);opacity:0;transition:opacity .2s}
 .begg .eggb{position:absolute;left:14%;top:14%;width:72%;height:72%;border-radius:50%;opacity:0;transform:scale(.3);transition:opacity .35s,transform .5s cubic-bezier(.2,1.6,.4,1);z-index:0}
 .begg .capt,.begg .capb,.begg .capl{z-index:1;transition:transform .5s cubic-bezier(.3,1.3,.5,1),opacity .4s}
-.begg.rolling .eggc{animation:eggshake .11s linear infinite}.begg.rolling .capt{transition:none}
-.begg.open .eggc{animation:none;overflow:visible}.begg.open .capt{transform:translateY(-70%) rotate(-25deg);opacity:0}.begg.open .capb{transform:translateY(60%);opacity:0}.begg.open .capl{opacity:0}.begg.open .eggb{opacity:1;transform:scale(1)}
+.begg.rolling .eggc{animation:eggshake .11s linear infinite}.begg.rolling .capt,.begg.rolling .capb{transition:none}.begg.rolling .capl{opacity:.8}
+.begg.open .eggc{animation:none;overflow:visible}.begg.open .capt{transform:translateY(-70%) rotate(-25deg);opacity:0}.begg.open .capb{transform:translateY(60%);opacity:0}.begg.open .capl{opacity:0}.begg.open .capt{transform:translateY(-55%) rotate(-18deg)}.begg.open .capb{transform:translateY(45%) rotate(10deg)}.begg.open .eggb{opacity:1;transform:scale(1)}
 @keyframes eggshake{0%{transform:rotate(-14deg)}50%{transform:rotate(14deg)}100%{transform:rotate(-14deg)}}
 .begg b{font-size:13px;margin-top:6px}.begg small{color:var(--sub);font-size:11px}
 .begg:hover .eggc{animation-duration:.9s}
+@keyframes eggfloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
 @keyframes eggspin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
 #vv .dmap .dgacha{display:none !important}
 .bslide .bart{width:150px;height:150px;border-radius:50%;filter:saturate(1.2);box-shadow:0 0 40px rgba(80,140,255,.35)}
@@ -547,7 +548,8 @@ body.feedfs #feed > .dash{display:none}
 #callOv{position:fixed;inset:0;z-index:300;background:#0e141f}
 #callOv iframe{width:100%;height:100%;border:0;display:block}
 #callOv .callx{position:absolute;right:10px;top:calc(8px + env(safe-area-inset-top));z-index:2;border:0;background:rgba(255,255,255,.14);color:#fff;border-radius:999px;padding:7px 12px;font-size:13px;cursor:pointer}
-.setx{background:var(--bg)}.gvl{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:8px 0 12px}.gvb{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:14px;padding:10px 4px;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;min-width:0}.gvb.on{border-color:#3b6cf6;box-shadow:0 0 0 2px rgba(59,108,246,.35)}.gvb i{width:40px;height:40px}.gvb i svg{width:100%;height:100%}.gvb b{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}.gvb small{font-size:10.5px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}.gvqr{display:grid;place-items:center;background:#fff;border-radius:14px;padding:10px;margin:12px auto 6px;width:fit-content}.gvu{word-break:break-all;font-size:12px;color:var(--sub)}.tminp{width:100%;box-sizing:border-box;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:12px;padding:10px 12px;font:inherit;margin:4px 0 10px}.sgrp{background:var(--card);border:1px solid var(--line);border-radius:18px;margin:0 0 14px;overflow:hidden}
+.setx{background:var(--bg)}
+@media (min-width:900px){ #setSheet{left:86px !important;right:auto !important;top:auto !important;bottom:14px !important;width:360px !important;max-height:min(82vh,760px);border:1px solid var(--line);border-radius:18px;box-shadow:0 20px 50px rgba(0,0,0,.5);padding:0 14px 14px} }   /* 11/28 PCは左下のアイコンのすぐ上に開く（押した場所の近く） */.gvl{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:8px 0 12px}.gvb{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:14px;padding:10px 4px;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;min-width:0}.gvb.on{border-color:#3b6cf6;box-shadow:0 0 0 2px rgba(59,108,246,.35)}.gvb i{width:40px;height:40px}.gvb i svg{width:100%;height:100%}.gvb b{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}.gvb small{font-size:10.5px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}.gvqr{display:grid;place-items:center;background:#fff;border-radius:14px;padding:10px;margin:12px auto 6px;width:fit-content}.gvu{word-break:break-all;font-size:12px;color:var(--sub)}.tminp{width:100%;box-sizing:border-box;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:12px;padding:10px 12px;font:inherit;margin:4px 0 10px}.sgrp{background:var(--card);border:1px solid var(--line);border-radius:18px;margin:0 0 14px;overflow:hidden}
 .sgrp.plan{padding:14px 16px}.srow0{display:flex;justify-content:space-between;align-items:baseline;gap:8px}.srow0 b{font-size:16px}.srow0 small{color:var(--sub);font-size:12.5px}
 .sbar{height:6px;border-radius:9px;background:var(--card2);margin:10px 0 6px;overflow:hidden}.sbar i{display:block;height:100%;width:0;background:#2f6cff;border-radius:9px}
 .slink{border:0;background:none;color:#4d8bff;font-size:15px;font-weight:700;padding:8px 0 0;cursor:pointer;border-top:1px solid var(--line);width:100%;text-align:left;margin-top:8px}
@@ -821,6 +823,7 @@ body.feedfs #feed > .dash{display:none}
     <div class="grow" id="grow"></div>
     <div class="ctrls">
       <button class="cb" id="mute" type="button"><span class="c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></span><span id="muteL">マイク</span></button>
+      <button class="cb" id="spkBtn" type="button"><span class="c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg></span><span id="spkL">スピーカー</span></button>
       <button class="cb" id="capBtn" type="button"><span class="c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10 10.5a2 2 0 1 0 0 3M16 10.5a2 2 0 1 0 0 3"/></svg></span>字幕</button>
       <button class="cb" id="toTalk" type="button"><span class="c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"/></svg></span>記録</button>
       <button class="cb" id="talk" type="button"><span class="c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 10v4M8 7v10M12 4v16M16 7v10M20 10v4"/></svg></span><span id="talkL">話しはじめる</span></button>
@@ -880,16 +883,17 @@ body.feedfs #feed > .dash{display:none}
   <div class="sheet setx" id="setSheet" hidden>
     <div class="sh"><b>設定</b><button type="button" class="close" data-close="setSheet">閉じる</button></div>
     <div class="sgrp plan"><div class="srow0"><b id="stPlan">Free プラン</b><small id="stUse"></small></div><div class="sbar"><i id="stBar"></i></div><button type="button" class="slink" data-st="plan">アップグレード・トッピング</button></div>
-    <div class="sgrp"><button type="button" class="srow me" data-st="me"><span class="pav" id="stAv">あ</span><span class="st"><b id="stName">あなた</b><small id="stMail">ログインしていません</small></span><i>›</i></button>
+    <div class="sgrp"><button type="button" class="srow" data-st="login" id="stLogin" hidden><em>🔑</em><span class="st"><b>Google でログイン</b><small>ログインすると、どの端末でも同じ愛棒・トーク</small></span><i>›</i></button><button type="button" class="srow me" data-st="me"><span class="pav" id="stAv">あ</span><span class="st"><b id="stName">あなた</b><small id="stMail">ログインしていません</small></span><i>›</i></button>
       <button type="button" class="srow" data-st="plan"><span class="st"><b>料金・お支払い</b><small>プラン・トッピング・ポイント</small></span><i>›</i></button></div>
     <div class="sgrp"><button type="button" class="srow" data-st="plug"><em>🧩</em><span class="st"><b>アプリをつなぐ</b><small>プラグイン（カレンダー・メールなど）</small></span><i>›</i></button>
       <button type="button" class="srow" data-st="qr"><em>👥</em><span class="st"><b>友だちを追加</b><small>QR・URL</small></span><i>›</i></button>
       <button type="button" class="srow" data-st="team" id="stTeam"><em>👥</em><span class="st"><b>グループをつくる</b><small>メールで招くと、ログインした時からグループでつながる</small></span><i>›</i></button><button type="button" class="srow" data-st="give"><em>🎁</em><span class="st"><b>愛棒を渡す</b><small>設定した愛棒を、URL・QRで渡す</small></span><i>›</i></button>
-      <button type="button" class="srow" data-st="android"><em>📱</em><span class="st"><b>Android の声の案内</b><small>ほかのアプリも、愛棒が案内（テスト版）</small></span><i>›</i></button></div>
+      </div>
     <p class="sgh">愛棒</p>
     <div class="sgrp"><button type="button" class="srow" data-st="tier"><em>🧠</em><span class="st"><b>AIのかしこさ</b><small>押すたびに X・G・Z</small></span><span class="sv" id="stTier">Z</span></button>
       <button type="button" class="srow" data-st="area"><em>🗾</em><span class="st"><b>地域・話し方（方言）</b></span><span class="sv" id="stArea">標準語</span><i>›</i></button>
       <button type="button" class="srow" data-st="guide"><em>🗣</em><span class="st"><b>声の案内</b><small>見ているところに合わせて、愛棒が声で案内</small></span><span class="tog" id="stGuide"></span></button>
+      <button type="button" class="srow" data-st="android"><em>📱</em><span class="st"><b>Android の声の案内</b><small>ほかのアプリも、愛棒が案内（テスト版）</small></span><i>›</i></button>
       <button type="button" class="srow" data-st="voice"><em>🔊</em><span class="st"><b>声</b><small>話すときの声</small></span><i>›</i></button></div>
     <p class="sgh">このアプリ</p>
     <div class="sgrp"><button type="button" class="srow" data-st="theme"><em>🌓</em><span class="st"><b>表示</b></span><span class="sv" id="stTheme">ダーク</span></button>
@@ -1203,7 +1207,7 @@ body.feedfs #feed > .dash{display:none}
       try { ctx = new AudioContext({ sampleRate: RATE }); } catch (e) { ctx = new AudioContext(); }
       try { dest = ctx.createMediaStreamDestination(); spk = spk || Object.assign(document.createElement('audio'), { autoplay: true, playsInline: true }); spk.setAttribute('playsinline', ''); spk.srcObject = dest.stream; spk.play().catch(() => {}); } catch (e) { dest = null; }
       await ctx.resume();
-      mic = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } });
+      mic = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } }); mic.getAudioTracks().forEach(t => t.enabled = !muted);
       const r = await fetch(base + '/grok/session', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ k: key, t: tok, wt: WT, tier: TIER(), voice: (curBot && (curBot.voice || CO_VOICE[curBot.c])) || '', name: $('name').value.trim(), gyo: P.get('gyo') || '', scene: P.get('scene') || '', tone: P.get('tone') || '', msg: P.get('msg') || '' }) });
       const j = await r.json().catch(() => ({}));
       if (!r.ok || !j.token) throw new Error(j.error || ('つなげませんでした（' + r.status + '）'));
@@ -1226,7 +1230,7 @@ body.feedfs #feed > .dash{display:none}
       if (dest && spk) spk.play().catch(() => { try { out.disconnect(); out.connect(ctx.destination); } catch (e) {} });   // <audio> が鳴らせないときは、ふつうに鳴らす
       out.port.onmessage = e => { const lv = Math.min(1, e.data * 1.6); if (lv > 0.03) { clearTimeout(talkT); HB('talk', lv); talkT = setTimeout(() => HB('idle', 0), 400); } };   // 声の大きさに合わせて、ハタボーイがはずむ
       src = ctx.createMediaStreamSource(mic); node = new AudioWorkletNode(ctx, 'mic-chunks');
-      node.port.onmessage = e => { if (ready) send({ type: 'input_audio_buffer.append', audio: toB64(e.data, ctx.sampleRate) }); };
+      node.port.onmessage = e => { if (ready && !muted) send({ type: 'input_audio_buffer.append', audio: toB64(e.data, ctx.sampleRate) }); };
       src.connect(node);
       endTimer = setTimeout(() => stop('1回の上限（' + (j.maxMin || 15) + '分）になりました'), (j.maxMin || 15) * 60000);
       $('talkL').textContent = 'おわる'; $('talk').classList.add('on'); $('talk').disabled = false; $('endBtn').classList.add('on'); $('setup').classList.add('hide'); $('orb').hidden = false; orbSync(); state(ready ? '話しかけてください' : '準備しています…');
@@ -1240,7 +1244,7 @@ body.feedfs #feed > .dash{display:none}
     out = null; clearTimeout(talkT);
     if (mic) mic.getTracks().forEach(t => t.stop()); mic = null; src = null; node = null;
     hush(); try { if (spk) { spk.pause(); spk.srcObject = null; } } catch (e) {} dest = null; try { ctx && ctx.close(); } catch (e) {} ctx = null; ready = false; HB('idle', 0);
-    $('talkL').textContent = '話しはじめる'; $('talk').classList.remove('on'); $('talk').disabled = false; $('endBtn').classList.remove('on'); $('setup').classList.remove('hide'); $('orb').hidden = true; muted = false; $('mute').classList.remove('off'); $('muteL').textContent = 'マイク';
+    $('talkL').textContent = '話しはじめる'; $('talk').classList.remove('on'); $('talk').disabled = false; $('endBtn').classList.remove('on'); $('setup').classList.remove('hide'); $('orb').hidden = true; $('mute').classList.toggle('off', muted); $('muteL').textContent = muted ? 'ミュート中' : 'マイク';
     state(why || 'おわりました');
   }
   let starting = false, rtDown = false;   // 11/28 つなぎ中に何度も押されても、1回だけつなぐ。つながらなかったら、文字は「頭」で答える
@@ -1862,7 +1866,10 @@ body.feedfs #feed > .dash{display:none}
   (async () => { const a = new URLSearchParams(location.search).get('a'); if (!a) return; const j = await api('/grok/shareget', { a }).catch(() => ({}));
     if (!j.bot) { setTimeout(() => note(j.error || 'この愛棒のURLは、使えなくなっています'), 1500); return; }
     setTimeout(() => { openBot(Object.assign({}, j.bot, { temp: true })); note((j.from || 'だれか') + 'さんから、愛棒「' + j.bot.name + '」が届きました'); if (j.msg) say(j.bot.name, j.msg); }, 1500); })();
-  function setOpen() { setFill(); $('stMsg').textContent = ''; openSheet('setSheet'); }
+  document.addEventListener('pointerdown', e => { if (wide() && !$('setSheet').hidden && !e.target.closest('#setSheet,#avTop,#railProf')) $('setSheet').hidden = true; });   // PC：外を押したら閉じる
+  function setOpen() { setFill(); $('stMsg').textContent = ''; openSheet('setSheet');
+    api('/grok/me', {}).then(j => { if (j.login) { $('pEmail').textContent = j.email + ' でログイン中'; const nm = (j.names && j.names[0]) || j.suggest || ''; if (nm && !$('name').value.trim()) { $('name').value = nm; $('name').dispatchEvent(new Event('input')); } }
+      else if (j.status === 401 || j.status === 403 || j.need) $('pEmail').textContent = ''; setFill(); $('stLogin').hidden = !!j.login; }).catch(() => {}); }   // 11/28 開くたびに、ログインのようすを確かめなおす
   $('setSheet').addEventListener('click', e => { const b = e.target.closest('[data-st]'); if (!b) return; const a = b.dataset.st, close = () => { $('setSheet').hidden = true; };
     if (a === 'me') { close(); openSheet('prof'); } else if (a === 'plan') { close(); openSheet('planSheet'); } else if (a === 'plug') { close(); openSheet('plugSheet'); } else if (a === 'qr') { close(); openSheet('qrSheet'); }
     else if (a === 'help') { close(); if (!guideOn) $('rHelp').onclick(); }
@@ -1872,6 +1879,7 @@ body.feedfs #feed > .dash{display:none}
     else if (a === 'guide') { guideSet(!guideOn); setFill(); }
     else if (a === 'theme') { const n = { dark: 'light', light: 'auto', auto: 'dark' }[LS.g('hbTheme', 'dark')] || 'dark'; LS.s('hbTheme', n); themeSync(); setFill(); }
     else if (a === 'out') { close(); outOpen(); }
+    else if (a === 'login') { close(); $('gate').hidden = false; }
     else if (a === 'team') { close(); openSheet('teamSheet'); }
     else if (a === 'give') { close(); giveOpen(); }
     else $('stMsg').textContent = SETM[a] || ''; });
@@ -1956,11 +1964,11 @@ body.feedfs #feed > .dash{display:none}
   const bGo = i => { bI = (i + BNR.length) % BNR.length; $('bSlides').style.transform = 'translateX(' + (-100 * bI) + '%)'; document.querySelectorAll('#bDots i').forEach((d, j) => d.classList.toggle('on', j === bI)); };
   $('bDots').onclick = e => { const d = e.target.closest('[data-bi]'); if (d) bGo(+d.dataset.bi); };
   bGo(0); setInterval(() => { if (!document.hidden && wide()) bGo(bI + 1); }, 6000);
-  { const EGGV = [['#ff5d8f', 'carina', 'やわらかい声'], ['#ffb547', 'eve', '元気な声'], ['#3bd18b', 'liora', 'やさしい声'], ['#3b8cff', 'rex', 'はきはきした声'], ['#a45cff', 'orion', '深い声'], ['#24d6c8', 'sal', 'なめらかな声'], ['#ff7a45', 'leo', '力強い声']], EGG = EGGV.map(x => x[0]); let ei = 0;   // 何色が出るかな：ひと回りごとに色がかわる。出た色で、生まれる愛棒の声がきまる
-    const egg = $('bEgg'); egg.style.setProperty('--ec', EGG[0]); egg.querySelector('.eggc').addEventListener('animationiteration', () => { ei = (ei + 1) % EGG.length; egg.style.setProperty('--ec', EGG[ei]); });
+  { const EGGV = [['#3b6cf6', 'rex', 'はきはきした声', '#24d6c8'], ['#e0517f', 'carina', 'やわらかい声', '#e8a23a'], ['#3b6cf6', 'sal', 'なめらかな声', '#2ee6a6'], ['#7c5cf0', 'orion', '深い声', '#24a7e0'], ['#e8a23a', 'eve', '元気な声', '#ff7aa8'], ['#1fa77a', 'liora', 'やさしい声', '#c8f06a'], ['#c0392b', 'leo', '力強い声', '#ffb347'], ['#24a7e0', 'luna', 'ふんわりした声', '#f4f1ff'], ['#5b2bd1', 'atlas', 'どっしりした声', '#ff6ec7'], ['#0f8b8d', 'ara', 'あたたかい声', '#ffd36e']], EGG = EGGV.map(x => x[0]); let ei = 0;   // もとの声の丸（2色のにじみ）を、色ちがいをたくさん   // 何色が出るかな：ひと回りごとに色がかわる。出た色で、生まれる愛棒の声がきまる
+    const egg = $('bEgg'), paint = i => { egg.style.setProperty('--ec', EGGV[i][0]); egg.style.setProperty('--ec2', EGGV[i][3]); }; paint(0); egg.querySelector('.eggc').addEventListener('animationiteration', () => { ei = (ei + 1) % EGG.length; paint(ei); });
     // 引いたら：色がくるくる変わって、卵が割れて、愛棒が生まれる → ガチャの画面へ
     egg.onclick = () => { if (egg.classList.contains('rolling') || egg.classList.contains('open')) return; egg.classList.add('rolling'); let n = 0;
-      const iv = setInterval(() => { ei = (ei + 1) % EGG.length; egg.style.setProperty('--ec', EGG[ei]); if (++n > 14) { clearInterval(iv); egg.classList.remove('rolling'); egg.classList.add('open'); const g = EGGV[ei]; LS.s('hbEgg', { c: g[0], v: g[1], at: Date.now() }); egg.querySelector('small').textContent = g[2] + 'の愛棒が生まれた！'; speak('こんにちは！' + g[2] + 'で話すよ。よろしくね', g[1], () => {}); setTimeout(() => { egg.querySelector('small').textContent = 'つながるほど、引ける'; }, 5000);
+      const iv = setInterval(() => { ei = (ei + 1) % EGG.length; paint(ei); if (++n > 14) { clearInterval(iv); egg.classList.remove('rolling'); egg.classList.add('open'); const g = EGGV[ei]; LS.s('hbEgg', { c: g[0], v: g[1], at: Date.now() }); egg.querySelector('small').textContent = g[2] + 'の愛棒が生まれた！'; speak('こんにちは！' + g[2] + 'で話すよ。よろしくね', g[1], () => {}); setTimeout(() => { egg.querySelector('small').textContent = 'つながるほど、引ける'; }, 5000);
         setTimeout(() => { $('goenGacha').click(); setTimeout(() => egg.classList.remove('open'), 600); }, 1100); } }, 110); }; }
   // すぐ使うボタン・バナーのボタン
   document.addEventListener('click', e => { const b = e.target.closest('[data-qa]'); if (!b) return; const a = b.dataset.qa;
@@ -1981,8 +1989,10 @@ body.feedfs #feed > .dash{display:none}
   function note2t(t) { const d = document.createElement('div'); d.className = 'pcard'; d.textContent = t; $('tlPeople').prepend(d); setTimeout(() => d.remove(), 6000); }
   // 光る表示：声で話しているあいだ、どの面にいても右下についてくる。押すと Chat へ
   $('orb').onclick = () => tab('aibo');
-  $('hMic').onclick = () => { $('mute').click(); $('hMic').classList.toggle('off', muted); };
-  $('hSpk').onclick = () => { spkMuted = !spkMuted; $('hSpk').classList.toggle('off', spkMuted); if (spkMuted) hush(); };
+  $('hMic').onclick = () => $('mute').click();
+  $('hSpk').onclick = () => { spkMuted = !spkMuted; $('hSpk').classList.toggle('off', spkMuted); $('spkBtn').classList.toggle('off', spkMuted); $('spkL').textContent = spkMuted ? '音を消し中' : 'スピーカー'; if (spkMuted) hush(); };
+  $('spkBtn').onclick = () => $('hSpk').onclick();   // 11/28 愛棒の枠の中にもスピーカー（上のボタンと同じ）
+  { const hm = $('hMic').onclick; }
   // 人どうしのトーク（おたがいフォロー＝ご縁の人）：トーク｜下書き。右下の相手のアイコンで声を聴く
   let dmWith = '', dmName = '', dmMsgs = [], dmTimer = 0;
   let dmSpoken = 0;
@@ -2050,7 +2060,7 @@ body.feedfs #feed > .dash{display:none}
   $('toTalk').onclick = () => { if (wide()) $('lcol').scrollIntoView({ behavior: 'smooth' }); else sub('thread'); $('log').scrollTop = 1e9; };
   $('capBtn').onclick = () => { $('cap').classList.toggle('off'); $('capBtn').classList.toggle('off'); };
   let muted = false;
-  $('mute').onclick = () => { if (!mic) return; muted = !muted; mic.getAudioTracks().forEach(t => t.enabled = !muted); $('mute').classList.toggle('off', muted); $('muteL').textContent = muted ? 'ミュート中' : 'マイク'; };
+  $('mute').onclick = () => { muted = !muted; if (mic) mic.getAudioTracks().forEach(t => t.enabled = !muted); $('mute').classList.toggle('off', muted); $('muteL').textContent = muted ? 'ミュート中' : 'マイク'; $('hMic').classList.toggle('off', muted); tip(muted ? 'マイクをオフにしました' : 'マイクをオンにしました'); };   // 11/28 話していないときも切りかえられる（話しはじめたときに、その状態で）
   function sendText(t) {   // 文字で話す（つないでいるときだけ）
     if (!ws || !ready) { tab('voice'); state('先に「話しはじめる」を押してください'); return false; }
     rows = { me: null, hb: null }; say('あなた', t); hush();
