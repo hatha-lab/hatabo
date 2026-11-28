@@ -114,6 +114,7 @@ html.light .cug button.on{background:var(--card2) !important;color:var(--ink)}
 @media (max-width:899px){ .csub [data-cs=feed]{display:none} #sideAibo .bnr{display:none} }
 @media (max-width:899px){ #pHome{display:none} body.phome #pHome{display:block;position:fixed;left:0;right:0;top:var(--hh,118px);bottom:0;z-index:14;overflow-y:auto;background:var(--bg);padding:12px 16px calc(24px + env(safe-area-inset-bottom));animation:phin .22s ease-out} body.phome #pHome .dash2{display:block} body.phome #hdr .logo img{box-shadow:0 0 0 2px #3b6cf6;border-radius:50%} @keyframes phin{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}} }
 @media (max-width:899px){ #pane-side{padding-top:calc(var(--hh,118px) + 8px) !important}
+  #pane-talk{padding-top:calc(var(--hh,118px) + 6px)}   /* 11/28 スマホ：トークの左の列・一覧が上のボタンの下にもぐらないように */
   #pane-pnl{padding-top:calc(var(--hh,118px) + 8px) !important;display:flex;flex-direction:column} #pane-pnl > #sidePanel{flex:1;min-height:0}
 }   /* 11/28 スマホ：愛棒・パネルが上のボタンの下にもぐらないように */
 @media (max-width:899px){ #sideTabs{display:none !important} #cTabs.inhead{display:flex;margin:0 auto 6px;width:min(300px,86%)} body:not(.onchat) #cTabs.inhead{display:none} }
@@ -822,7 +823,6 @@ body.feedfs #feed > .dash{display:none}
     <div id="tlTeams"></div>
     <div id="tlPeople"><p class="note">検証ページに来た人が、ここに友だちとして並びます。</p></div>
     <p class="sub2">お店・公式</p>
-    <button class="tl" type="button" id="addShop"><i class="pl shop">店</i><span><b>HATHABO ACE <small class="badge">お店・宿</small></b><small>HATHABO ACE で作ったお店や宿の窓口を、トークに加える（検証ではまだ見本だけ）</small></span></button>
     <button class="tl" type="button" id="offAcc"><i class="pl offi-ic"><img src="hathabo-emblem-w.webp" alt=""></i><span><b>HATHABO 公式 <small class="badge">公式</small></b><small>HATHABO ACE のご案内・お知らせ（あなたの愛棒とは別です）</small></span></button>
     <p class="sub2">追加</p>
     <button class="tl" type="button" id="addFriend"><i class="pl">＋</i><span><b>友だちを追加</b><small>QRを見せる・URLを送る。読んだ人とトークでつながります</small></span></button>
@@ -2039,7 +2039,7 @@ body.feedfs #feed > .dash{display:none}
   document.querySelectorAll('#tierBtns button').forEach(b => b.onclick = () => { try { localStorage.setItem('grokTier', b.dataset.tier); } catch (e) {} tierFill(); $('setMsg').textContent = b.dataset.tier === 'Z' ? 'Z：むずかしい相談は Claude Opus（いちばん賢い）が考えます。ふだんはこれ。' : b.dataset.tier === 'G' ? 'G：むずかしい相談は Claude Sonnet が考えます。' : 'X：ぜんぶ Grok だけで答えます（いちばん速い）。いまのことは Grok が自分で調べます。'; if (ws) $('setMsg').textContent += '（次に話しはじめたときから）'; });
   tierFill();
   document.querySelectorAll('[data-set]').forEach(b => b.onclick = () => { $('setMsg').textContent = SETM[b.dataset.set] || ''; });
-  $('addShop').onclick = () => { go('chat'); const d = document.createElement('div'); d.className = 'pcard'; d.innerHTML = '<b>お店を追加</b>HATHABO ACE で作ったお店や宿の窓口を、ここからトークに加えられるようにします。いまは検証中なので、見本だけです。'; $('log').appendChild(d); $('log').scrollTop = 1e9; };
+  if ($('addShop')) $('addShop').onclick = () => { go('chat'); const d = document.createElement('div'); d.className = 'pcard'; d.innerHTML = '<b>お店を追加</b>HATHABO ACE で作ったお店や宿の窓口を、ここからトークに加えられるようにします。いまは検証中なので、見本だけです。'; $('log').appendChild(d); $('log').scrollTop = 1e9; };
   // ハタボ コネクトの案内カード（愛棒が、仕事の効率化の話で、使っているAIが分かったときに出す）
   function connectCard(callId, args) {
     let ai = ''; try { ai = String(JSON.parse(args || '{}').ai || ''); } catch (e) {}
