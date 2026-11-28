@@ -362,6 +362,7 @@ body.feedfs #feed > .dash{display:none}
 .cmenu2 button:hover{background:#1f2434}
 .cmenu2 i{width:22px;text-align:center;font-style:normal;color:var(--sub)}
 .cmenu2 small{margin-left:auto;color:var(--sub);font-size:11px}
+.vtoast{position:absolute;left:50%;top:45%;transform:translate(-50%,-50%);z-index:5;background:rgba(0,0,0,.6);color:#fff;font-style:normal;font-size:14px;padding:8px 14px;border-radius:999px;pointer-events:none}
 .call{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:transparent;color:var(--ink);display:grid;place-items:center;cursor:pointer}
 .call svg{width:17px;height:17px}
 .call.on{background:var(--stop);border-color:var(--stop);color:#fff}
@@ -931,6 +932,11 @@ body.feedfs #feed > .dash{display:none}
   // 右に縦のボタン：いいね・声を聴く・コメント（愛棒に聞く）・共有
   const paH = (attr, id, on, n, text) => '<div class="pa"><button type="button" class="' + (on ? 'on' : '') + '" ' + attr + '="' + esc(id) + '">いいね ' + n + '</button><button type="button" data-say="' + esc(String(text || '').slice(0, 200)) + '" data-voice="' + (VOX[id] || voiceOf(id)) + '">声を聴く</button><button type="button" data-ask="' + esc(String(text || '').slice(0, 80)) + '">コメント</button><button type="button" data-share="' + esc(String(text || '').slice(0, 120)) + '">共有</button></div>';
   document.addEventListener('click', e => { if (e.target.id === 'ffx') document.body.classList.remove('feedfs'); });
+  // 動画は、画面に出たら音なしで自動で流れる（スワイプで次へ行くと止まる）。押すと音が出る／もう一度押すと音を消す
+  let vidIO = null, vidSound = false;
+  function feedVideos() { if (vidIO) vidIO.disconnect();
+    vidIO = new IntersectionObserver(es => es.forEach(en => { const v = en.target; if (en.isIntersecting && en.intersectionRatio >= 0.6) { v.muted = !vidSound; v.play().catch(err => { if (err && err.name === 'NotAllowedError') { v.muted = true; vidSound = false; v.play().catch(() => {}); } }); } else v.pause(); }), { root: $('feed'), threshold: [0, 0.6, 1] });
+    $('feed').querySelectorAll('video').forEach(v => { v.muted = true; v.setAttribute('muted', ''); v.autoplay = true; v.loop = true; v.playsInline = true; v.preload = 'auto'; vidIO.observe(v); }); }
   function renderFeed(msg) {
     let h = '<div class="post"><div class="ph"><img src="hathabo-logo.webp" alt=""><b>ハタボ公式</b><span class="badge">公式</span><small>見本</small></div><video src="feed_cm.mp4" poster="feed_cm.jpg" playsinline muted loop preload="metadata"></video><p class="pt" style="padding-top:10px">すべての人に、AIの愛棒を。ハタボのCMができました。話すだけで、あなたの代わりに動いてくれる愛棒です。</p>' + paH('data-slike', 's-cm', sLiked.has('s-cm'), 128 + (sLiked.has('s-cm') ? 1 : 0), 'すべての人に、AIの愛棒を。ハタボのCMができました。') + '</div>';
     if (msg) h += '<p class="dash">' + esc(msg) + '</p>';
@@ -941,13 +947,14 @@ body.feedfs #feed > .dash{display:none}
     while (si < sam.length) h += sam[si++];   // 見本の投稿（下へめくっていく体験を試せるように）
     if (feedData && !feedData.posts.length) h += '<p class="dash">みんなの投稿は、まだありません。「＋ 投稿」から最初の投稿をしてみてください。</p>';
     $('feed').innerHTML = h;
+    feedVideos();
   }
   $('feed').addEventListener('click', async e => {
     const f = e.target.closest('[data-fol]'), l = e.target.closest('[data-like]'), a = e.target.closest('[data-ask]'), sl = e.target.closest('[data-slike]');
     const sy = e.target.closest('[data-say]'), sh = e.target.closest('[data-share]');
     if (sy && sy.closest('#feed')) { sy.classList.add('on'); speak(sy.dataset.say, sy.dataset.voice, () => sy.classList.remove('on')); return; }
     if (sh) { const d = { title: 'HATHABO', text: sh.dataset.share, url: location.origin + location.pathname }; if (navigator.share) navigator.share(d).catch(() => {}); else { try { navigator.clipboard.writeText(d.text + ' ' + d.url); sh.textContent = 'コピーしました'; } catch (x) {} } return; }
-    const vd = e.target.closest('#feed video'); if (vd) { vd.paused ? (vd.muted = false, vd.play().catch(() => {})) : vd.pause(); return; }
+    const vd = e.target.closest('#feed video'); if (vd) { vidSound = vd.muted; vd.muted = !vidSound; if (vd.paused) vd.play().catch(() => {}); const t = document.createElement('i'); t.className = 'vtoast'; t.textContent = vidSound ? '🔊 音あり' : '🔇 音なし'; vd.parentNode.appendChild(t); setTimeout(() => t.remove(), 1200); return; }
     const card = e.target.closest('#feed .post'); if (card && !e.target.closest('button,video,a') && !document.body.classList.contains('feedfs')) { document.body.classList.add('feedfs'); card.scrollIntoView(); return; }
     if (sl) { const k = sl.dataset.slike; sLiked.has(k) ? sLiked.delete(k) : sLiked.add(k); renderFeed(); return; }
     if (f) { await api('/grok/follow', { who: f.dataset.fol, on: !f.classList.contains('on') }); loadFeed(true); }
