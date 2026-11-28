@@ -122,7 +122,11 @@ html.light .cug button.on{background:var(--card2) !important;color:var(--ink)}
   body.onfeed #hdr .top button{background-color:rgba(0,0,0,.35);border-color:rgba(255,255,255,.25);color:#fff}
   body.phome #hdr, body.onfeed.phome #hdr{background:var(--bg) !important;-webkit-backdrop-filter:none !important;backdrop-filter:none !important}   /* ホームを開いているときは、上の帯もホームと同じ色に（うしろの Feed を透かさない） */
   /* 11/28 スマホのスレッド：上でも発言が透けて見えるように。愛棒の名前の帯は透明に、上のボタンのガラスもうすく */
-  body.onchat #hdr{background:color-mix(in srgb,var(--bg) 34%,transparent);-webkit-backdrop-filter:blur(8px) saturate(1.3);backdrop-filter:blur(8px) saturate(1.3)}
+  /* 11/28 スマホのチャット：上の帯は完全に透かす。ぼかしは上ほど強く、下に向かって消える（発言が上まで見える）。ボタンは浮いた丸のまま */
+  body.onchat #hdr{background:none !important;-webkit-backdrop-filter:none !important;backdrop-filter:none !important;border-bottom:0 !important;isolation:isolate}
+  body.onchat #hdr::before{content:'';position:absolute;inset:0 0 -28px 0;z-index:-1;pointer-events:none;background:linear-gradient(180deg,color-mix(in srgb,var(--bg) 75%,transparent) 0%,color-mix(in srgb,var(--bg) 30%,transparent) 60%,transparent 100%);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);-webkit-mask-image:linear-gradient(180deg,#000 50%,transparent);mask-image:linear-gradient(180deg,#000 50%,transparent)}
+  body.onchat #hdr .dots{background:color-mix(in srgb,var(--card) 80%,transparent);border:1px solid var(--line);border-radius:999px;padding:3px;width:max-content;margin:0 auto 6px}
+  body.onchat #hdr .csub{background:color-mix(in srgb,var(--card) 94%,transparent)}
   #pane-chat .thead{background:linear-gradient(180deg,color-mix(in srgb,var(--bg) 30%,transparent),transparent) !important;-webkit-backdrop-filter:none !important;backdrop-filter:none !important;pointer-events:none}
   #pane-chat .thead > *{pointer-events:auto} #pane-chat .thead b{text-shadow:0 1px 6px rgba(0,0,0,.8)}
   #pane-chat .log{padding-top:calc(var(--hh,118px) + 40px) !important}
