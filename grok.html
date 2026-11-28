@@ -1218,14 +1218,18 @@ body.feedfs #feed > .dash{display:none}
   const sayEl = new Audio();   // 1つの音声を使いまわす（iPhone は一度押したあとなら自動で流せる）
   function sayStop() { sayN++; try { speechSynthesis.cancel(); } catch (e) {} try { sayEl.pause(); } catch (e) {} }
   function sayUnlock() { try { sayEl.src = SILENT; sayEl.play().catch(() => {}); } catch (e) {} }
-  async function speak(text, voice, done) { sayStop(); const my = sayN;
-    const j = await api('/grok/tts', { text, voice }).catch(() => ({}));
+  // 11/28 読み上げはサーバーの声だけ（xAI → だめなら Google）。ブラウザの機械の声には切りかえない（パソコンで機械の声になっていた）
+  function tip(t) { const d = document.createElement('div'); d.className = 'ftoast in'; d.style.cursor = 'default'; d.innerHTML = '<span><b>' + esc(t) + '</b></span>'; document.body.appendChild(d); setTimeout(() => d.remove(), 3500); }
+  async function speak(text, voice, done) { sayStop(); const my = sayN; sayUnlock();   // 押したその場で音を使えるようにしておく（待っているあいだに許可が切れないように）
+    let j = await api('/grok/tts', { text, voice }).catch(() => ({}));
+    if (!j.audio && my === sayN) j = await api('/grok/tts', { text, voice: 'ara' }).catch(() => ({}));   // もう一回だけ、ふだんの声で
     if (my !== sayN) return;   // とちゅうで次へめくったら読まない
-    if (j.audio) { sayAud = sayEl; sayEl.onended = () => done && done(); sayEl.src = 'data:audio/mpeg;base64,' + j.audio; sayEl.play().catch(() => done && done()); return; }
-    try { const u = new SpeechSynthesisUtterance(text); u.lang = 'ja-JP'; u.onend = () => done && done(); speechSynthesis.speak(u); } catch (e) { done && done(); } }
+    if (j.audio) { sayAud = sayEl; sayEl.onended = () => done && done(); sayEl.src = 'data:audio/mpeg;base64,' + j.audio; sayEl.play().catch(() => { tip('音を出せませんでした。もう一度押してください'); done && done(); }); return; }
+    tip('声を用意できませんでした' + (j.error ? '（' + j.error + '）' : j.status ? '（' + j.status + '）' : '')); done && done(); }
+  const SAMPLE_IDS = new Set(FEED_SAMPLE.map(x => x.id));
   const VOX = { 's-cm': 'ara', 's-1': 'eve', 's-2': 'sal', 's-3': 'leo', 's-4': 'carina', 's-5': 'luna', 's-6': 'ara', 's-7': 'liora', 's-8': 'rex', 's-9': 'atlas', 's-10': 'orion', 's-11': 'eve', 's-12': 'leo', 's-13': 'carina', 's-14': 'atlas', 's-15': 'luna', 's-16': 'rex', 's-17': 'sal', 's-18': 'liora', 's-19': 'eve', 's-20': 'ara', 's-21': 'luna', 's-22': 'orion', 's-23': 'carina' };   // 利用シーンごとに、ちがう声
   // 右に縦のボタン：いいね・声を聴く・コメント（愛棒に聞く）・共有
-  const paH = (attr, id, on, n, text) => '<div class="pa"><button type="button" class="' + (on ? 'on' : '') + '" ' + attr + '="' + esc(id) + '">いいね ' + n + '</button><button type="button" data-say="' + esc(String(text || '').slice(0, 200)) + '" data-voice="' + (VOX[id] || voiceOf(id)) + '">話す</button><button type="button" data-ask="' + esc(String(text || '').slice(0, 80)) + '">コメント</button><button type="button" data-share="' + esc(String(text || '').slice(0, 120)) + '">共有</button></div>';
+  const paH = (attr, id, on, n, text) => '<div class="pa"><button type="button" class="' + (on ? 'on' : '') + '" ' + attr + '="' + esc(id) + '">いいね ' + n + '</button><button type="button" data-say="' + esc(String(text || '').slice(0, 200)) + '" data-voice="' + (VOX[id] || voiceOf(id)) + '">話す</button>' + (SAMPLE_IDS.has(id) ? '<button type="button" data-talkbot="' + esc(id) + '">愛棒と話す</button>' : '<button type="button" data-ask="' + esc(String(text || '').slice(0, 80)) + '">コメント</button>') + '<button type="button" data-share="' + esc(String(text || '').slice(0, 120)) + '">共有</button></div>';
   document.addEventListener('click', e => { if (e.target.id === 'ffx') document.body.classList.remove('feedfs'); });
   // 動画は、画面に出たら音なしで自動で流れる（スワイプで次へ行くと止まる）。押すと音が出る／もう一度押すと音を消す
   // 音ありのとき：動画は音つきで流れ、写真・文字の投稿は画面に出たら愛棒の声で読みあげる（めくると止まる）
@@ -1266,6 +1270,8 @@ body.feedfs #feed > .dash{display:none}
     if (f) { await api('/grok/follow', { who: f.dataset.fol, on: !f.classList.contains('on') }); loadFeed(true); }
     if (l) { await api('/grok/like', { id: l.dataset.like, on: !l.classList.contains('on') }); loadFeed(true); }
     if (a) { if (sendText('この投稿について教えて：「' + a.dataset.ask + '」')) go('chat'); }
+    const tb = e.target.closest('[data-talkbot]'); if (tb) { const x = FEED_SAMPLE.find(y => y.id === tb.dataset.talkbot); if (!x) return;   // 利用シーンの愛棒と話してみる（その場だけ。保存しない）
+      document.body.classList.remove('feedfs'); openBot({ name: x.aiName, role: x.name, desc: x.text + '（' + (x.shop ? 'お店・宿の愛棒として、お客さまに' : '持ち主の愛棒として') + '答える。見本の愛棒なので、具体的な予約や個人の情報は受けつけず、ためしに話す相手として明るく）', s: 0, c: 5, voice: VOX[x.id] || 'ara', temp: true }); }
   });
   $('newPost').onclick = () => { if (!$('name').value.trim()) { tab('aibo'); state('先に呼び名を入れてください'); return; } $('pMsg').textContent = ''; openSheet('compose'); $('pText').focus(); };
   document.querySelectorAll('#vis button').forEach(b => b.onclick = () => { vis = b.dataset.v; document.querySelectorAll('#vis button').forEach(x => x.classList.toggle('on', x === b)); });
@@ -1377,7 +1383,7 @@ body.feedfs #feed > .dash{display:none}
   // 役割：作った愛棒をひらくと、声の愛棒がその役割で話す（つないでいるときはすぐ、つないでいなければ、つないだときに）
   let curBot = null;
   function sendRole() { if (!(ws && ready)) return; const x = curBot; send({ type: 'session.update', session: { voice: (x && x.voice) || 'ara' } }); const r = x ? ROLES.find(y => y[0] === x.role) : null;
-    send({ type: 'conversation.item.create', item: { type: 'message', role: 'system', content: [{ type: 'input_text', text: x ? 'ここからは「' + x.name + '」という名前の愛棒として話す。役割は「' + x.role + '」：' + (r ? r[1] : '') + '。' + (x.gyo ? '業種・場面は「' + x.gyo + '」。例や言い方をこの業種に合わせる。' : '') + 'この役割に合うことを中心に、短く手伝う。役割の外のことを頼まれたら、ハタボーイにもどるよう一言すすめる。' + hogenLine(x.ho || 0, x.sp == null ? 1 : x.sp) : 'ここからは、いつものハタボーイで話す。' + hogenLine(myHogen(), 1) }] } }); }
+    send({ type: 'conversation.item.create', item: { type: 'message', role: 'system', content: [{ type: 'input_text', text: x ? 'ここからは「' + x.name + '」という名前の愛棒として話す。役割は「' + x.role + '」：' + (x.desc || (r ? r[1] : '')) + '。' + (x.gyo ? '業種・場面は「' + x.gyo + '」。例や言い方をこの業種に合わせる。' : '') + 'この役割に合うことを中心に、短く手伝う。役割の外のことを頼まれたら、ハタボーイにもどるよう一言すすめる。' + hogenLine(x.ho || 0, x.sp == null ? 1 : x.sp) : 'ここからは、いつものハタボーイで話す。' + hogenLine(myHogen(), 1) }] } }); }
   // スタンプ工房：アイデア（と写真）→ Kling AI で4案 → えらんで保存。カードはスレッドの中（更新しても残るので、押すしくみは log 全体で受ける）
   function stampCard() { const d = document.createElement('div'); d.className = 'pcard stampc'; d.innerHTML = '<b>🎨 スタンプ工房</b><small>どんなスタンプにしたいか、ひとことで。写真をもとにもできます</small><textarea class="stx" maxlength="200" placeholder="例：ハタボーイが笑顔で「ありがとう」"></textarea><label class="stph">📷 写真をもとにする（なくてもOK）<input type="file" accept="image/png,image/jpeg" hidden></label><button type="button" class="postbtn" data-stamp="go">4つの案を作る</button><div class="stout"></div>'; $('log').appendChild(d); $('log').scrollTop = 1e9; }
   const shrink = f => new Promise(res => { const r = new FileReader(); r.onload = () => { const im = new Image(); im.onload = () => { const k = Math.min(1, 1024 / Math.max(im.width, im.height)), c = document.createElement('canvas'); c.width = Math.max(300, im.width * k); c.height = Math.max(300, im.height * k); c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); res(c.toDataURL('image/jpeg', .85)); }; im.onerror = () => res(''); im.src = r.result; }; r.onerror = () => res(''); r.readAsDataURL(f); });
