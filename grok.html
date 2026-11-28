@@ -83,7 +83,7 @@ html.light .cug button.on{background:var(--card2) !important;color:var(--ink)}
 #hdr{display:contents}
 @media (max-width:899px){
   main{position:relative}
-  #hdr{display:block;position:absolute;top:0;left:0;right:0;z-index:15;padding-top:env(safe-area-inset-top);background:rgba(7,8,13,.62);background:color-mix(in srgb,var(--bg) 62%,transparent);-webkit-backdrop-filter:blur(18px) saturate(1.4);backdrop-filter:blur(18px) saturate(1.4)}
+  #hdr{display:block;position:absolute;top:0;left:0;right:0;z-index:15;padding-top:calc(env(safe-area-inset-top) + 8px);background:rgba(7,8,13,.62);background:color-mix(in srgb,var(--bg) 62%,transparent);-webkit-backdrop-filter:blur(18px) saturate(1.4);backdrop-filter:blur(18px) saturate(1.4)}
   #hdr .top{background:none}
   body:not(.ontalk) #hdr .logo span{display:none}   /* エンブレムはいつも、HATHABO の文字はトークのときだけ */
   .pane{padding-top:calc(var(--hh,118px) + 4px)}
@@ -112,6 +112,7 @@ html.light .cug button.on{background:var(--card2) !important;color:var(--ink)}
 @media (min-width:900px){ #pane-side{border-left:1px solid var(--line)} body.nS #pane-chat #cTabs{display:flex !important;margin:0 auto 8px} body:not(.nC) #sideTabs [data-cs=thread]{display:none} #sideTabs{width:min(240px,80%) !important} }
 @media (min-width:900px){ body.nC #sideTabs{width:min(380px,92%) !important} #dots [data-p=feed]{display:none} body.sfeed #pane-side{display:none !important} body:not(.sfeed) #pane-feed{display:none !important} #pane-feed #sideTabs{margin:0 auto 8px;display:flex} #pane-feed{border-left:1px solid var(--line)} }
 @media (max-width:899px){ .csub [data-cs=feed]{display:none} #sideAibo .bnr{display:none} }
+@media (max-width:899px){ #pHome{display:none} body.phome #pHome{display:block;position:fixed;left:0;right:0;top:var(--hh,118px);bottom:0;z-index:14;overflow-y:auto;background:var(--bg);padding:12px 16px calc(24px + env(safe-area-inset-bottom));animation:phin .22s ease-out} body.phome #pHome .dash2{display:block} body.phome #hdr .logo img{box-shadow:0 0 0 2px #3b6cf6;border-radius:50%} @keyframes phin{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}} }
 @media (max-width:899px){ #pane-side{padding-top:calc(var(--hh,118px) + 8px) !important}
   /* 11/28 スマホ：愛棒→パネルもスワイプでとなりへ（愛棒の面の中で横にめくり、パネルの先でフィードへ） */
   #pane-side{flex-direction:row !important;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scrollbar-width:none;gap:0 !important;overscroll-behavior-x:auto;padding-left:0 !important;padding-right:0 !important}
@@ -1311,22 +1312,26 @@ body.feedfs #feed > .dash{display:none}
   let logT = 0; new MutationObserver(() => { clearTimeout(logT); logT = setTimeout(() => { try { const L = $('log'); while (L.children.length > 100) L.firstElementChild.remove(); localStorage.setItem(logKey0, L.innerHTML); } catch (e) {} }, 400); }).observe($('log'), { childList: true, subtree: true, characterData: true });
   new MutationObserver(helloSync).observe($('log'), { childList: true });
   let homeForce = false;
+  // 11/28 スマホのホーム：ふだんは出さず、左上のエンブレムを押したときだけ（もう一度押す・下のボタンを押す・スワイプで閉じる）
+  function phomeToggle(on) { const d = $('dash2'); let h = $('pHome'); if (!h) { h = document.createElement('div'); h.id = 'pHome'; document.body.appendChild(h); h.addEventListener('click', e => { if (e.target.closest('button')) setTimeout(() => phomeToggle(false), 60); }); }
+    const open = on === undefined ? !document.body.classList.contains('phome') : on; document.body.classList.toggle('phome', open); if (open) { h.appendChild(d); h.scrollTop = 0; } else if (d.parentNode === h) dashPlace(); }
   function homeSync() { const pc = $('pane-chat'); pc.classList.toggle('home', !$('log').children.length || homeForce); }
   new MutationObserver(() => { homeForce = false; homeSync(); }).observe($('log'), { childList: true });
   setTimeout(homeSync, 0);
-  document.querySelector('.top .logo').onclick = () => { if (!wide()) return go('talk'); homeForce = true; homeSync(); sub('thread'); };   // パソコン：エンブレム／HATHABO でホーム。スマホは今までどおりトーク（左）   // エンブレム／HATHABO：ホームへ
+  document.querySelector('.top .logo').onclick = () => { if (!wide()) return phomeToggle(); homeForce = true; homeSync(); sub('thread'); };   // パソコン：エンブレム／HATHABO でホーム。スマホは今までどおりトーク（左）   // エンブレム／HATHABO：ホームへ
   setTimeout(helloSync, 0);
   function nameSync() { try { helloSync(); } catch (e) {} $('aname').textContent = 'マイ愛棒（' + aiboName + '）'; $('aname2').textContent = aiboName; try { if (!curBot) $('tHeadN').textContent = aiboName; } catch (e) {} }
   function who() { const n = $('name').value.trim(); $('who').textContent = n ? n + 'さん' : 'あなた'; $('meDot').textContent = $('avTop').textContent = n ? n.slice(0, 1) : 'あ'; $('avTop').classList.toggle('on', !!n); }
   $('name').addEventListener('input', who); who();
   // 画面の並び：トーク ← Chat → Feed。スマホは横にスワイプ（指を右へ＝トーク、左へ＝Feed）、パソコンは3列で全部見える
+  let goLock = { p: '', until: 0 };   // 11/28 ボタンで動かしているあいだは、とちゅうの面で上の表示（HATHABO の文字など）をちらつかせない
   const PANES = ['talk', 'chat', 'side', 'feed'], panesEl = $('panes'), dotBtns = [...document.querySelectorAll('#dots button')];
   const wide = () => matchMedia('(min-width:900px)').matches;
-  function go(p, smooth) { const i = PANES.indexOf(p); if (i < 0) return; if (wide() && p === 'feed' && sideMode !== 'feed') return sideShow('feed'); if (!wide()) panesEl.scrollTo({ left: i * panesEl.clientWidth, behavior: smooth === false ? 'auto' : 'smooth' }); dotOn(p); if (p === 'feed' || p === 'talk') loadFeed(); }
+  function go(p, smooth) { const i = PANES.indexOf(p); if (i < 0) return; if (wide() && p === 'feed' && sideMode !== 'feed') return sideShow('feed'); if (!wide()) { goLock = { p, until: Date.now() + 800 }; panesEl.scrollTo({ left: i * panesEl.clientWidth, behavior: smooth === false ? 'auto' : 'smooth' }); } dotOn(p); if (p === 'feed' || p === 'talk') loadFeed(); }
   var curPane = 'chat';
-  function dotOn(p) { document.body.classList.toggle('onchat', p === 'chat' || p === 'side'); document.body.classList.toggle('ontalk', p === 'talk'); if (p === 'talk') { const d = document.querySelector('.dots [data-p="talk"]'); if (d) d.classList.remove('newdot'); } try { if (p !== 'feed' && sayPost) { sayPost = null; sayStop(); } } catch (e) {} if (!wide()) dotBtns.forEach(b => b.classList.toggle('on', b.dataset.p === (p === 'side' ? 'chat' : p))); curPane = p; try { csubSync(); } catch (e) {} if (typeof orbSync === 'function') try { orbSync(); } catch (e) {} }
+  function dotOn(p) { if (p !== curPane && document.body.classList.contains('phome')) phomeToggle(false); document.body.classList.toggle('onchat', p === 'chat' || p === 'side'); document.body.classList.toggle('ontalk', p === 'talk'); if (p === 'talk') { const d = document.querySelector('.dots [data-p="talk"]'); if (d) d.classList.remove('newdot'); } try { if (p !== 'feed' && sayPost) { sayPost = null; sayStop(); } } catch (e) {} if (!wide()) dotBtns.forEach(b => b.classList.toggle('on', b.dataset.p === (p === 'side' ? 'chat' : p))); curPane = p; try { csubSync(); } catch (e) {} if (typeof orbSync === 'function') try { orbSync(); } catch (e) {} }
   panesEl.addEventListener('scroll', () => { if (document.body.classList.contains('feedfs')) return dotOn('feed');   // フィードを大きく見ているあいだは、上のタブは Feed のまま
-    const i = Math.round(panesEl.scrollLeft / Math.max(1, panesEl.clientWidth)); const p = PANES.at(Math.max(0, Math.min(PANES.length - 1, i))); dotOn(p); if (p !== 'chat') loadFeed(); }, { passive: true });
+    const i = Math.round(panesEl.scrollLeft / Math.max(1, panesEl.clientWidth)); const p = PANES.at(Math.max(0, Math.min(PANES.length - 1, i))); if (Date.now() < goLock.until && p !== goLock.p) return; dotOn(p); if (p !== 'chat') loadFeed(); }, { passive: true });
   // パソコン：Talk・Chat・Feed を押すと、その列を出す／しまう（2つだけ・1つだけ＝全画面にもできる。少なくとも1つは出す）
   const colKey = { talk: 'nT', chat: 'nC', side: 'nS', feed: 'nF' };
   // パソコンの右の列（愛棒・パネル・フィード）は、しまわない
