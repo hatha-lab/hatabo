@@ -36,6 +36,13 @@ html.light .cug button.on{background:var(--card2) !important;color:var(--ink)}
 html.light .dgacha{margin-left:auto;align-self:center;display:flex;flex-direction:column;align-items:center;gap:4px;padding:14px 18px;border-radius:18px;border:1px solid #e8a23a;background:linear-gradient(160deg,rgba(232,162,58,.18),rgba(232,162,58,.04));color:var(--ink);cursor:pointer;min-width:120px}
 .dgacha i{font-style:normal;font-size:30px}.dgacha b{font-size:14px}.dgacha small{font-size:11px;color:var(--sub)}
 .hidl .h small{display:block;font-weight:400;color:var(--sub);font-size:11.5px}.hidb{display:flex;align-items:center;gap:10px;width:100%;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:14px;padding:10px 12px;margin-top:6px;cursor:pointer;font-size:14px}.hidb .pav{width:30px;height:30px;font-size:13px}.hidb em{margin-left:auto;font-style:normal;color:var(--hbd);font-size:12.5px}
+/* パソコン：左上の愛棒（ハタボーイ）を押したら、ダッシュボードをしまって愛棒の画面を出す（前は下にかくれて、効かないように見えた） */
+@media (min-width:900px){ #pane-chat.vmode .dash2{display:none} #pane-chat.vmode .vv{display:flex;flex-direction:column;min-height:calc(100dvh - 140px)} #pane-chat.vmode .vv .ring,#pane-chat.vmode .vv .chip,#pane-chat.vmode .vv .aname,#pane-chat.vmode .vv .cap,#pane-chat.vmode .vv .wave{display:revert !important} #pane-chat.vmode .vv .chip{display:flex !important} #pane-chat.vmode .vv .wave{display:flex !important} #pane-chat.vmode .vv .ring{width:min(36vh,340px)} #vv:fullscreen .ring{width:min(62vh,620px) !important} #vv:fullscreen .aname{font-size:28px} #vv:fullscreen .cap{font-size:20px} }
+.prz{position:absolute;right:12px;top:10px;z-index:6;display:flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:7px 14px;font-size:13px;font-weight:700;cursor:pointer}
+#vv{position:relative}#pane-chat:not(.vmode) .prz{display:none}
+#vv:fullscreen{background:radial-gradient(120% 80% at 50% 30%,#16204a,#07080d 70%);display:flex;flex-direction:column;justify-content:center;padding:4vh 6vw}
+#vv:fullscreen .dash2{display:none}#vv:fullscreen .prz{top:20px;right:20px}
+.howto{margin:8px 0 20px;padding-left:22px;display:flex;flex-direction:column;gap:14px;line-height:1.7;font-size:14px;color:var(--sub)}.howto b{display:block;color:var(--ink);font-size:15px;margin-bottom:2px}
 .vtoast{background:var(--card2) !important;color:var(--ink)}
 html.light .mkgo:disabled{background:var(--card2) !important;color:var(--ink)}
 html.light .post .pimg{background:var(--card2) !important;color:var(--ink)}
@@ -666,6 +673,7 @@ body.feedfs #feed > .dash{display:none}
     <div id="railBots"></div>
     <button type="button" id="mkBot"><i style="background:#2a2e3c">＋</i>愛棒を<br>つくる</button>
     <button type="button" id="rPlug" class="plugb"><i style="background:#1d2130"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 7V3M15 7V3M7 7h10v4a5 5 0 0 1-10 0zM12 16v5"/></svg></i>プラグイン</button>
+    <button type="button" id="rHelp" class="plugb"><i style="background:#1d2130"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.3a2.6 2.6 0 0 1 5 .9c0 1.7-2.5 2.2-2.5 3.8M12 17.2v.1"/></svg></i>使い方</button>
     <button type="button" class="rp" id="railProf"><i class="pav" id="avRail">あ</i>プロフィール</button>
   </aside>
     <div class="tlist">
@@ -682,6 +690,7 @@ body.feedfs #feed > .dash{display:none}
   <section class="pane" id="pane-chat">
     <div class="seg2" id="cTabs"><button type="button" class="on" data-ct="thread">スレッド</button><button type="button" data-ct="aibo">愛棒</button></div>
     <div class="vv" id="vv">
+    <button type="button" class="prz" id="przBtn" aria-label="プレゼン"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M12 16v4M8 20h8"/></svg><span>プレゼン</span></button>
     <div class="dash2" id="dash2">
       <div class="qacts" id="qActs"><button type="button" data-qa="talk"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 10v4M8 7v10M12 4v16M16 7v10M20 10v4"/></svg></i>話す</button><button type="button" data-qa="thread"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"/></svg></i>スレッド</button><button type="button" data-qa="mk"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></i>愛棒をつくる</button><button type="button" data-qa="photo"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/></svg></i>写真</button><button type="button" data-qa="minutes"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M6 3h9l4 4v14H6z"/><path d="M9 12h7M9 16h5"/></svg></i>議事録</button><button type="button" data-qa="post"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M12 8v8M8 12h8"/></svg></i>投稿</button><button type="button" data-qa="plug"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 7V3M15 7V3M7 7h10v4a5 5 0 0 1-10 0zM12 16v5"/></svg></i>アプリ</button><button type="button" data-qa="gacha"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M4 12h16"/></svg></i>ガチャ</button></div>
       <div class="bnr" id="bnr"><div class="bslides" id="bSlides"></div><div class="bdots" id="bDots"></div></div>
@@ -747,6 +756,17 @@ body.feedfs #feed > .dash{display:none}
     <div class="outb"><div class="pav big" id="outAv">あ</div><p class="pn" id="outName">あなた</p><p class="note" id="outMail"></p>
       <p>このスマホ（ブラウザ）からログアウトします。愛棒・トーク・投稿は消えません。またGoogleでログインすると、つづきから使えます。</p>
       <button type="button" class="postbtn outgo" id="outGo">ログアウトする</button><button type="button" class="mapbtn" data-close="outSheet">やめる</button></div>
+  </div>
+  <div class="sheet" id="helpSheet" hidden>
+    <div class="sh"><img src="hathabo-logo.webp" alt=""><b>使い方</b><button type="button" class="close" data-close="helpSheet">閉じる</button></div>
+    <ol class="howto">
+      <li><b>3つの画面</b>Talk＝友だちとのトーク、Chat＝愛棒との会話、Feed＝みんなの投稿。スマホは左右にスワイプ、パソコンは上のボタンで出す／しまう。</li>
+      <li><b>愛棒と話す</b>Chat の「愛棒」で、話しはじめるを押すと声で話せます。「スレッド」では文字でも。パソコンは「プレゼン」で愛棒だけを大きく出せます。</li>
+      <li><b>愛棒をふやす</b>左の「＋」から役割（予約・翻訳・議事録など）をえらんで、自分の愛棒を作れます。いちばん下の「カスタマイズ」で、声やスタンプも。</li>
+      <li><b>友だちとつながる</b>右上の＋ →「友だち追加」でQRを見せると、読んだ人とトークでつながります。電話も、相手がいないときは相手の愛棒がお留守番。</li>
+      <li><b>アプリをつなぐ</b>左下の「プラグイン」で、カレンダーやメールなど、いつものツールとつなげます。</li>
+      <li><b>自分のこと</b>スマホは右上、パソコンは左下のアイコンから。マイページ・方言・表示（ダーク／ライト）・料金・ログアウト。</li>
+    </ol>
   </div>
   <div class="sheet" id="hajime" hidden>
     <div class="sh"><img src="hathabo-logo.webp" alt=""><b>はじめに</b><button type="button" class="close" id="hjX" aria-label="閉じる">閉じる</button></div>
@@ -1422,6 +1442,10 @@ body.feedfs #feed > .dash{display:none}
   function themeSync() { const t = LS.g('hbTheme', 'dark'), on = t === 'light' || (t === 'auto' && matchMedia('(prefers-color-scheme: light)').matches); document.documentElement.classList.toggle('light', on); const e = $('avTheme'); if (e) e.textContent = '表示：' + ({ dark: 'ダーク', light: 'ライト', auto: '端末に合わせる' }[t] || 'ダーク'); }
   themeSync(); try { matchMedia('(prefers-color-scheme: light)').addEventListener('change', themeSync); } catch (e) {}
   $('goenGacha').onclick = () => openSheet('growSheet');   // パソコン：ご縁マップのとなりから、ガチャ
+  // 愛棒の画面：プレゼン＝愛棒だけを画面いっぱいに（もう一度押すか Esc でもどる）
+  $('przBtn').onclick = () => { const v = $('vv'); try { if (document.fullscreenElement) { document.exitFullscreen(); return; } (v.requestFullscreen || v.webkitRequestFullscreen).call(v); } catch (e) {} };
+  document.addEventListener('fullscreenchange', () => { const on = document.fullscreenElement === $('vv'); $('przBtn').querySelector('span').textContent = on ? 'プレゼンをやめる' : 'プレゼン'; });
+  $('rHelp').onclick = () => openSheet('helpSheet');   // 使い方：プラグインのとなり（スマホ・パソコンとも左下）
   $('pOut').onclick = outOpen; $('outGo').onclick = outNow;
   // 右上のアイコン：マイページ・料金・ログアウト
   $('avTop').onclick = e => { e.stopPropagation(); $('avWho').textContent = ($('name').value.trim() || 'アカウント') + ($('pEmail').textContent ? '・' + $('pEmail').textContent.replace(' でログイン中', '') : ''); $('cMenu2').hidden = true; $('avMenu').hidden = !$('avMenu').hidden; };
