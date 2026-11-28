@@ -486,6 +486,15 @@ body.feedfs #feed > .dash{display:none}
 #callOv{position:fixed;inset:0;z-index:300;background:#0e141f}
 #callOv iframe{width:100%;height:100%;border:0;display:block}
 #callOv .callx{position:absolute;right:10px;top:calc(8px + env(safe-area-inset-top));z-index:2;border:0;background:rgba(255,255,255,.14);color:#fff;border-radius:999px;padding:7px 12px;font-size:13px;cursor:pointer}
+.setx{background:var(--bg)}.sgrp{background:var(--card);border:1px solid var(--line);border-radius:18px;margin:0 0 14px;overflow:hidden}
+.sgrp.plan{padding:14px 16px}.srow0{display:flex;justify-content:space-between;align-items:baseline;gap:8px}.srow0 b{font-size:16px}.srow0 small{color:var(--sub);font-size:12.5px}
+.sbar{height:6px;border-radius:9px;background:var(--card2);margin:10px 0 6px;overflow:hidden}.sbar i{display:block;height:100%;width:0;background:#2f6cff;border-radius:9px}
+.slink{border:0;background:none;color:#4d8bff;font-size:15px;font-weight:700;padding:8px 0 0;cursor:pointer;border-top:1px solid var(--line);width:100%;text-align:left;margin-top:8px}
+.srow{display:flex;align-items:center;gap:12px;width:100%;border:0;border-bottom:1px solid var(--line);background:none;color:var(--ink);padding:14px 16px;text-align:left;cursor:pointer;font:inherit}.sgrp .srow:last-child{border-bottom:0}
+.srow em{font-style:normal;width:26px;text-align:center;font-size:18px}.srow .st{flex:1;min-width:0}.srow .st b{display:block;font-size:15px}.srow .st small{display:block;color:var(--sub);font-size:12.5px;margin-top:2px}
+.srow i{font-style:normal;color:var(--sub);font-size:22px;line-height:1}.srow .sv{color:var(--sub);font-size:14px;white-space:nowrap}.srow.danger b{color:#ff6b7d}html.light .srow.danger b{color:#c62f3e}
+.srow.me .pav{width:46px;height:46px;font-size:18px;flex:0 0 auto}.sgh{color:var(--sub);font-size:13px;margin:6px 6px 8px}
+.tog{width:46px;height:28px;border-radius:99px;background:var(--card2);border:1px solid var(--line);position:relative;flex:0 0 auto}.tog::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s}.tog.on{background:#2f6cff;border-color:#2f6cff}.tog.on::after{left:21px}
 .avmenu{position:fixed;right:12px;top:calc(56px + env(safe-area-inset-top));z-index:120;min-width:230px}
 .avmenu p{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:260px}.avmenu .danger{color:#ff6b7d}.avmenu .danger i{color:#ff6b7d}
 .outb{display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;padding:18px 6px}.outb p{margin:0;font-size:14px;line-height:1.7;color:var(--sub);max-width:340px}
@@ -804,6 +813,27 @@ body.feedfs #feed > .dash{display:none}
     <div id="dmDraft" hidden><p class="note">愛棒がこのトークを読んで、返信の下書きを作ります。送る前に、かならず自分で確かめてください。</p><button type="button" class="postbtn" id="dmMake">返信の下書きを作ってもらう</button><textarea id="dmDraftTxt" placeholder="ここに下書きが出ます"></textarea><div class="pbtns"><button type="button" id="dmDraftSend">この文面で送る</button><button type="button" id="dmDraftClear">やめる</button></div></div>
   </div>
   <div class="cmenu2 avmenu" id="avMenu" hidden><p id="avWho">アカウント</p><button type="button" data-av="me"><i>👤</i>マイページ</button><button type="button" data-av="area"><i>🗾</i>地域・話し方（方言）</button><button type="button" data-av="guide"><i>🗣</i><span id="avGuide">声の案内：オン</span></button><button type="button" data-av="theme"><i>🌓</i><span id="avTheme">表示：ダーク</span></button><button type="button" data-av="plan"><i>💳</i>料金・トッピング</button><button type="button" data-av="out" class="danger"><i>⏻</i>ログアウト</button></div>
+  <div class="sheet setx" id="setSheet" hidden>
+    <div class="sh"><b>設定</b><button type="button" class="close" data-close="setSheet">閉じる</button></div>
+    <div class="sgrp plan"><div class="srow0"><b id="stPlan">Free プラン</b><small id="stUse"></small></div><div class="sbar"><i id="stBar"></i></div><button type="button" class="slink" data-st="plan">アップグレード・トッピング</button></div>
+    <div class="sgrp"><button type="button" class="srow me" data-st="me"><span class="pav" id="stAv">あ</span><span class="st"><b id="stName">あなた</b><small id="stMail">ログインしていません</small></span><i>›</i></button>
+      <button type="button" class="srow" data-st="plan"><span class="st"><b>料金・お支払い</b><small>プラン・トッピング・ポイント</small></span><i>›</i></button></div>
+    <div class="sgrp"><button type="button" class="srow" data-st="plug"><em>🧩</em><span class="st"><b>アプリをつなぐ</b><small>プラグイン（カレンダー・メールなど）</small></span><i>›</i></button>
+      <button type="button" class="srow" data-st="qr"><em>👥</em><span class="st"><b>友だちを追加</b><small>QR・URL</small></span><i>›</i></button>
+      <button type="button" class="srow" data-st="android"><em>📱</em><span class="st"><b>Android の声の案内</b><small>ほかのアプリも、愛棒が案内（テスト版）</small></span><i>›</i></button></div>
+    <p class="sgh">愛棒</p>
+    <div class="sgrp"><button type="button" class="srow" data-st="tier"><em>🧠</em><span class="st"><b>AIのかしこさ</b><small>押すたびに X・G・Z</small></span><span class="sv" id="stTier">Z</span></button>
+      <button type="button" class="srow" data-st="area"><em>🗾</em><span class="st"><b>地域・話し方（方言）</b></span><span class="sv" id="stArea">標準語</span><i>›</i></button>
+      <button type="button" class="srow" data-st="guide"><em>🗣</em><span class="st"><b>声の案内</b><small>見ているところに合わせて、愛棒が声で案内</small></span><span class="tog" id="stGuide"></span></button>
+      <button type="button" class="srow" data-st="voice"><em>🔊</em><span class="st"><b>声</b><small>話すときの声</small></span><i>›</i></button></div>
+    <p class="sgh">このアプリ</p>
+    <div class="sgrp"><button type="button" class="srow" data-st="theme"><em>🌓</em><span class="st"><b>表示</b></span><span class="sv" id="stTheme">ダーク</span></button>
+      <button type="button" class="srow" data-st="notice"><em>🔔</em><span class="st"><b>通知</b></span><i>›</i></button>
+      <button type="button" class="srow" data-st="privacy"><em>🔒</em><span class="st"><b>プライバシー</b><small>覚えたことを見る・消す</small></span><i>›</i></button>
+      <button type="button" class="srow" data-st="help"><em>❓</em><span class="st"><b>使い方</b></span><i>›</i></button></div>
+    <p class="note" id="stMsg"></p>
+    <div class="sgrp"><button type="button" class="srow danger" data-st="out"><span class="st"><b>ログアウト</b></span></button></div>
+  </div>
   <div class="sheet" id="outSheet" hidden>
     <div class="sh"><img src="hathabo-logo.webp" alt=""><b>ログアウト</b><button type="button" class="close" data-close="outSheet">閉じる</button></div>
     <div class="outb"><div class="pav big" id="outAv">あ</div><p class="pn" id="outName">あなた</p><p class="note" id="outMail"></p>
@@ -1686,8 +1716,27 @@ body.feedfs #feed > .dash{display:none}
     const x = artSave({ kind: 'draft', title: dmName + 'さんへの返信', text: j.answer, to: dmWith, toName: dmName, src: dmName + 'さんとのトーク' }); artCard(x, $('dmLog')); };
   $('pOut').onclick = outOpen; $('outGo').onclick = outNow;
   // 右上のアイコン：マイページ・料金・ログアウト
-  $('avTop').onclick = e => { e.stopPropagation(); $('avWho').textContent = ($('name').value.trim() || 'アカウント') + ($('pEmail').textContent ? '・' + $('pEmail').textContent.replace(' でログイン中', '') : ''); $('cMenu2').hidden = true; $('avMenu').hidden = !$('avMenu').hidden; };
+  $('avTop').onclick = e => { e.stopPropagation(); $('cMenu2').hidden = true; setOpen(); };
+  const avOld = e => { $('avWho').textContent = ($('name').value.trim() || 'アカウント') + ($('pEmail').textContent ? '・' + $('pEmail').textContent.replace(' でログイン中', '') : ''); $('cMenu2').hidden = true; $('avMenu').hidden = !$('avMenu').hidden; };
   document.addEventListener('click', e => { if (!e.target.closest('#avMenu,#avTop,#railProf')) $('avMenu').hidden = true; });
+  // 11/28 設定（スマホは右上・パソコンは左下のアイコンから）。マイページはその中のひとつ
+  const AREA_HO = () => { const a = LS.g('hbArea', ''); return (a && a !== '-' ? a + '・' : '') + HOGEN[myHogen()]; };
+  function setFill() { const nm = $('name').value.trim() || 'あなた', em = ($('pEmail').textContent || '').replace(' でログイン中', '');
+    $('stName').textContent = nm; $('stMail').textContent = em || 'ログインしていません'; $('stAv').textContent = nm.slice(0, 1);
+    const t = TIER(); $('stPlan').textContent = 'Free プラン（' + t + '）'; $('stTier').textContent = { X: 'X（Grok）', G: 'G（Sonnet）', Z: 'Z（Opus）' }[t] || t;
+    const pts = ($('pPts').textContent || '').replace(/[^0-9]/g, ''); $('stUse').textContent = 'ありがとうポイント ' + (pts || 0) + ' pt';
+    $('stBar').style.width = Math.min(100, (+pts || 0)) + '%'; $('stArea').textContent = AREA_HO();
+    $('stGuide').classList.toggle('on', guideOn); $('stTheme').textContent = { dark: 'ダーク', light: 'ライト', auto: '端末に合わせる' }[LS.g('hbTheme', 'dark')] || 'ダーク'; }
+  function setOpen() { setFill(); $('stMsg').textContent = ''; openSheet('setSheet'); }
+  $('setSheet').addEventListener('click', e => { const b = e.target.closest('[data-st]'); if (!b) return; const a = b.dataset.st, close = () => { $('setSheet').hidden = true; };
+    if (a === 'me') { close(); openSheet('prof'); } else if (a === 'plan') { close(); openSheet('planSheet'); } else if (a === 'plug') { close(); openSheet('plugSheet'); } else if (a === 'qr') { close(); openSheet('qrSheet'); }
+    else if (a === 'android' || a === 'help') { close(); $('rHelp').click(); if (a === 'android') setTimeout(() => { const g = $('andG'); if (g) g.scrollIntoView({ block: 'start' }); }, 300); }
+    else if (a === 'tier') { const n = { X: 'G', G: 'Z', Z: 'X' }[TIER()] || 'Z'; try { localStorage.setItem('grokTier', n); } catch (x) {} try { tierFill(); } catch (x) {} setFill(); $('stMsg').textContent = n === 'Z' ? 'Z：むずかしい相談は Claude Opus が考えます。' : n === 'G' ? 'G：むずかしい相談は Claude Sonnet が考えます。' : 'X：ぜんぶ Grok で答えます（いちばん速い）。'; }
+    else if (a === 'area') { close(); hjA = LS.g('hbArea', ''); hajimeOpen(null); }
+    else if (a === 'guide') { guideSet(!guideOn); setFill(); }
+    else if (a === 'theme') { const n = { dark: 'light', light: 'auto', auto: 'dark' }[LS.g('hbTheme', 'dark')] || 'dark'; LS.s('hbTheme', n); themeSync(); setFill(); }
+    else if (a === 'out') { close(); outOpen(); }
+    else $('stMsg').textContent = SETM[a] || ''; });
   $('avMenu').addEventListener('click', e => { const b = e.target.closest('[data-av]'); if (!b) return; $('avMenu').hidden = true; const a = b.dataset.av;
     if (a === 'guide') { guideSet(!guideOn); $('avMenu').hidden = false; return; }
     if (a === 'theme') { const n = { dark: 'light', light: 'auto', auto: 'dark' }[LS.g('hbTheme', 'dark')] || 'dark'; LS.s('hbTheme', n); themeSync(); $('avMenu').hidden = false; return; } if (a === 'me') openSheet('prof'); else if (a === 'area') { hjA = LS.g('hbArea', ''); hajimeOpen(null); } else if (a === 'plan') openSheet('planSheet'); else outOpen(); });
