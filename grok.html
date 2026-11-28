@@ -106,7 +106,7 @@ html.light .cug button.on{background:var(--card2) !important;color:var(--ink)}
 /* 11/28 4つめの面（愛棒・パネル）。パソコンは列、スマホは左右にスワイプ */
 #pane-side{display:flex;flex-direction:column;gap:6px}
 #pane-side .sidetabs{align-self:center;width:min(300px,86%);flex:0 0 auto;margin:2px 0 6px}#pane-side .sidetabs button{flex:1;white-space:nowrap}
-#sideAibo{flex:1;min-height:0;display:flex;flex-direction:column;position:relative;overflow-y:auto}#sideAibo[hidden],#sidePanel[hidden]{display:none}
+#sideAibo{flex:1;min-height:0;display:flex;flex-direction:column;position:relative;overflow-y:auto}@media (min-width:900px){#pane-pnl{display:none !important}}#sideAibo[hidden],#sidePanel[hidden]{display:none}
 #sidePanel{flex:1;min-height:0;overflow-y:auto}
 #sideAibo .ring{width:min(62vw,240px)}
 @media (min-width:900px){ #pane-side{border-left:1px solid var(--line)} body.nS #pane-chat #cTabs{display:flex !important;margin:0 auto 8px} body:not(.nC) #sideTabs [data-cs=thread]{display:none} #sideTabs{width:min(240px,80%) !important} }
@@ -114,10 +114,7 @@ html.light .cug button.on{background:var(--card2) !important;color:var(--ink)}
 @media (max-width:899px){ .csub [data-cs=feed]{display:none} #sideAibo .bnr{display:none} }
 @media (max-width:899px){ #pHome{display:none} body.phome #pHome{display:block;position:fixed;left:0;right:0;top:var(--hh,118px);bottom:0;z-index:14;overflow-y:auto;background:var(--bg);padding:12px 16px calc(24px + env(safe-area-inset-bottom));animation:phin .22s ease-out} body.phome #pHome .dash2{display:block} body.phome #hdr .logo img{box-shadow:0 0 0 2px #3b6cf6;border-radius:50%} @keyframes phin{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}} }
 @media (max-width:899px){ #pane-side{padding-top:calc(var(--hh,118px) + 8px) !important}
-  /* 11/28 スマホ：愛棒→パネルもスワイプでとなりへ（愛棒の面の中で横にめくり、パネルの先でフィードへ） */
-  #pane-side{flex-direction:row !important;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scrollbar-width:none;gap:0 !important;overscroll-behavior-x:auto;padding-left:0 !important;padding-right:0 !important}
-  #pane-side::-webkit-scrollbar{display:none}
-  #pane-side > #sideAibo, #pane-side > #sidePanel{display:flex !important;flex-direction:column;flex:0 0 100%;width:100%;box-sizing:border-box;padding-left:16px;padding-right:16px;scroll-snap-align:start;scroll-snap-stop:always;overflow-y:auto}
+  #pane-pnl{padding-top:calc(var(--hh,118px) + 8px) !important;display:flex;flex-direction:column} #pane-pnl > #sidePanel{flex:1;min-height:0}
 }   /* 11/28 スマホ：愛棒・パネルが上のボタンの下にもぐらないように */
 @media (max-width:899px){ #sideTabs{display:none !important} #cTabs.inhead{display:flex;margin:0 auto 6px;width:min(300px,86%)} body:not(.onchat) #cTabs.inhead{display:none} }
 .csub{display:flex}#cTabs{align-self:center;width:min(300px,86%);flex:0 0 auto}.csub button{flex:1;white-space:nowrap}
@@ -371,7 +368,8 @@ body.offi #log .row.hb::before{background:#fff url(hathabo-emblem-w.webp) center
 #pane-chat .lcol{display:flex;flex-direction:column;height:calc(100dvh - 170px);margin-top:0}
 @media (max-width:899px){ #pane-chat .vv{display:none} }
 #cTabs{margin:0 auto 6px}
-.orb.vhide{display:none}.orb.idle{transform:scale(.86);opacity:.9;box-shadow:0 0 18px rgba(70,140,255,.45),0 0 6px rgba(46,230,166,.35)}.orb.idle i{animation-duration:4s !important}
+.orb.vhide{display:none}
+.navihl{outline:3px solid #3b6cf6 !important;outline-offset:3px;border-radius:12px;animation:navip 1.1s ease-in-out infinite;position:relative;z-index:5}@keyframes navip{0%,100%{box-shadow:0 0 0 0 rgba(59,108,246,.55)}50%{box-shadow:0 0 0 10px rgba(59,108,246,0)}}.orb.idle{transform:scale(.86);opacity:.9;box-shadow:0 0 18px rgba(70,140,255,.45),0 0 6px rgba(46,230,166,.35)}.orb.idle i{animation-duration:4s !important}
 #pane-chat .lh{display:none}
 #pane-chat .log{flex:1;max-height:none;min-height:0;background:transparent;border:0;padding:4px 2px}
 @media (max-width:899px){.top .fs{display:none}.top .tr{grid-column:3}}   /* スマホは全画面ボタンを出さない */
@@ -899,6 +897,7 @@ body.feedfs #feed > .dash{display:none}
       <div id="artBody"><p class="note">愛棒と作ったもの（議事録・スタンプ・下書き・資料）が、ここに開きます。</p></div>
     </div>
   </section>
+  <section class="pane" id="pane-pnl" aria-label="パネル"></section>   <!-- 11/28 スマホだけ：パネルを独立した面に（Talk⇄スレッド⇄愛棒⇄パネル⇄Feed） -->
   <section class="pane" id="pane-feed">
     <div class="fhead"><b>Feed <small style="color:var(--sub);font-size:12px;font-weight:500">全体</small></b><button type="button" class="newpost" id="newPost">＋ 投稿</button></div>
     <button type="button" class="ffx" id="ffx" aria-label="とじる">✕</button><p class="ffh">上下スワイプで前後の投稿</p><div id="feed"></div>
@@ -1227,7 +1226,7 @@ body.feedfs #feed > .dash{display:none}
       if (quiet && called) { quiet = false; grow(); if (nameOnly) quietAfter = 1; send({ type: 'response.create' }); }   // 名前を呼ばれたら戻る（名前モードなら、答えたらまた黙る）
       return; }
     if (t === 'response.output_audio_transcript.delta' || t === 'response.audio_transcript.delta' || t === 'response.output_text.delta') { if (ev.delta) respShown = true; say(spkName(), ev.delta || ''); return; }
-    if (t === 'response.function_call_arguments.done') { if (ev.name === 'ask_brain') brain(ev.call_id, ev.arguments); else if (ev.name === 'remember') remember(ev.call_id, ev.arguments); else if (ev.name === 'quiet') hold(ev.call_id, 'quiet'); else if (ev.name === 'set_name') rename(ev.call_id, ev.arguments); else if (ev.name === 'feedback') feedback(ev.call_id, ev.arguments); else if (ev.name === 'minutes') minutes(ev.call_id, ev.arguments); else if (ev.name === 'connect_card') connectCard(ev.call_id, ev.arguments); else if (ev.name === 'ui') uiAct(ev.call_id, ev.arguments); return; }
+    if (t === 'response.function_call_arguments.done') { if (ev.name === 'ask_brain') brain(ev.call_id, ev.arguments); else if (ev.name === 'remember') remember(ev.call_id, ev.arguments); else if (ev.name === 'quiet') hold(ev.call_id, 'quiet'); else if (ev.name === 'set_name') rename(ev.call_id, ev.arguments); else if (ev.name === 'feedback') feedback(ev.call_id, ev.arguments); else if (ev.name === 'minutes') minutes(ev.call_id, ev.arguments); else if (ev.name === 'connect_card') connectCard(ev.call_id, ev.arguments); else if (ev.name === 'ui' || ev.name === 'navi') uiAct(ev.call_id, ev.arguments); return; }
     if (t === 'session.updated') { ready = true; state('話しかけてください'); if (!uiAdded) { uiAdded = true; send({ type: 'session.update', session: { tools: baseTools.concat(UI_TOOL) } }); }   // 11/28 画面を動かす道具は、声の設定が通ったあとに別で足す（受けつけられなくても声は止まらない）
       if (curBot || myHogen()) sendRole(); return; }
     if (t === 'error') { const em = (ev.error && ev.error.message) || ev.message || '';
@@ -1329,11 +1328,11 @@ body.feedfs #feed > .dash{display:none}
   $('name').addEventListener('input', who); who();
   // 画面の並び：トーク ← Chat → Feed。スマホは横にスワイプ（指を右へ＝トーク、左へ＝Feed）、パソコンは3列で全部見える
   let goLock = { p: '', until: 0 };   // 11/28 ボタンで動かしているあいだは、とちゅうの面で上の表示（HATHABO の文字など）をちらつかせない
-  const PANES = ['talk', 'chat', 'side', 'feed'], panesEl = $('panes'), dotBtns = [...document.querySelectorAll('#dots button')];
+  const PANES = ['talk', 'chat', 'side', 'pnl', 'feed'], panesEl = $('panes'), dotBtns = [...document.querySelectorAll('#dots button')];
   const wide = () => matchMedia('(min-width:900px)').matches;
   function go(p, smooth) { const i = PANES.indexOf(p); if (i < 0) return; if (wide() && p === 'feed' && sideMode !== 'feed') return sideShow('feed'); if (!wide()) { goLock = { p, until: Date.now() + 800 }; panesEl.scrollTo({ left: i * panesEl.clientWidth, behavior: smooth === false ? 'auto' : 'smooth' }); } dotOn(p); if (p === 'feed' || p === 'talk') loadFeed(); }
   var curPane = 'chat';
-  function dotOn(p) { if (p !== curPane && document.body.classList.contains('phome')) phomeToggle(false); if (p === 'side' && p !== curPane && !wide()) requestAnimationFrame(() => { $('sideAibo').scrollTop = 0; });   /* 11/28 スマホ：愛棒の画面は、いちばん上（愛棒の顔）から見せる */ document.body.classList.toggle('onchat', p === 'chat' || p === 'side'); document.body.classList.toggle('ontalk', p === 'talk'); if (p === 'talk') { const d = document.querySelector('.dots [data-p="talk"]'); if (d) d.classList.remove('newdot'); } try { if (p !== 'feed' && sayPost) { sayPost = null; sayStop(); } } catch (e) {} if (!wide()) dotBtns.forEach(b => b.classList.toggle('on', b.dataset.p === (p === 'side' ? 'chat' : p))); curPane = p; try { csubSync(); } catch (e) {} if (typeof orbSync === 'function') try { orbSync(); } catch (e) {} }
+  function dotOn(p) { if (p !== curPane && document.body.classList.contains('phome')) phomeToggle(false); if (p === 'side' && p !== curPane && !wide()) requestAnimationFrame(() => { $('sideAibo').scrollTop = 0; });   /* 11/28 スマホ：愛棒の画面は、いちばん上（愛棒の顔）から見せる */ document.body.classList.toggle('onchat', p === 'chat' || p === 'side' || p === 'pnl'); document.body.classList.toggle('ontalk', p === 'talk'); if (p === 'talk') { const d = document.querySelector('.dots [data-p="talk"]'); if (d) d.classList.remove('newdot'); } try { if (p !== 'feed' && sayPost) { sayPost = null; sayStop(); } } catch (e) {} if (!wide()) dotBtns.forEach(b => b.classList.toggle('on', b.dataset.p === (p === 'side' || p === 'pnl' ? 'chat' : p))); curPane = p; try { csubSync(); } catch (e) {} if (typeof orbSync === 'function') try { orbSync(); } catch (e) {} }
   panesEl.addEventListener('scroll', () => { if (document.body.classList.contains('feedfs')) return dotOn('feed');   // フィードを大きく見ているあいだは、上のタブは Feed のまま
     const i = Math.round(panesEl.scrollLeft / Math.max(1, panesEl.clientWidth)); const p = PANES.at(Math.max(0, Math.min(PANES.length - 1, i))); if (Date.now() < goLock.until && p !== goLock.p) return; dotOn(p); if (p !== 'chat') loadFeed(); }, { passive: true });
   // パソコン：Talk・Chat・Feed を押すと、その列を出す／しまう（2つだけ・1つだけ＝全画面にもできる。少なくとも1つは出す）
@@ -1353,22 +1352,24 @@ body.feedfs #feed > .dash{display:none}
   addEventListener('resize', () => { if (!wide()) { const a = dotBtns.find(b => b.classList.contains('on')); go(a ? a.dataset.p : 'chat', false); } });
   function sub(v) { if (v === 'aibo') { sideShow('aibo'); go('side'); } else { go('chat'); $('log').scrollTop = 1e9; } orbSync(); }   // 愛棒＝となりの面へ
   let sideMode = 'aibo';
-  let sideLock = 0;   // スマホ：愛棒｜パネルを横にめくったら、上のボタンも合わせる
-  $('pane-side').addEventListener('scroll', () => { if (wide() || Date.now() - sideLock < 500) return; const ps = $('pane-side'), m = ps.scrollLeft > ps.clientWidth / 2 ? 'panel' : 'aibo'; if (m !== sideMode) { sideMode = m; $('sideAibo').hidden = m !== 'aibo'; $('sidePanel').hidden = m !== 'panel'; csubSync(); } }, { passive: true });
+  // 11/28 スマホ：パネルはとなりの面（#pane-pnl）に置く。パソコンは右の列（#pane-side）の中
+  function panelPlace() { const sp = $('sidePanel'); if (!wide()) { if (sp.parentNode !== $('pane-pnl')) $('pane-pnl').appendChild(sp); sp.hidden = false; }
+    else { if (sp.parentNode !== $('pane-side')) $('sideAibo').after(sp); sp.hidden = sideMode !== 'panel'; } }
+  setTimeout(panelPlace, 0); addEventListener('resize', () => setTimeout(panelPlace, 0));
   function sideShow(m) { if (m === 'feed' && !wide()) return go('feed');
-    sideMode = m; $('sideAibo').hidden = m !== 'aibo'; $('sidePanel').hidden = m !== 'panel';
-    if (!wide() && m !== 'feed') { const ps = $('pane-side'); sideLock = Date.now(); ps.scrollTo({ left: m === 'panel' ? ps.clientWidth : 0, behavior: 'smooth' }); }
+    sideMode = m; if (!wide()) { $('sideAibo').hidden = false; panelPlace(); go(m === 'panel' ? 'pnl' : 'side'); return; }
+    $('sideAibo').hidden = m !== 'aibo'; $('sidePanel').hidden = m !== 'panel';
     // 11/28 パソコン：右の列＝愛棒｜パネル｜フィード。フィードのときは、右の列にフィードを出す（スマホくらいの縦長の幅なので、縦の動画も崩れない）
     const t = $('sideTabs'), host = m === 'feed' && wide() ? $('pane-feed') : $('pane-side'); if (t.parentNode !== host) host.insertBefore(t, host.firstChild);
     document.body.classList.toggle('sfeed', m === 'feed'); if (m === 'feed') { loadFeed(); } try { colsSync(); } catch (e) {} csubSync(); }
-  function csubSync() { const v = !wide() && curPane !== 'side' ? 'thread' : sideMode;
+  function csubSync() { const v = curPane === 'side' ? 'aibo' : curPane === 'pnl' ? 'panel' : 'thread';
     document.querySelectorAll('.csub').forEach(g => { const w = wide() ? (g.id === 'cTabs' ? 'thread' : sideMode) : v; g.querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.cs === w)); }); }
   // 11/28 Chat の中：スレッド｜愛棒｜パネル（スワイプでもとなりへ）
   document.querySelectorAll('.csub button').forEach(b => b.onclick = () => { const v = b.dataset.cs;
     if (wide()) { const h = LS.g('hbHideCols', []), need = v === 'thread' ? 'nC' : 'nS'; if (h.includes(need)) { LS.s('hbHideCols', h.filter(x => x !== need)); colsSync(); } }   // パソコン：その列がかくれていたら出す
     if (v === 'thread') { go('chat'); if (wide()) $('txt').focus(); return csubSync(); }
-    if (!wide()) go('side');   // 先に面をうつす
-    if (v === 'panel' && !$('artBody').dataset.id) artFolder(); else sideShow(v); if (!wide() && curPane !== 'side') go('side', false); });
+    if (!wide()) { if (v === 'panel' && !$('artBody').dataset.id) artFolder(); return go(v === 'panel' ? 'pnl' : 'side'); }   // スマホ：それぞれの面へ
+    if (v === 'panel' && !$('artBody').dataset.id) artFolder(); else sideShow(v); });
   // 11/28 スマホ：玉はつながる前から出しておく（押すと話しはじめる）。話しているあいだは光って動き、押すと愛棒の画面へ
   const orbIdle = () => !wide();
   function orbSync() { const o = $('orb'), live = !!ws; if (!live) o.hidden = !orbIdle(); o.classList.toggle('idle', !live); o.setAttribute('aria-label', live ? '愛棒と話しています' : '押すと愛棒と話せます'); o.classList.toggle('vhide', !wide() && curPane !== 'chat'); }   // 愛棒の画面が見えているときは出さない
@@ -1777,46 +1778,45 @@ body.feedfs #feed > .dash{display:none}
   document.addEventListener('click', e => { if (!e.target.closest('#przM')) $('przM').hidden = true; });
   $('przFs').onclick = () => { $('przM').hidden = true; const v = $('sideAibo'); try { (v.requestFullscreen || v.webkitRequestFullscreen).call(v); } catch (e) {} };
   $('przDoc').onclick = () => { $('przM').hidden = true; sayUnlock(); $('dkFile').value = ''; $('dkFile').click(); };
-  // 11/28 話すだけで操作：愛棒が「ui」で画面を動かす（面の切りかえ・投稿・ガチャ・プレゼン・「〇〇を押して」）。投稿の送信は、読みあげて確認してから
-  const UI_TOOL = { type: 'function', name: 'ui', description: 'この画面（HATHABO アプリ）を、話している人の代わりに操作する。「〇〇開いて」「投稿して」「次のスライド」「〇〇を押して」などと言われたら使う。投稿を送る（post_send）のは、下書きを読みあげて「送っていいですか」と聞き、はいと言われてからだけ。結果は短く伝える。あなたがハタボーイのとき、HATHABO ACE・料金・プラン・お店や会社向けの話が出たら、自分では説明せず「くわしくは HATHABO 公式がご案内しますね。公式につなぎます」と言ってから to_official を使う。友だちと話したいと言われたら「〇〇さんとつなぎますね」と言って to_friend（text に名前）。公式や別の愛棒から自分の愛棒にもどりたいと言われたら to_hataboy。',
-    parameters: { type: 'object', properties: { action: { type: 'string', enum: ['talk', 'chat', 'feed', 'thread', 'aibo', 'panel', 'post', 'post_send', 'gacha', 'map', 'grow', 'market', 'make_aibo', 'add_friend', 'settings', 'guide_on', 'guide_off', 'deck_start', 'next', 'prev', 'pause', 'resume', 'deck_end', 'scroll_down', 'scroll_up', 'close', 'tap', 'to_official', 'to_friend', 'to_hataboy'] }, text: { type: 'string', description: 'post の本文、または tap で押すボタンの名前（画面に出ている文字）' } }, required: ['action'] } };
-  function uiTap(label) { const L = String(label || '').replace(/\s/g, ''); if (!L) return null; const vis = e => { const r = e.getBoundingClientRect(); return r.width > 0 && r.height > 0 && getComputedStyle(e).visibility !== 'hidden'; };
-    const els = [...document.querySelectorAll('button,a,[role=button],.tl,.dtile,[data-qa],[data-cs],[data-p]')].filter(vis), txt = e => (e.getAttribute('aria-label') || '') + '|' + (e.textContent || '').replace(/\s/g, '');
-    const hit = els.find(e => (e.textContent || '').replace(/\s/g, '') === L) || els.find(e => txt(e).includes(L)); if (hit) { hit.click(); return (hit.textContent || hit.getAttribute('aria-label') || '').trim().slice(0, 30); } return null; }
+  // 11/28 愛棒がナビゲーションする：声で話しているあいだ、愛棒は「navi」で画面を案内する。面を開く・スクロール・ボタンを光らせて場所を教える・プレゼンを進める
+  // 送る・かける・買う・消すのような、取り消せないことは愛棒は押さない。ボタンを光らせて「ここを押してください」と言い、本人が押す
+  const UI_TOOL = { type: 'function', name: 'navi', description: 'あなたはこのアプリ（HATHABO）のナビ役。相手が「〇〇開いて」「どこ？」「どうやるの？」「次」などと言ったら使う。action は open（面や画面を開く）・scroll（up か down）・show（ボタンを光らせて場所を教える。押しはしない）・back（いま開いている画面を閉じる）・slide（プレゼンを next・prev・pause・resume・start・end）。open の target は talk・chat・feed・aibo・panel・home・gacha・map・grow・market・settings・make_aibo・add_friend・post・official・hataboy・friend。post は下書きを入れるだけで、送るのは本人。friend は name に名前。show の target は画面に出ている文字。送る・電話・購入・削除は自分で押さず、show で光らせて本人に押してもらう。ACE・料金・お店向けの話は、自分で説明せず「公式がご案内します」と言って open official。動かしたら、何をしたかを短く言う。',
+    parameters: { type: 'object', properties: { action: { type: 'string' }, target: { type: 'string' }, text: { type: 'string' }, name: { type: 'string' } }, required: ['action'] } };
+  const visEl = e => { const r = e.getBoundingClientRect(); return r.width > 0 && r.height > 0 && getComputedStyle(e).visibility !== 'hidden'; };
+  function naviFind(label) { const L = String(label || '').replace(/\s/g, ''); if (!L) return null; const els = [...document.querySelectorAll('button,a,[role=button],.tl,.dtile,[data-qa],[data-cs],[data-p],input,textarea')].filter(visEl), txt = e => (e.getAttribute('aria-label') || '') + '|' + (e.getAttribute('placeholder') || '') + '|' + (e.textContent || '').replace(/\s/g, '');
+    return els.find(e => (e.textContent || '').replace(/\s/g, '') === L) || els.find(e => txt(e).includes(L)) || null; }
+  function naviShow(el) { if (!el) return; document.querySelectorAll('.navihl').forEach(x => x.classList.remove('navihl')); el.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); el.classList.add('navihl'); setTimeout(() => el.classList.remove('navihl'), 6000); }
+  function naviScroll(d) { const el = [$('pHome'), $('log'), $('feed'), $('sideAibo'), $('vv'), $('tlBody')].find(e => e && visEl(e) && e.scrollHeight > e.clientHeight + 10); if (el) el.scrollBy({ top: d * el.clientHeight * .7, behavior: 'smooth' }); return !!el; }
   function uiAct(callId, args) { let a = {}; try { a = JSON.parse(args || '{}'); } catch (e) {}
-    const R = out => reply(callId, out), scr = d => { const el = [$('log'), $('feed'), $('sideAibo'), $('vv')].find(e => e && e.offsetParent && e.scrollHeight > e.clientHeight + 10); if (el) el.scrollBy({ top: d * el.clientHeight * .8, behavior: 'smooth' }); };
-    const deckOn = $('deck') && !$('deck').hidden;
-    switch (a.action) {
+    const R = out => reply(callId, out), act = String(a.action || ''), tg = String(a.target || '').toLowerCase(), deckOn = $('deck') && !$('deck').hidden, sheet = id => { openSheet(id); };
+    if (act === 'scroll') { const ok = naviScroll(tg === 'up' ? -1 : 1); return R(ok ? (tg === 'up' ? '上へもどしました' : '下へ進めました') : 'スクロールできるところがありません'); }
+    if (act === 'back') { const c = [...document.querySelectorAll('.sheet:not([hidden]) [data-close]')].pop(); if (c) { c.click(); return R('閉じました'); } if (document.body.classList.contains('phome')) { phomeToggle(false); return R('ホームを閉じました'); } if (deckOn) { dkClose(); return R('プレゼンを閉じました'); } return R('閉じるものはありません'); }
+    if (act === 'show') { const el = naviFind(a.target || a.text); if (!el) return R('「' + (a.target || '') + '」は、いまの画面に見つかりませんでした。どの画面にあるか考えて、open してから show してください'); naviShow(el); return R('「' + (el.textContent || el.getAttribute('aria-label') || '').trim().slice(0, 24) + '」を光らせました。ここを押してくださいと伝えて'); }
+    if (act === 'slide') { if (!deckOn) return R('プレゼンが開いていません。チャットに PDF を入れてもらうと始められます');
+      if (tg === 'start') { if (!$('dkPrep').hidden) $('dkStart').click(); else dkPlay(true); return R('プレゼンをはじめました。あなたは黙って、スライドの声にまかせて'); }
+      if (tg === 'next') { dkShow(DK.i + 1); return R('次のスライドへ'); } if (tg === 'prev') { dkShow(DK.i - 1); return R('前のスライドへ'); }
+      if (tg === 'pause') { dkPlay(false); return R('止めました'); } if (tg === 'resume') { dkPlay(true); return R('つづけます'); } if (tg === 'end') { dkClose(); return R('プレゼンを閉じました'); } return R('slide の target は next・prev・pause・resume・start・end'); }
+    if (act !== 'open') return R('action は open・scroll・show・back・slide のどれか');
+    switch (tg) {
       case 'talk': go('talk'); return R('トークを開きました');
       case 'chat': case 'thread': tab('chat'); return R('スレッドを開きました');
       case 'feed': go('feed'); return R('フィードを開きました');
       case 'aibo': sub('aibo'); return R('愛棒の画面を開きました');
       case 'panel': sub('panel'); return R('パネルを開きました');
-      case 'post': go('feed'); $('newPost').click(); setTimeout(() => { if (a.text) $('pText').value = a.text; }, 50); return R(a.text ? '投稿の下書きを入れました。読みあげて、送っていいか聞いてください' : '投稿の画面を開きました。何を書くか聞いてください');
-      case 'post_send': if ($('compose').hidden || !$('pText').value.trim()) return R('送る投稿がありません'); $('pSend').click(); return R('投稿を送りました');
-      case 'gacha': { const e = $('bEgg'); if (e && e.offsetParent) e.click(); else openSheet('growSheet'); return R('ご縁ガチャを開きました'); }
+      case 'home': if (wide()) { homeForce = true; homeSync(); sub('thread'); } else phomeToggle(true); return R('ホームを開きました');
+      case 'gacha': if (!wide()) phomeToggle(true); setTimeout(() => naviShow($('bEgg')), 300); return R('ご縁ガチャの卵を光らせました。押すと回せます');
       case 'map': { const m = document.querySelector('.tomap'); if (m) m.click(); return R('ご縁マップを開きました'); }
-      case 'grow': openSheet('growSheet'); return R('育てる画面を開きました');
-      case 'market': openSheet('plugSheet'); return R('マーケットを開きました');
+      case 'grow': sheet('growSheet'); return R('育てる画面を開きました');
+      case 'market': sheet('plugSheet'); return R('マーケットを開きました');
+      case 'settings': setOpen(); return R('設定を開きました');
       case 'make_aibo': $('mkBot').click(); return R('愛棒をつくる画面を開きました');
       case 'add_friend': $('addFriend').click(); return R('友だち追加を開きました');
-      case 'settings': setOpen(); return R('設定を開きました');
-      case 'guide_on': case 'guide_off': guideSet(a.action === 'guide_on'); return R(a.action === 'guide_on' ? '声の案内をオンにしました' : '声の案内をオフにしました');
-      case 'deck_start': if (!deckOn) return R('プレゼンの資料が開いていません。チャットに PDF を入れてもらってください'); if (!$('dkPrep').hidden) $('dkStart').click(); else dkPlay(true); return R('プレゼンをはじめます。あなたは話さず、スライドの声にまかせてください');
-      case 'next': if (!deckOn) { scr(1); return R('下へ進みました'); } dkShow(DK.i + 1); return R('次のスライドへ');
-      case 'prev': if (!deckOn) { scr(-1); return R('上へもどりました'); } dkShow(DK.i - 1); return R('前のスライドへ');
-      case 'pause': if (deckOn) dkPlay(false); else sayStop(); return R('止めました');
-      case 'resume': if (deckOn) dkPlay(true); return R('つづけます');
-      case 'deck_end': if (deckOn) dkClose(); return R('プレゼンを閉じました');
-      case 'scroll_down': scr(1); return R('下へスクロールしました');
-      case 'scroll_up': scr(-1); return R('上へスクロールしました');
-      case 'close': { const c = [...document.querySelectorAll('.sheet:not([hidden]) [data-close]')].pop(); if (c) c.click(); else if (deckOn) dkClose(); return R('閉じました'); }
-      case 'to_official': if (!curBot || !curBot.off) { note('（HATHABO 公式につなぎました）'); setTimeout(() => $('offAcc').click(), 600); } return R('HATHABO 公式のトークにつなぎました');
-      case 'to_friend': { const n = String(a.text || '').replace(/\s|さん|くん|ちゃん/g, ''); const r = n && [...document.querySelectorAll('#tlPeople .tl, #tlTeams .tl')].find(e => e.textContent.replace(/\s/g, '').includes(n)); if (!r) return R('「' + (a.text || '') + '」さんは、トークの友だちに見つかりませんでした'); note('（' + a.text + 'さんとつなぎました）'); setTimeout(() => r.click(), 600); return R(a.text + 'さんのトークにつなぎました'); }
-      case 'to_hataboy': toHataboy(); return R('自分の愛棒（ハタボーイ）にもどりました');
-      case 'tap': { const t = uiTap(a.text); return R(t ? '「' + t + '」を押しました' : '「' + (a.text || '') + '」というボタンは、いまの画面に見つかりませんでした'); }
+      case 'post': go('feed'); $('newPost').click(); setTimeout(() => { if (a.text) $('pText').value = a.text; naviShow($('pSend')); }, 120); return R(a.text ? '投稿の下書きを入れて、送るボタンを光らせました。読みあげて、よければ本人に押してもらって' : '投稿の画面を開きました。何を書くか聞いて');
+      case 'official': if (!curBot || !curBot.off) { note('（HATHABO 公式につなぎました）'); setTimeout(() => $('offAcc').click(), 600); } return R('HATHABO 公式のトークにつなぎました');
+      case 'hataboy': toHataboy(); return R('自分の愛棒（ハタボーイ）にもどりました');
+      case 'friend': { const nm = String(a.name || a.text || '').replace(/\s|さん|くん|ちゃん/g, ''); const r = nm && [...document.querySelectorAll('#tlPeople .tl, #tlTeams .tl')].find(e => e.textContent.replace(/\s/g, '').includes(nm)); if (!r) return R('「' + (a.name || '') + '」さんは、トークの友だちに見つかりませんでした'); note('（' + (a.name || nm) + 'さんとつなぎました）'); setTimeout(() => r.click(), 600); return R((a.name || nm) + 'さんのトークを開きました'); }
     }
-    R('その操作はまだできません'); }
+    R('その画面はまだ開けません。show で近いボタンを光らせて案内して'); }
   // 11/28 声でプレゼンを動かす：準備の画面で「はじめて・いいよ・OK」→ はじめる。プレゼン中は「次・もどって・止めて・つづけて・おわり」
   let dvAt = 0;
   function deckVoice(t) { if (!$('deck') || $('deck').hidden || Date.now() - dvAt < 1500) return; const x = String(t).replace(/[\s。、！？!?]/g, '');
@@ -1893,7 +1893,7 @@ body.feedfs #feed > .dash{display:none}
   function guideIntro(k) { const x = INTRO[k]; if (!x) return; if (Date.now() < gIntroAfter) return setTimeout(() => guideIntro(k), gIntroAfter - Date.now() + 200); const seen = LS.g('hbGuideSeen', []); if (seen.includes(x[0])) return; setTimeout(() => { if (guideSay(x[1], x[0], true)) LS.s('hbGuideSeen', seen.concat(x[0])); }, 900); }
   // 面が変わったとき
   let gLastView = '';
-  setInterval(() => { const v = wide() ? '' : curPane === 'side' ? sideMode : curPane === 'chat' ? '' : curPane; if (v !== gLastView) { gLastView = v; if (v) guideIntro(v); } }, 700);
+  setInterval(() => { const v = wide() ? '' : curPane === 'side' ? 'aibo' : curPane === 'pnl' ? 'panel' : curPane === 'chat' ? '' : curPane; if (v !== gLastView) { gLastView = v; if (v) guideIntro(v); } }, 700);
   // 迷い：何もないところを4秒に3回押す・同じものを10秒に2回開け閉めする・30秒なにもしない
   let gTaps = [], gLastEl = null, gIdle = 0, gOpen = [];
   document.addEventListener('pointerdown', e => { gLastEl = e.target; clearTimeout(gIdle); gIdle = setTimeout(() => { if ($('log').children.length < 2 && guideOn) guideSay('なにか迷っていますか？' + (helpOf(gLastEl) || '下の欄に話しかけるか、右の丸を押すと声で話せます'), '', false); }, 30000);
@@ -1923,7 +1923,7 @@ body.feedfs #feed > .dash{display:none}
   $('rHelp').onclick = () => { const on = !guideOn; guideSet(on);
     // 11/28 使い方は文字で読ませない：押すと点灯して、愛棒がいまの画面を声で案内する。もう一度押すと消える
     if (on) { guideAt = 0; LS.s('hbGuideSeen', []); gIntroAfter = Date.now() + 9000;
-      const v = wide() ? (sideMode === 'feed' ? 'feed' : 'chat') : curPane === 'side' ? sideMode : curPane, x = INTRO[v] || INTRO.chat;
+      const v = wide() ? (sideMode === 'feed' ? 'feed' : 'chat') : curPane === 'side' ? 'aibo' : curPane === 'pnl' ? 'panel' : curPane, x = INTRO[v] || INTRO.chat;
       setTimeout(() => guideSay('案内しますね。' + x[1] + '。わからないところを触ると、説明します', '', true), 200); }
     else { $('helpSheet').hidden = true; sayStop(); } };
   $('gPill').onclick = () => { if (guideOn) $('rHelp').onclick(); };   // どの画面からでも、案内をとめられる
