@@ -146,10 +146,11 @@ main{max-width:none;padding:0;height:100dvh;display:flex;flex-direction:column}
 .seg2{display:flex;gap:4px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px;margin:2px auto 10px;max-width:260px}
 .seg2 button{flex:1;border:0;background:transparent;color:var(--sub);border-radius:999px;padding:6px 0;font-size:13px;font-weight:700;cursor:pointer}
 .seg2 button.on{background:var(--card2);color:var(--ink);box-shadow:0 0 0 1px var(--line)}
-.orb{position:fixed;right:16px;bottom:22px;z-index:15;width:58px;height:58px;border-radius:50%;border:0;background:radial-gradient(circle at 35% 30%,#8fb0ff,#3b6cf6 55%,#1a2a7a);box-shadow:0 0 0 6px rgba(59,108,246,.18),0 0 28px rgba(59,108,246,.55);cursor:pointer;display:grid;place-items:center;transition:transform .1s}
+.orb{--lv:0;position:fixed;left:50%;bottom:calc(86px + env(safe-area-inset-bottom));z-index:15;width:66px;height:66px;margin-left:-33px;border-radius:50%;border:0;padding:0;background:#04050b;cursor:pointer;transform:scale(calc(1 + var(--lv) * .28));transition:transform .08s linear;box-shadow:0 0 calc(16px + var(--lv) * 46px) rgba(70,140,255,.55),0 0 calc(4px + var(--lv) * 18px) rgba(46,230,166,.45)}   /* 11/28：下のまん中。青と緑がまざって、声に合わせてゆらぐ光 */
 .orb[hidden]{display:none}
-.orb i{position:absolute;inset:-6px;border-radius:50%;border:1.5px solid rgba(143,176,255,.5);animation:orbp 1.8s ease-out infinite}
-.orb i:nth-child(2){animation-delay:.6s}.orb i:nth-child(3){animation-delay:1.2s}
+.orb i{position:absolute;inset:3px;border-radius:50%;mix-blend-mode:screen;filter:blur(5px);background:conic-gradient(from 0deg,#3b6cf6,#24d6c8,#7c5cf0,#2ee6a6,#3b6cf6);animation:orbspin 3.4s linear infinite}
+.orb i:nth-child(2){inset:9px;filter:blur(7px);background:radial-gradient(circle at 30% 28%,rgba(170,235,255,.95),transparent 55%),conic-gradient(from 140deg,#2ee6a6,transparent 30%,#5b8cff 55%,transparent 80%,#2ee6a6);animation-duration:5s;animation-direction:reverse}.orb i:nth-child(3){inset:20px;filter:blur(3px);background:radial-gradient(circle,#fff,rgba(255,255,255,0) 70%);animation:none;opacity:calc(.45 + var(--lv) * .55)}
+@keyframes orbspin{to{transform:rotate(360deg)}}
 @keyframes orbp{from{transform:scale(1);opacity:.8}to{transform:scale(1.7);opacity:0}}
 .dmlog{min-height:50vh;max-height:60vh}
 .row.aibo span{border-left:2px dashed #3a3f52;padding-left:10px}
@@ -320,6 +321,47 @@ body.feedfs #feed > .dash{display:none}
 #tierBtns button small{display:block;font-size:10px;font-weight:500;color:var(--sub)}
 #tierBtns button.on{background:#f2f4fa;color:#111;border-color:#f2f4fa}
 #tierBtns button.on small{color:#555}
+.mygrid{margin-top:12px}
+.mg{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;border-radius:12px;overflow:hidden}
+.mg button{aspect-ratio:1;border:0;padding:0;background:#141827;cursor:pointer;overflow:hidden}
+.mg img{width:100%;height:100%;object-fit:cover;display:block}
+.mg span{display:grid;place-items:center;height:100%;padding:8px;color:var(--ink);font-size:11.5px;line-height:1.4;background:radial-gradient(circle at 30% 20%,#2a3a7a,#0b0d18 75%)}
+/* PCの上：すぐ使うボタンの列と、広告・最新情報のバナー（くるくる回る） */
+.qacts{display:flex;gap:10px;justify-content:space-between;overflow-x:auto;scrollbar-width:none;padding:4px 2px 12px}
+.qacts button{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:6px;background:transparent;border:0;color:var(--ink);font-size:12px;cursor:pointer;min-width:58px}
+.qacts i{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;background:var(--card);border:1px solid var(--line);box-shadow:0 2px 8px rgba(0,0,0,.25)}
+.qacts svg{width:22px;height:22px}
+.qacts button:hover i{border-color:#3b6cf6}
+.bnr{position:relative;border:1px solid var(--line);border-radius:22px;overflow:hidden;height:190px;margin-bottom:14px;background:#0d1020}
+.bslides{display:flex;height:100%;transition:transform .6s cubic-bezier(.3,.8,.3,1)}
+.bslide{flex:0 0 100%;display:grid;grid-template-columns:1fr 150px;align-items:center;gap:10px;padding:20px 26px;position:relative}
+.bslide small{color:var(--sub);font-size:12px;letter-spacing:.08em}
+.bslide h3{margin:4px 0 6px;font-size:22px;line-height:1.3}
+.bslide p{margin:0 0 12px;color:var(--sub);font-size:13px;line-height:1.6}
+.bslide .bcta{display:inline-flex;gap:8px}
+.bslide .bcta button{border:0;border-radius:999px;padding:8px 16px;font-weight:800;font-size:13px;cursor:pointer;background:#f2f4fa;color:#111}
+.bslide .bcta button.s{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.bslide .bart{width:150px;height:150px;border-radius:50%;filter:saturate(1.2);box-shadow:0 0 40px rgba(80,140,255,.35)}
+.bdots{position:absolute;left:0;right:0;bottom:10px;display:flex;justify-content:center;gap:6px}
+.bdots i{width:7px;height:7px;border-radius:50%;background:#3a3f52;cursor:pointer}.bdots i.on{background:#f2f4fa;width:18px;border-radius:4px}
+/* PCの区切り：ドラッグして広さを変える */
+.rz{display:none}
+@media (min-width:900px){
+  .panes{grid-template-columns:var(--wl,380px) minmax(360px,1fr) var(--wr,380px) !important}
+  .rz{display:block;position:fixed;top:var(--rzt,64px);bottom:0;width:10px;margin-left:-5px;z-index:30;cursor:col-resize}
+  .rz::after{content:"";position:absolute;left:4px;top:0;bottom:0;width:2px;background:transparent;transition:background .15s}
+  .rz:hover::after,.rz.drag::after{background:#3b6cf6}
+  body.rzing{cursor:col-resize;user-select:none}
+  #pane-chat .vv .ring,#pane-chat .vv .chip,#pane-chat .vv .aname,#pane-chat .vv .cap,#pane-chat .vv .disc,#pane-chat .vv .wave{display:none}
+  #pane-chat .vv{max-height:none}
+}
+.newm{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:20px;line-height:1;cursor:pointer;margin-right:6px}
+.cmenu2{position:fixed;top:calc(56px + env(safe-area-inset-top));right:12px;z-index:70;width:260px;background:#151926;border:1px solid var(--line);border-radius:18px;padding:10px 8px;box-shadow:0 18px 40px rgba(0,0,0,.55)}
+.cmenu2 p{margin:2px 10px 6px;color:var(--sub);font-size:12px;font-weight:700}
+.cmenu2 button{display:flex;align-items:center;gap:12px;width:100%;background:transparent;border:0;color:var(--ink);font-size:16px;padding:10px;border-radius:12px;text-align:left;cursor:pointer}
+.cmenu2 button:hover{background:#1f2434}
+.cmenu2 i{width:22px;text-align:center;font-style:normal;color:var(--sub)}
+.cmenu2 small{margin-left:auto;color:var(--sub);font-size:11px}
 .call{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:transparent;color:var(--ink);display:grid;place-items:center;cursor:pointer}
 .call svg{width:17px;height:17px}
 .call.on{background:var(--stop);border-color:var(--stop);color:#fff}
@@ -447,7 +489,8 @@ body.feedfs #feed > .dash{display:none}
   <header class="top">
     <div class="logo"><img src="hathabo-logo.webp" alt="HATHABO"><span>HATHABO</span></div>
     <button class="fs" id="fsBtn" type="button" aria-label="全画面"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
-    <div class="tr"><button class="end" id="endBtn" type="button">終わる</button><button type="button" class="hb" id="hSpk" aria-label="スピーカー">🔊</button><button type="button" class="hb" id="hMic" aria-label="マイク">🎙</button><div class="av" id="avTop">あ</div></div>
+    <div class="tr"><button class="end" id="endBtn" type="button">終わる</button><button type="button" class="hb" id="hSpk" aria-label="スピーカー">🔊</button><button type="button" class="hb" id="hMic" aria-label="マイク">🎙</button><button type="button" class="newm" id="newM" aria-label="作成">＋</button><div class="av" id="avTop">あ</div></div>
+    <div class="cmenu2" id="cMenu2" hidden><p>作成</p><button type="button" data-cm="talk"><i>💬</i>新しいトーク</button><button type="button" data-cm="friend"><i>＋</i>友だち追加</button><button type="button" data-cm="group"><i>👥</i>グループ作成<small>準備中</small></button><button type="button" data-cm="post"><i>📷</i>投稿</button><button type="button" data-cm="draft"><i>📝</i>新しいたたき台</button><button type="button" data-cm="aibo"><i>✦</i>愛棒の追加</button></div>
   </header>
   <div class="ttl" id="ttl" hidden>愛棒</div>
   <nav class="dots" id="dots" aria-label="画面"><button type="button" data-p="talk">Talk</button><button type="button" class="on" data-p="chat">Chat</button><button type="button" data-p="feed">Feed</button></nav>
@@ -483,7 +526,10 @@ body.feedfs #feed > .dash{display:none}
   <section class="pane" id="pane-chat">
     <div class="seg2" id="cTabs"><button type="button" class="on" data-ct="thread">スレッド</button><button type="button" data-ct="aibo">愛棒</button></div>
     <div class="vv" id="vv">
-    <div class="dash2" id="dash2"><h2 id="dHi">こんばんは</h2><p class="note">愛棒に話しかけるか、愛棒を選んでください</p>
+    <div class="dash2" id="dash2">
+      <div class="qacts" id="qActs"><button type="button" data-qa="talk"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 10v4M8 7v10M12 4v16M16 7v10M20 10v4"/></svg></i>話す</button><button type="button" data-qa="thread"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"/></svg></i>スレッド</button><button type="button" data-qa="mk"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></i>愛棒をつくる</button><button type="button" data-qa="photo"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/></svg></i>写真</button><button type="button" data-qa="minutes"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M6 3h9l4 4v14H6z"/><path d="M9 12h7M9 16h5"/></svg></i>議事録</button><button type="button" data-qa="post"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M12 8v8M8 12h8"/></svg></i>投稿</button><button type="button" data-qa="plug"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 7V3M15 7V3M7 7h10v4a5 5 0 0 1-10 0zM12 16v5"/></svg></i>アプリ</button><button type="button" data-qa="gacha"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M4 12h16"/></svg></i>ガチャ</button></div>
+      <div class="bnr" id="bnr"><div class="bslides" id="bSlides"></div><div class="bdots" id="bDots"></div></div>
+      <h2 id="dHi">こんばんは</h2><p class="note">愛棒に話しかけるか、愛棒を選んでください</p>
       <div class="kpis"><div><b id="kMemo">0</b><small>覚えたこと</small></div><div><b id="kPosts">0</b><small>投稿</small></div><div><b id="kFol">0</b><small>フォロワー</small></div><div><b id="kPts">0</b><small>ポイント</small></div><div><b id="kStage">はじめまして</b><small>育ち</small></div></div>
       <div class="dmap"><div class="map mini" id="mapMini"></div><div><b>ご縁マップ</b><p class="note" id="mapSum">つながり 0人</p><button type="button" class="mapbtn tomap">ひらく</button></div></div>
       <p class="h">プリインストールの愛棒</p><div class="pre"><button type="button" data-say="お店の予約の段取りを手伝って"><i style="background:#3b6cf6">••</i><span><b>予約愛棒</b><small>お店・宿を予約</small></span></button><button type="button" data-say="英語で話す練習がしたい"><i style="background:#3fb37f">••</i><span><b>翻訳愛棒</b><small>多言語・方言</small></span></button><button type="button" data-say="今週の予定を整理したい"><i style="background:#e8a23a">••</i><span><b>スケジュール愛棒</b><small>予定を調整</small></span></button><button type="button" data-say="議事録をとってほしい"><i style="background:#7c5cf0">••</i><span><b>議事録愛棒</b><small>会議をまとめる</small></span></button></div></div>
@@ -529,6 +575,7 @@ body.feedfs #feed > .dash{display:none}
     <p class="dash">検証している人どうしで、投稿・フォロー・いいねを試せます。呼び名ごとの投稿です。電話番号や住所は書かないでください。</p>
   </section>
   </div>
+  <div class="rz" id="rzL" aria-hidden="true"></div><div class="rz" id="rzR" aria-hidden="true"></div>
   <button type="button" class="orb" id="orb" hidden aria-label="愛棒と話しています"><i></i><i></i><i></i></button>
   <div class="sheet" id="dmSheet" hidden>
     <div class="sh"><i class="pav" id="dmAv">?</i><b id="dmName">トーク</b><button type="button" class="call" id="dmCall" aria-label="電話する"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></svg></button><button type="button" class="close" data-close="dmSheet">閉じる</button></div>
@@ -593,6 +640,7 @@ body.feedfs #feed > .dash{display:none}
     <div class="pchips"><span class="pts" id="pPts">ありがとうポイント 0 pt</span></div>
     <div class="pbtns"><button type="button" id="pEdit">呼び名を変える</button><button type="button" id="pPeople">検証している人をフォロー</button></div>
     <div id="peopleList" hidden></div>
+    <div class="mygrid" id="myGrid"></div>
     <div class="card"><p class="h">QRで友だち追加</p><p class="note">このQRを相手に読んでもらうと、同じ検証ページが開いて、トークでつながります。</p><div class="qr" id="qrBox"></div></div>
     <div class="card">
       <p class="h">試してみる（押すとハタボーイに頼みます）</p>
@@ -606,7 +654,7 @@ body.feedfs #feed > .dash{display:none}
     <div class="card set">
       <p class="h">料金・お支払い</p><div class="paylinks"><button type="button" class="pl1" data-sheet="planSheet"><b>料金・お支払い</b><small>Free・Pro・Max・エース</small></button><button type="button" class="pl1" data-sheet="planSheet"><b>トッピング</b><small>返事・声・使い放題</small></button></div>
       <p class="h">設定</p>
-      <div class="tierset"><span>AIのかしこさ</span><div id="tierBtns"><button type="button" data-tier="X">X<small>はやい</small></button><button type="button" data-tier="G">G<small>かしこい</small></button><button type="button" data-tier="Z">Z<small>いちばん</small></button></div></div>
+      <div class="tierset"><span>AIのかしこさ</span><div id="tierBtns"><button type="button" data-tier="X">X<small>Grok</small></button><button type="button" data-tier="G">G<small>Sonnet</small></button><button type="button" data-tier="Z">Z<small>Opus</small></button></div></div>
       <div class="setl"><button type="button" data-set="voice">声（話すときの声・端末の声に切りかえ）</button><button type="button" data-set="notice">通知</button><button type="button" data-set="privacy">プライバシー（覚えたことを見る・消す）</button><button type="button" data-set="help">使い方</button></div>
       <p class="note" id="setMsg"></p>
     </div>
@@ -653,7 +701,7 @@ body.feedfs #feed > .dash{display:none}
   let ws = null, ctx = null, mic = null, node = null, src = null, out = null, endTimer = null, talkT = null, rows = { me: null, hb: null }, spkMuted = false, aiboName = 'ハタボーイ', dest = null, spk = null, turns = [], all = [], key = '', ready = false, quiet = false, quietAfter = 0, minFrom = -1;
   const state = t => { $('state').textContent = t; };
   const bars = [...document.querySelectorAll('#wave i')];
-  const HB = (s, lv) => { try { if (lv !== undefined) bars.forEach((b, i) => { b.style.height = (6 + lv * 22 * (0.45 + 0.55 * Math.abs(Math.sin(i * 1.7 + Date.now() / 140)))) + 'px'; }); if (lv !== undefined) $('orb').style.transform = 'scale(' + (1 + lv * 0.28).toFixed(3) + ')'; if (window.HB) { if (s) window.HB.setState(s); if (lv !== undefined) window.HB.setLevel(lv); } } catch (e) {} };   // 3Dのハタボーイ（読みこめなくても会話は続ける）
+  const HB = (s, lv) => { try { if (lv !== undefined) bars.forEach((b, i) => { b.style.height = (6 + lv * 22 * (0.45 + 0.55 * Math.abs(Math.sin(i * 1.7 + Date.now() / 140)))) + 'px'; }); if (lv !== undefined) $('orb').style.setProperty('--lv', Math.min(1, lv).toFixed(3)); if (window.HB) { if (s) window.HB.setState(s); if (lv !== undefined) window.HB.setLevel(lv); } } catch (e) {} };   // 3Dのハタボーイ（読みこめなくても会話は続ける）
   function say(who, t) {
     if (!t) return;
     const k = who === 'あなた' ? 'me' : 'hb';
@@ -779,7 +827,7 @@ body.feedfs #feed > .dash{display:none}
       try { dest = ctx.createMediaStreamDestination(); spk = spk || Object.assign(document.createElement('audio'), { autoplay: true, playsInline: true }); spk.setAttribute('playsinline', ''); spk.srcObject = dest.stream; spk.play().catch(() => {}); } catch (e) { dest = null; }
       await ctx.resume();
       mic = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } });
-      const r = await fetch(base + '/grok/session', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ k: key, t: tok, wt: WT, voice: (curBot && curBot.voice) || '', name: $('name').value.trim(), gyo: P.get('gyo') || '', scene: P.get('scene') || '', tone: P.get('tone') || '', msg: P.get('msg') || '' }) });
+      const r = await fetch(base + '/grok/session', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ k: key, t: tok, wt: WT, tier: TIER(), voice: (curBot && curBot.voice) || '', name: $('name').value.trim(), gyo: P.get('gyo') || '', scene: P.get('scene') || '', tone: P.get('tone') || '', msg: P.get('msg') || '' }) });
       const j = await r.json().catch(() => ({}));
       if (!r.ok || !j.token) throw new Error(j.error || ('つなげませんでした（' + r.status + '）'));
       if (j.memo) { memo = j.memo; grow(); }
@@ -840,7 +888,7 @@ body.feedfs #feed > .dash{display:none}
   addEventListener('resize', () => { if (!wide()) { const a = dotBtns.find(b => b.classList.contains('on')); go(a ? a.dataset.p : 'chat', false); } });
   function sub(v) { document.querySelectorAll('#cTabs button').forEach(x => x.classList.toggle('on', x.dataset.ct === v)); $('pane-chat').classList.toggle('vmode', v === 'aibo'); if (v === 'thread') $('log').scrollTop = 1e9; orbSync(); }
   document.querySelectorAll('#cTabs button').forEach(b => b.onclick = () => sub(b.dataset.ct));
-  function orbSync() { const cur = (dotBtns.find(b => b.classList.contains('on')) || {}).dataset; $('orb').classList.toggle('vhide', wide() || (!!cur && cur.p === 'chat' && $('pane-chat').classList.contains('vmode'))); }   // 愛棒の画面が見えているときは出さない
+  function orbSync() { const cur = (dotBtns.find(b => b.classList.contains('on')) || {}).dataset; $('orb').classList.toggle('vhide', !wide() && !!cur && cur.p === 'chat' && $('pane-chat').classList.contains('vmode')); }   // 愛棒の画面が見えているときは出さない
   function tab(t) { if (t === 'voice' || t === 'aibo') { go('chat'); return sub('aibo'); } go(t === 'talk' ? 'talk' : 'chat'); if (t !== 'talk') sub('thread'); }
   function openSheet(id) { $(id).hidden = false; if (id === 'prof') { loadFeed(true); profFill(); qrFill(); } }
   document.querySelectorAll('[data-close]').forEach(b => b.onclick = () => { $(b.dataset.close).hidden = true; });
@@ -871,8 +919,17 @@ body.feedfs #feed > .dash{display:none}
     { id: 's-5', name: '湯宿 みずほ', aiName: 'ミズホ', shop: true, img: 'https://picsum.photos/id/1036/900/900', text: '雪見の露天風呂、はじまりました。空室やご予約は、宿の愛棒が24時間お答えします。', likes: 38 },
     { id: 's-6', name: 'たけし', aiName: 'ゲン', img: 'https://picsum.photos/id/1043/900/900', text: '新人さんの最初の1週間、愛棒が段取りを教えてくれて大助かり。議事録も勝手にまとまってる。', likes: 19 },
   ];
+  // 声を聴く：xAI の声で読む（人ごとにちがう声）。作れないときだけ端末の声
+  const VOI = ['ara', 'eve', 'rex', 'sal', 'leo', 'liora', 'carina', 'orion', 'luna', 'atlas'];
+  const voiceOf = k => VOI[[...String(k || '')].reduce((n, c) => n + c.charCodeAt(0), 0) % VOI.length];
+  let sayAud = null;
+  async function speak(text, voice, done) { try { speechSynthesis.cancel(); } catch (e) {} if (sayAud) { sayAud.pause(); sayAud = null; }
+    const j = await api('/grok/tts', { text, voice }).catch(() => ({}));
+    if (j.audio) { sayAud = new Audio('data:audio/mpeg;base64,' + j.audio); sayAud.onended = () => done && done(); sayAud.play().catch(() => done && done()); return; }
+    try { const u = new SpeechSynthesisUtterance(text); u.lang = 'ja-JP'; u.onend = () => done && done(); speechSynthesis.speak(u); } catch (e) { done && done(); } }
+  const VOX = { 's-cm': 'ara', 's-emb': 'ara', 's-1': 'eve', 's-2': 'leo', 's-3': 'liora', 's-4': 'carina', 's-5': 'sal', 's-6': 'rex' };   // 見本の投稿の声
   // 右に縦のボタン：いいね・声を聴く・コメント（愛棒に聞く）・共有
-  const paH = (attr, id, on, n, text) => '<div class="pa"><button type="button" class="' + (on ? 'on' : '') + '" ' + attr + '="' + esc(id) + '">いいね ' + n + '</button><button type="button" data-say="' + esc(String(text || '').slice(0, 200)) + '">声を聴く</button><button type="button" data-ask="' + esc(String(text || '').slice(0, 80)) + '">コメント</button><button type="button" data-share="' + esc(String(text || '').slice(0, 120)) + '">共有</button></div>';
+  const paH = (attr, id, on, n, text) => '<div class="pa"><button type="button" class="' + (on ? 'on' : '') + '" ' + attr + '="' + esc(id) + '">いいね ' + n + '</button><button type="button" data-say="' + esc(String(text || '').slice(0, 200)) + '" data-voice="' + (VOX[id] || voiceOf(id)) + '">声を聴く</button><button type="button" data-ask="' + esc(String(text || '').slice(0, 80)) + '">コメント</button><button type="button" data-share="' + esc(String(text || '').slice(0, 120)) + '">共有</button></div>';
   document.addEventListener('click', e => { if (e.target.id === 'ffx') document.body.classList.remove('feedfs'); });
   function renderFeed(msg) {
     let h = '<div class="post"><div class="ph"><img src="hathabo-logo.webp" alt=""><b>ハタボ公式</b><span class="badge">公式</span><small>見本</small></div><video src="feed_cm.mp4" poster="feed_cm.jpg" playsinline muted loop preload="metadata"></video><p class="pt" style="padding-top:10px">すべての人に、AIの愛棒を。ハタボのCMができました。話すだけで、あなたの代わりに動いてくれる愛棒です。</p>' + paH('data-slike', 's-cm', sLiked.has('s-cm'), 128 + (sLiked.has('s-cm') ? 1 : 0), 'すべての人に、AIの愛棒を。ハタボのCMができました。') + '</div>';
@@ -888,7 +945,7 @@ body.feedfs #feed > .dash{display:none}
   $('feed').addEventListener('click', async e => {
     const f = e.target.closest('[data-fol]'), l = e.target.closest('[data-like]'), a = e.target.closest('[data-ask]'), sl = e.target.closest('[data-slike]');
     const sy = e.target.closest('[data-say]'), sh = e.target.closest('[data-share]');
-    if (sy && sy.closest('#feed')) { try { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(sy.dataset.say); u.lang = 'ja-JP'; speechSynthesis.speak(u); } catch (x) {} return; }
+    if (sy && sy.closest('#feed')) { sy.classList.add('on'); speak(sy.dataset.say, sy.dataset.voice, () => sy.classList.remove('on')); return; }
     if (sh) { const d = { title: 'HATHABO', text: sh.dataset.share, url: location.origin + location.pathname }; if (navigator.share) navigator.share(d).catch(() => {}); else { try { navigator.clipboard.writeText(d.text + ' ' + d.url); sh.textContent = 'コピーしました'; } catch (x) {} } return; }
     const vd = e.target.closest('#feed video'); if (vd) { vd.paused ? (vd.muted = false, vd.play().catch(() => {})) : vd.pause(); return; }
     const card = e.target.closest('#feed .post'); if (card && !e.target.closest('button,video,a') && !document.body.classList.contains('feedfs')) { document.body.classList.add('feedfs'); card.scrollIntoView(); return; }
@@ -922,7 +979,11 @@ body.feedfs #feed > .dash{display:none}
     $('pAv').textContent = n ? n.slice(0, 1) : 'あ'; $('avRail').textContent = n ? n.slice(0, 1) : 'あ'; $('pName').textContent = n ? n + 'さん' : 'あなた（呼び名をまだ入れていません）';
     $('cPosts').textContent = m.posts || 0; $('cFollowers').textContent = m.followers || 0; $('cFollowing').textContent = m.following || 0;
     $('pPts').textContent = 'ありがとうポイント ' + (m.points || 0) + ' pt（検証用）';
+    // 自分の投稿（インスタのプロフィールのように3列）。押すとフィードのその投稿へ
+    const my = ((feedData && feedData.posts) || []).filter(p => p.mine);
+    $('myGrid').innerHTML = '<p class="h">投稿</p>' + (my.length ? '<div class="mg">' + my.map(p => '<button type="button" data-mypost="' + esc(p.id) + '">' + (p.img ? '<img loading="lazy" alt="" src="' + base + '/feed/img/' + esc(p.img) + '">' : '<span>' + esc(p.text.slice(0, 40)) + '</span>') + '</button>').join('') + '</div>' : '<p class="note">まだ投稿がありません。フィードの「＋ 投稿」から最初の投稿をしてみてください。</p>');
   }
+  document.addEventListener('click', e => { const b = e.target.closest('[data-mypost]'); if (!b) return; $('prof').hidden = true; go('feed'); setTimeout(() => { const el = [...document.querySelectorAll('#feed [data-like]')].find(x => x.dataset.like === b.dataset.mypost); if (el) el.closest('.post').scrollIntoView(); }, 350); });
   function peopleRows() {
     const P = (feedData && feedData.people) || [];
     $('peopleList').innerHTML = P.length ? P.map(x => '<div class="prow"><i class="pav">' + esc(x.name.slice(0, 1)) + '</i><span>' + esc(x.name) + (x.followsMe ? '<small>あなたをフォロー</small>' : '') + '</span><button type="button" class="fol' + (x.follow ? ' on' : '') + '" data-fol="' + esc(x.key) + '">' + (x.follow ? 'フォロー中' : 'フォロー') + '</button></div>').join('') : '<p class="note">まだ投稿した人がいません。投稿した人がここに出ます。</p>';
@@ -981,8 +1042,16 @@ body.feedfs #feed > .dash{display:none}
   $('mkGo').onclick = () => { const B = LS.g('hbBots', []), x = { name: $('mkName').value.trim().slice(0, 16), s: mk.s, c: mk.c, role: RO[mk.r], gyo: mk.g ? GYO[mk.g] : '', voice: VOICES[mk.v][0] }; B.push(x); LS.s('hbBots', B.slice(-8)); $('mkName').value = ''; $('mkSheet').hidden = true; railBots(); openBot(x); };   // 作ったら、そのままスレッドで話しはじめる
   railBots();
   // QR：この検証ページのURL（つながる用）
-  function qrFill() { const u = location.origin + location.pathname + (new URLSearchParams(location.search).get('t') ? '?t=' + new URLSearchParams(location.search).get('t') : '');
-    try { const q = window.qrcode(0, 'M'); q.addData(u); q.make(); $('qrBox').innerHTML = q.createImgTag(6, 8); } catch (e) { $('qrBox').textContent = u; } }
+  // QRで友だち追加：QRに自分のしるし（f）を入れる。読んだ人はログインのあと、自動でおたがいフォロー（トークに入る）
+  async function qrFill() { const j = await api('/grok/qr', {}).catch(() => ({})), tq = new URLSearchParams(location.search).get('t'), qs = new URLSearchParams();
+    if (tq) qs.set('t', tq); if (j.f) qs.set('f', j.f);
+    const u = location.origin + location.pathname + (qs.toString() ? '?' + qs : '');
+    try { const q = window.qrcode(0, 'L'); q.addData(u); q.make(); $('qrBox').innerHTML = q.createImgTag(5, 8); } catch (e) { $('qrBox').textContent = u; } }
+  async function qrAdd() { const f = new URLSearchParams(location.search).get('f'); if (!f || !$('name').value.trim()) return;
+    const p = new URLSearchParams(location.search); p.delete('f'); history.replaceState(null, '', location.pathname + (p.toString() ? '?' + p : ''));
+    const j = await api('/grok/qradd', { f }).catch(() => ({}));
+    if (j.ok && !j.self) { feedAt = 0; await loadFeed(true).catch(() => {}); go('talk'); const d = document.createElement('div'); d.className = 'pcard'; d.innerHTML = '<b>' + esc(j.name) + 'さんと友だちになりました</b>トークに入りました。押すと話しかけられます。'; $('tlPeople').prepend(d); }
+    else if (j.error) note(j.error); }
   // PCのダッシュボード
   function dashFill() { const h = new Date().getHours(), n = $('name').value.trim(), m = (feedData && feedData.me) || {};
     $('dHi').textContent = (h < 4 || h >= 18 ? 'こんばんは' : h < 11 ? 'おはようございます' : 'こんにちは') + '、' + (n ? n + 'さん' : 'ようこそ');
@@ -1047,7 +1116,8 @@ body.feedfs #feed > .dash{display:none}
     const j = await api('/grok/me', {}).catch(() => ({}));
     if (j.need && !j.login) { $('gate').hidden = false; return; }
     try { if (!LS.g('hbGacha', {}).last && !LS.g('hbFirst', 0)) { LS.s('hbFirst', 1); $('first1').hidden = false; $('growSheet').classList.add('firstg'); openSheet('growSheet'); } } catch (e) {}
-    if (j.login) { $('pEmail').textContent = j.email + ' でログイン中'; const nm = (j.names && j.names[0]) || j.suggest || ''; if (nm && !$('name').value.trim()) { $('name').value = nm; $('name').dispatchEvent(new Event('input')); } if ($('name').value.trim()) document.body.classList.add('logged'); }   // ログインしていれば、ようこそ（呼び名・合言葉）は出さない
+    if (j.login) { $('pEmail').textContent = j.email + ' でログイン中'; const nm = (j.names && j.names[0]) || j.suggest || ''; if (nm && !$('name').value.trim()) { $('name').value = nm; $('name').dispatchEvent(new Event('input')); } if ($('name').value.trim()) document.body.classList.add('logged'); }
+    qrAdd();   // ログインしていれば、ようこそ（呼び名・合言葉）は出さない
   })();
   $('gGoogle').onclick = () => { location.href = base + '/google/login?to=grok&back=' + encodeURIComponent(location.search.slice(1)); };
   $('pOut').onclick = () => { try { localStorage.removeItem('grokWt'); } catch (e) {} location.reload(); };
@@ -1056,7 +1126,7 @@ body.feedfs #feed > .dash{display:none}
   document.querySelectorAll('[data-sheet]').forEach(b => b.onclick = () => openSheet(b.dataset.sheet));
   const SETM = { voice: '声は、いまは ara（エア）の声です。端末の声への切りかえは、これから入ります。', notice: '通知は、友だちからのトークと、愛棒の留守番の伝言を、これから届けられるようにします。', privacy: '覚えたことを見るときは「何を覚えてる？」、消すときは「〇〇を忘れて」と愛棒に言ってください。', help: '真ん中のチャットで書くか、愛棒の画面で話しかけてください。左へなぞるとトーク、右へなぞると Feed です。' };
   function tierFill() { document.querySelectorAll('#tierBtns button').forEach(b => b.classList.toggle('on', b.dataset.tier === TIER())); }
-  document.querySelectorAll('#tierBtns button').forEach(b => b.onclick = () => { try { localStorage.setItem('grokTier', b.dataset.tier); } catch (e) {} tierFill(); $('setMsg').textContent = b.dataset.tier === 'Z' ? 'いちばん賢いAIで考えます（ふだんはこれ）。' : b.dataset.tier === 'G' ? '賢いAIで考えます。' : '速いAIで考えます。こみいった相談は Z がおすすめです。'; });
+  document.querySelectorAll('#tierBtns button').forEach(b => b.onclick = () => { try { localStorage.setItem('grokTier', b.dataset.tier); } catch (e) {} tierFill(); $('setMsg').textContent = b.dataset.tier === 'Z' ? 'Z：むずかしい相談は Claude Opus（いちばん賢い）が考えます。ふだんはこれ。' : b.dataset.tier === 'G' ? 'G：むずかしい相談は Claude Sonnet が考えます。' : 'X：ぜんぶ Grok だけで答えます（いちばん速い）。いまのことは Grok が自分で調べます。'; if (ws) $('setMsg').textContent += '（次に話しはじめたときから）'; });
   tierFill();
   document.querySelectorAll('[data-set]').forEach(b => b.onclick = () => { $('setMsg').textContent = SETM[b.dataset.set] || ''; });
   $('addShop').onclick = () => { go('chat'); const d = document.createElement('div'); d.className = 'pcard'; d.innerHTML = '<b>お店を追加</b>HATHABO ACE で作ったお店や宿の窓口を、ここからトークに加えられるようにします。いまは検証中なので、見本だけです。'; $('log').appendChild(d); $('log').scrollTop = 1e9; };
@@ -1100,6 +1170,50 @@ body.feedfs #feed > .dash{display:none}
     tellAibo((ask ? ask + '\n' : 'これを見て、短く感想と、手伝えそうなことを言って。\n') + notes.join('\n').slice(0, 12000));
   }
   Object.values(ATT).forEach(id => $(id).onchange = () => { const fs = $(id).files; attach(fs).finally(() => { $(id).value = ''; }); });
+
+  // PC：トーク・チャット・フィードの境目をドラッグして広さを変える（この端末に保存）
+  (() => { const P = $('panes'), rs = document.documentElement.style;
+    const load = () => { try { const v = JSON.parse(localStorage.getItem('hbCols') || '{}'); if (v.l) rs.setProperty('--wl', v.l + 'px'); if (v.r) rs.setProperty('--wr', v.r + 'px'); } catch (e) {} };
+    const place = () => { if (!wide()) return; const r = P.getBoundingClientRect(), L = $('pane-talk').getBoundingClientRect(), F = $('pane-feed').getBoundingClientRect(); rs.setProperty('--rzt', r.top + 'px'); $('rzL').style.left = L.right + 'px'; $('rzR').style.left = F.left + 'px'; };
+    let drag = null;
+    const down = side => e => { if (!wide()) return; e.preventDefault(); drag = side; $(side === 'l' ? 'rzL' : 'rzR').classList.add('drag'); document.body.classList.add('rzing'); };
+    $('rzL').addEventListener('pointerdown', down('l')); $('rzR').addEventListener('pointerdown', down('r'));
+    addEventListener('pointermove', e => { if (!drag) return; const W = innerWidth, x = e.clientX;
+      if (drag === 'l') rs.setProperty('--wl', Math.max(260, Math.min(W * 0.4, x)) + 'px'); else rs.setProperty('--wr', Math.max(280, Math.min(W * 0.45, W - x)) + 'px'); place(); });
+    addEventListener('pointerup', () => { if (!drag) return; drag = null; document.querySelectorAll('.rz').forEach(r => r.classList.remove('drag')); document.body.classList.remove('rzing');
+      try { localStorage.setItem('hbCols', JSON.stringify({ l: parseInt(getComputedStyle(document.documentElement).getPropertyValue('--wl')) || 0, r: parseInt(getComputedStyle(document.documentElement).getPropertyValue('--wr')) || 0 })); } catch (e) {} });
+    $('rzL').ondblclick = $('rzR').ondblclick = () => { rs.removeProperty('--wl'); rs.removeProperty('--wr'); try { localStorage.removeItem('hbCols'); } catch (e) {} setTimeout(place, 50); };   // ダブルクリックで元の広さ
+    load(); addEventListener('resize', place); setTimeout(place, 300); setInterval(place, 2000); })();
+  // バナー（広告・最新情報）：6秒ごとに次へ。点を押すと、その1枚へ
+  const BNR = [
+    { k: 'NEW', t: 'ハタボーイと、声で話そう', d: '話すほど、あなたのことを覚えて育つ愛棒。予約・予定・議事録も、話すだけ。', b: [['話しはじめる', 'talk']], c: ['#3b6cf6', '#24d6c8'] },
+    { k: 'アプリを接続', t: 'いつものツールと、つながる', d: 'LINE公式アカウント・Googleドライブ ほか129のサービス。仕事が、声ひとつで回ります。', b: [['アプリを見る', 'plug']], c: ['#2ee6a6', '#3b6cf6'] },
+    { k: '愛棒をつくる', t: '家でも、仕事でも、遊びでも', d: 'お店の窓口・電話のお留守番・家庭教師・お風呂の相手…45の役割から、あなたの愛棒を。', b: [['つくる', 'mk']], c: ['#e8a23a', '#e0517f'] },
+    { k: '料金', t: 'Pro 月2,980円・Max 月10,000円', d: 'いちばん賢いAIを、毎日。足りない日は、1時間3,000円の使い放題を足すだけ。', b: [['料金を見る', 'plan']], c: ['#7c5cf0', '#24a7e0'] },
+    { k: 'ガチャ', t: '1日1回、無料でガチャ', d: '着せかえ・限定スタンプ・ありがとうポイントが当たります。', b: [['ガチャを引く', 'gacha']], c: ['#ff7aa8', '#e8a23a'] },
+  ];
+  let bI = 0;
+  $('bSlides').innerHTML = BNR.map(x => '<div class="bslide"><div><small>' + esc(x.k) + '</small><h3>' + esc(x.t) + '</h3><p>' + esc(x.d) + '</p><div class="bcta">' + x.b.map((y, i) => '<button type="button" class="' + (i ? 's' : '') + '" data-qa="' + y[1] + '">' + esc(y[0]) + '</button>').join('') + '</div></div><i class="bart" style="background:radial-gradient(circle at 30% 30%,' + x.c[1] + ',' + x.c[0] + ' 55%,#0b0d18 100%)"></i></div>').join('');
+  $('bDots').innerHTML = BNR.map((_, i) => '<i data-bi="' + i + '"></i>').join('');
+  const bGo = i => { bI = (i + BNR.length) % BNR.length; $('bSlides').style.transform = 'translateX(' + (-100 * bI) + '%)'; document.querySelectorAll('#bDots i').forEach((d, j) => d.classList.toggle('on', j === bI)); };
+  $('bDots').onclick = e => { const d = e.target.closest('[data-bi]'); if (d) bGo(+d.dataset.bi); };
+  bGo(0); setInterval(() => { if (!document.hidden && wide()) bGo(bI + 1); }, 6000);
+  // すぐ使うボタン・バナーのボタン
+  document.addEventListener('click', e => { const b = e.target.closest('[data-qa]'); if (!b) return; const a = b.dataset.qa;
+    if (a === 'talk') $('talk').click(); else if (a === 'thread') tab('chat'); else if (a === 'mk') $('mkBot').click(); else if (a === 'photo') $('attImg').click(); else if (a === 'minutes') { const t = $('txt'); t.value = '議事録とって'; t.focus(); $('sendF').classList.add('typing'); }
+    else if (a === 'post') $('newPost').click(); else if (a === 'plug') openSheet('plugSheet'); else if (a === 'gacha') openSheet('growSheet'); else if (a === 'plan') openSheet('planSheet'); });
+
+  // 右上の「＋」：作成メニュー（新しいトーク・友だち追加・グループ作成・投稿・新しいたたき台・愛棒の追加）
+  $('newM').onclick = e => { e.stopPropagation(); $('cMenu2').hidden = !$('cMenu2').hidden; };
+  document.addEventListener('click', e => { if (!e.target.closest('#cMenu2,#newM')) $('cMenu2').hidden = true; });
+  $('cMenu2').addEventListener('click', e => { const b = e.target.closest('[data-cm]'); if (!b) return; $('cMenu2').hidden = true; const a = b.dataset.cm;
+    if (a === 'talk') { go('talk'); note2t('トークの友だちを押すと、その人と話せます。'); }
+    else if (a === 'friend') $('addFriend').click();
+    else if (a === 'group') note2t('グループのトークは、これから入ります（検証中）。');
+    else if (a === 'post') { go('feed'); $('newPost').click(); }
+    else if (a === 'draft') { tab('chat'); const t = $('txt'); t.value = 'たたき台を作って：'; t.focus(); $('sendF').classList.add('typing'); }
+    else if (a === 'aibo') $('mkBot').click(); });
+  function note2t(t) { const d = document.createElement('div'); d.className = 'pcard'; d.textContent = t; $('tlPeople').prepend(d); setTimeout(() => d.remove(), 6000); }
   // 光る表示：声で話しているあいだ、どの面にいても右下についてくる。押すと Chat へ
   $('orb').onclick = () => tab('aibo');
   document.querySelector('.logo').onclick = () => { if (!wide()) go('talk'); };   // スマホ：上の HATHABO でトーク（左）
@@ -1134,13 +1248,13 @@ body.feedfs #feed > .dash{display:none}
     $('dmCall').classList.add('on'); dmSpoken = Date.now();
     await dmLoad('電話をかけました', false, true);
     const m = [...dmMsgs].reverse().find(x => x.rusu && x.at >= dmSpoken - 5000);
-    if (m && 'speechSynthesis' in window) { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(m.text); u.lang = 'ja-JP'; u.onend = () => $('dmCall').classList.remove('on'); speechSynthesis.speak(u); }
+    if (m) speak(m.text, voiceOf(dmWith + '愛棒'), () => $('dmCall').classList.remove('on'));
     else { note2(dmName + 'さんを呼んでいます。トークに通知が残ります（人どうしの声の電話は、これから）'); $('dmCall').classList.remove('on'); }
   };
   function note2(t) { const d = document.createElement('p'); d.className = 'note'; d.textContent = t; $('dmLog').appendChild(d); $('dmLog').scrollTop = 1e9; }
   $('dmVoice').onclick = () => {   // 相手のいちばん新しいメッセージを声で（検証では、端末の読み上げの声）
-    const m = [...dmMsgs].reverse().find(x => !x.mine); if (!m || !window.speechSynthesis) return;
-    speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(m.text); u.lang = 'ja-JP'; u.onend = () => $('dmVoice').classList.remove('on'); $('dmVoice').classList.add('on'); speechSynthesis.speak(u);
+    const m = [...dmMsgs].reverse().find(x => !x.mine); if (!m) return;
+    $('dmVoice').classList.add('on'); speak(m.text, voiceOf(m.rusu ? dmWith + '愛棒' : dmWith), () => $('dmVoice').classList.remove('on'));
   };
   $('tlPeople').addEventListener('click', e => { const d = e.target.closest('[data-dm]'); if (d) openDm(d.dataset.dm, d.dataset.nm); });
   $('peopleList').addEventListener('click', async e => { const f = e.target.closest('[data-fol]'); if (f) { await api('/grok/follow', { who: f.dataset.fol, on: !f.classList.contains('on') }); loadFeed(true); } });
