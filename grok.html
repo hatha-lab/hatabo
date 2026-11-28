@@ -291,6 +291,8 @@ body.dmgroup #dmVoice, body.dmgroup #dmCall, body.dmgroup #dmGrp{display:none !i
 @media (min-width:900px){.gpill{display:none !important}}   /* パソコンは左の列の「使い方」がいつも見えるので、それが点灯するだけ */
 #rHelp.gon i{background:#2f6cff !important;color:#fff}#rHelp.gon{color:#7fa8ff}.hgrow{border:1px solid var(--line);border-radius:16px;background:var(--card);margin:4px 0 12px}
 @media (max-width:899px){ .rail #rPlug,.rail #rHelp{position:sticky;background:var(--bg);padding:4px 0;z-index:2} .rail #rPlug{bottom:70px} .rail #rHelp{bottom:0;margin-top:0} }
+/* 11/28 パソコンの左の列：プラグイン・使い方・プロフィールは、いつもいちばん下に見える（愛棒がふえても下にかくれない） */
+@media (min-width:900px){ .rail #rPlug,.rail #rHelp,.rail #railProf{position:sticky;background:var(--bg);padding:4px 0;z-index:2;flex:0 0 auto} .rail #rPlug{bottom:144px} .rail #rHelp{bottom:72px;margin-top:0} .rail #railProf{bottom:0} }
 .rail .rp{margin-top:6px}
 .plg{display:flex;gap:12px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:8px}
 .plg i{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-style:normal;font-weight:800;color:#fff;flex:0 0 40px}
@@ -543,7 +545,7 @@ body.feedfs #feed > .dash{display:none}
 #callOv{position:fixed;inset:0;z-index:300;background:#0e141f}
 #callOv iframe{width:100%;height:100%;border:0;display:block}
 #callOv .callx{position:absolute;right:10px;top:calc(8px + env(safe-area-inset-top));z-index:2;border:0;background:rgba(255,255,255,.14);color:#fff;border-radius:999px;padding:7px 12px;font-size:13px;cursor:pointer}
-.setx{background:var(--bg)}.tminp{width:100%;box-sizing:border-box;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:12px;padding:10px 12px;font:inherit;margin:4px 0 10px}.sgrp{background:var(--card);border:1px solid var(--line);border-radius:18px;margin:0 0 14px;overflow:hidden}
+.setx{background:var(--bg)}.gvl{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:8px 0 12px}.gvb{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:14px;padding:10px 4px;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;min-width:0}.gvb.on{border-color:#3b6cf6;box-shadow:0 0 0 2px rgba(59,108,246,.35)}.gvb i{width:40px;height:40px}.gvb i svg{width:100%;height:100%}.gvb b{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}.gvb small{font-size:10.5px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}.gvqr{display:grid;place-items:center;background:#fff;border-radius:14px;padding:10px;margin:12px auto 6px;width:fit-content}.gvu{word-break:break-all;font-size:12px;color:var(--sub)}.tminp{width:100%;box-sizing:border-box;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:12px;padding:10px 12px;font:inherit;margin:4px 0 10px}.sgrp{background:var(--card);border:1px solid var(--line);border-radius:18px;margin:0 0 14px;overflow:hidden}
 .sgrp.plan{padding:14px 16px}.srow0{display:flex;justify-content:space-between;align-items:baseline;gap:8px}.srow0 b{font-size:16px}.srow0 small{color:var(--sub);font-size:12.5px}
 .sbar{height:6px;border-radius:9px;background:var(--card2);margin:10px 0 6px;overflow:hidden}.sbar i{display:block;height:100%;width:0;background:#2f6cff;border-radius:9px}
 .slink{border:0;background:none;color:#4d8bff;font-size:15px;font-weight:700;padding:8px 0 0;cursor:pointer;border-top:1px solid var(--line);width:100%;text-align:left;margin-top:8px}
@@ -757,7 +759,7 @@ body.feedfs #feed > .dash{display:none}
     <div class="logo"><img src="hathabo-logo.webp" alt="HATHABO"><span>HATHABO</span></div>
     <button class="fs" id="fsBtn" type="button" aria-label="全画面"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
     <div class="tr"><button class="end" id="endBtn" type="button">終わる</button><button type="button" class="hb" id="hSpk" aria-label="スピーカー">🔊</button><button type="button" class="hb" id="hMic" aria-label="マイク">🎙</button><button type="button" class="newm" id="newM" aria-label="作成">＋</button><div class="av" id="avTop">あ</div></div>
-    <div class="cmenu2" id="cMenu2" hidden><p>作成</p><button type="button" data-cm="talk"><i>💬</i>新しいトーク</button><button type="button" data-cm="friend"><i>＋</i>友だち追加</button><button type="button" data-cm="group"><i>👥</i>グループ作成<small>準備中</small></button><button type="button" data-cm="post"><i>📷</i>投稿</button><button type="button" data-cm="draft"><i>📝</i>新しいたたき台</button><button type="button" data-cm="aibo"><i>✦</i>愛棒の追加</button></div>
+    <div class="cmenu2" id="cMenu2" hidden><p>作成</p><button type="button" data-cm="talk"><i>💬</i>新しいトーク</button><button type="button" data-cm="friend"><i>＋</i>友だち追加</button><button type="button" data-cm="group"><i>👥</i>グループ作成<small>メールで招く</small></button><button type="button" data-cm="give"><i>🎁</i>愛棒を渡す<small>URL・QR</small></button><button type="button" data-cm="post"><i>📷</i>投稿</button><button type="button" data-cm="draft"><i>📝</i>新しいたたき台</button><button type="button" data-cm="aibo"><i>✦</i>愛棒の追加</button></div>
   </header>
   <div class="ttl" id="ttl" hidden>愛棒</div>
   <nav class="dots" id="dots" aria-label="画面"><button type="button" data-p="talk">Talk</button><button type="button" class="on" data-p="chat">Chat</button><button type="button" data-p="feed">Feed</button></nav>
@@ -789,6 +791,7 @@ body.feedfs #feed > .dash{display:none}
     <div id="tlPeople"><p class="note">検証ページに来た人が、ここに友だちとして並びます。</p></div>
     <p class="sub2">追加</p>
     <button class="tl" type="button" id="addFriend"><i class="pl">＋</i><span><b>友だちを追加</b><small>QRを見せる・URLを送る。読んだ人とトークでつながります</small></span></button>
+    <button class="tl" type="button" id="offAcc"><i class="pl"><img src="hathabo-logo.webp" alt="" style="width:100%;height:100%;border-radius:50%"></i><span><b>HATHABO 公式 <small class="badge">公式</small></b><small>お知らせ・新しい機能・使い方。ハタボの公式アカウント</small></span></button>
     <button class="tl" type="button" id="addShop"><i class="pl shop">店</i><span><b>お店を追加</b><small>HATHABO ACE で作ったお店や宿の窓口を、トークに加える（検証ではまだ見本だけ）</small></span></button>
     <p class="dash">トーク＝つながっている友だち。検証URLから来た人どうしは、はじめからつながっています。愛棒とのやりとり（チャット）は真ん中の面です。アプリを開くと、LINEでのログインを聞かれることがあります。</p>
     </div>
@@ -879,7 +882,7 @@ body.feedfs #feed > .dash{display:none}
       <button type="button" class="srow" data-st="plan"><span class="st"><b>料金・お支払い</b><small>プラン・トッピング・ポイント</small></span><i>›</i></button></div>
     <div class="sgrp"><button type="button" class="srow" data-st="plug"><em>🧩</em><span class="st"><b>アプリをつなぐ</b><small>プラグイン（カレンダー・メールなど）</small></span><i>›</i></button>
       <button type="button" class="srow" data-st="qr"><em>👥</em><span class="st"><b>友だちを追加</b><small>QR・URL</small></span><i>›</i></button>
-      <button type="button" class="srow" data-st="team" id="stTeam" hidden><em>👥</em><span class="st"><b>チームをつくる（事務局）</b><small>メールで招くと、ログインした時からグループでつながる</small></span><i>›</i></button>
+      <button type="button" class="srow" data-st="team" id="stTeam"><em>👥</em><span class="st"><b>グループをつくる</b><small>メールで招くと、ログインした時からグループでつながる</small></span><i>›</i></button><button type="button" class="srow" data-st="give"><em>🎁</em><span class="st"><b>愛棒を渡す</b><small>設定した愛棒を、URL・QRで渡す</small></span><i>›</i></button>
       <button type="button" class="srow" data-st="android"><em>📱</em><span class="st"><b>Android の声の案内</b><small>ほかのアプリも、愛棒が案内（テスト版）</small></span><i>›</i></button></div>
     <p class="sgh">愛棒</p>
     <div class="sgrp"><button type="button" class="srow" data-st="tier"><em>🧠</em><span class="st"><b>AIのかしこさ</b><small>押すたびに X・G・Z</small></span><span class="sv" id="stTier">Z</span></button>
@@ -895,8 +898,8 @@ body.feedfs #feed > .dash{display:none}
     <div class="sgrp"><button type="button" class="srow danger" data-st="out"><span class="st"><b>ログアウト</b></span></button></div>
   </div>
   <div class="sheet" id="teamSheet" hidden>
-    <div class="sh"><b>チームをつくる（事務局）</b><button type="button" class="close" data-close="teamSheet">閉じる</button></div>
-    <p class="note">チームの人の Google のメールアドレスを入れてください（1行に1人）。その人がこのページに Google でログインすると、そのときからみんなと友だちになっていて、グループのトークでつながります。メールアドレスは、ここに入れるだけにしてください（チャットやトークには書かない）。</p>
+    <div class="sh"><b>グループをつくる</b><button type="button" class="close" data-close="teamSheet">閉じる</button></div>
+    <p class="note">招く人の Google のメールアドレスを入れてください（1行に1人）。その人がこのページに Google でログインすると、そのときからグループのトークに入っていて、つくったあなたとは1対1のトークでもつながります（メンバーどうしの1対1は、それぞれが友だちになったときに）。メールアドレスは、ここに入れるだけにしてください（チャットやトークには書かない）。</p>
     <label class="note" for="tmTitle">グループの名前</label><input id="tmTitle" class="tminp" maxlength="30" value="HATHABO チーム">
     <label class="note" for="tmEmails">メールアドレス（あなたの分は入れなくても入ります）</label><textarea id="tmEmails" class="tminp" rows="5" placeholder="name@example.com"></textarea>
     <button type="button" class="postbtn" id="tmGo">チームをつくる</button><p class="note" id="tmMsg"></p>
@@ -1836,7 +1839,28 @@ body.feedfs #feed > .dash{display:none}
     const j = await api('/grok/team', { title: $('tmTitle').value.trim(), emails: $('tmEmails').value }).catch(() => ({}));
     $('tmGo').disabled = false; $('tmMsg').textContent = j.ok ? 'できました（' + j.n + '人）。ログインした人から、トークの「' + ($('tmTitle').value.trim() || 'チーム') + '」でつながります。' : (j.error || 'つくれませんでした');
     if (j.ok) { $('tmEmails').value = ''; teamsLoad(); } };
-  function setOpen() { setFill(); $('stMsg').textContent = ''; openSheet('setSheet'); api('/grok/keys', {}).then(j => { $('stTeam').hidden = !j.keys; }).catch(() => {}); }   // 事務局のアカウントのときだけ、チームをつくれる
+  // 11/28 愛棒を渡す：どの愛棒か選ぶ → パネルで設定 → URL と QR ができる（相手は開くと、その愛棒と話せる）
+  function giveOpen() { const B = [{ name: aiboName || 'ハタボーイ', role: 'あなたの愛棒', s: 0, c: 3, voice: 'ara', main: 1 }].concat(LS.g('hbBots', []));
+    $('artT').textContent = '愛棒を渡す'; const b = $('artBody'); b.dataset.id = 'give';
+    b.innerHTML = '<p class="note">渡す愛棒をえらんで、相手へのひとことを書くと、URL と QR ができます。相手は開くと、その愛棒と話せます（あなたの記憶やメモは渡りません）。</p><div class="gvl">' + B.map((x, i) => '<button type="button" class="gvb' + (i ? '' : ' on') + '" data-gi="' + i + '"><i>' + bot(x.s || 0, x.c || 0) + '</i><b>' + esc(x.name) + '</b><small>' + esc(x.role || '') + '</small></button>').join('') + '</div>'
+      + '<label class="note">どんな愛棒か（相手にどう話すか）</label><textarea id="gvDesc" class="tminp" rows="3" maxlength="300" placeholder="例：マー君の営業を手伝う、明るい相棒"></textarea><label class="note">相手へのひとこと（最初に愛棒が言います）</label><input id="gvMsg" class="tminp" maxlength="120" placeholder="例：はじめまして！よろしくね"><label class="note">だれに渡すか（メモ・あなただけ見ます）</label><input id="gvTo" class="tminp" maxlength="30" placeholder="例：やすくん"><button type="button" class="postbtn" id="gvGo">URL と QR をつくる</button><div id="gvOut"></div>';
+    let gi = 0; b.querySelectorAll('.gvb').forEach(x => x.onclick = () => { gi = +x.dataset.gi; b.querySelectorAll('.gvb').forEach(y => y.classList.toggle('on', y === x)); });
+    $('gvGo').onclick = async () => { const x = B[gi]; $('gvGo').disabled = true;
+      const j = await api('/grok/share', { bot: { name: x.name, role: x.role || '', desc: $('gvDesc').value.trim() || x.desc || '', voice: x.voice || CO_VOICE[x.c || 0] || 'ara', s: x.s || 0, c: x.c || 0 }, msg: $('gvMsg').value.trim(), to: $('gvTo').value.trim() }).catch(() => ({}));
+      $('gvGo').disabled = false; if (!j.a) { $('gvOut').innerHTML = '<p class="note">' + esc(j.error || 'つくれませんでした') + '</p>'; return; }
+      const u = location.origin + location.pathname + '?a=' + j.a; let img = ''; try { const q = window.qrcode(0, 'L'); q.addData(u); q.make(); img = q.createImgTag(5, 8); } catch (e) {}
+      $('gvOut').innerHTML = '<div class="gvqr">' + img + '</div><p class="gvu">' + esc(u) + '</p><div class="pbtns"><button type="button" id="gvCopy">URLをコピー</button><button type="button" id="gvSend">送る（LINE・メールなど）</button><button type="button" id="gvStop">このURLを止める</button></div>';
+      $('gvCopy').onclick = () => { try { navigator.clipboard.writeText(u); $('gvCopy').textContent = 'コピーしました'; } catch (e) {} };
+      $('gvSend').onclick = () => { const d = { title: x.name, text: x.name + 'を渡します。開くと話せます', url: u }; if (navigator.share) navigator.share(d).catch(() => {}); else $('gvCopy').click(); };
+      $('gvStop').onclick = async () => { const r = await api('/grok/shareoff', { a: j.a }).catch(() => ({})); $('gvStop').textContent = r.ok ? '止めました' : '止められませんでした'; }; };
+    sideShow('panel'); if (!wide()) go('side'); }
+  // 公式アカウント：お知らせ・新しい機能・使い方を、公式の愛棒が話す
+  $('offAcc').onclick = () => openBot({ name: 'HATHABO 公式', role: 'ハタボ公式アカウント', desc: 'ハタボの公式アカウント。新しい機能・お知らせ・キャンペーン・使い方を、短くわかりやすく案内する。売りこみすぎない。', s: 0, c: 3, voice: 'ara', temp: true });
+  // 渡された愛棒のURL（?a=）を開いたとき
+  (async () => { const a = new URLSearchParams(location.search).get('a'); if (!a) return; const j = await api('/grok/shareget', { a }).catch(() => ({}));
+    if (!j.bot) { setTimeout(() => note(j.error || 'この愛棒のURLは、使えなくなっています'), 1500); return; }
+    setTimeout(() => { openBot(Object.assign({}, j.bot, { temp: true })); note((j.from || 'だれか') + 'さんから、愛棒「' + j.bot.name + '」が届きました'); if (j.msg) say(j.bot.name, j.msg); }, 1500); })();
+  function setOpen() { setFill(); $('stMsg').textContent = ''; openSheet('setSheet'); }
   $('setSheet').addEventListener('click', e => { const b = e.target.closest('[data-st]'); if (!b) return; const a = b.dataset.st, close = () => { $('setSheet').hidden = true; };
     if (a === 'me') { close(); openSheet('prof'); } else if (a === 'plan') { close(); openSheet('planSheet'); } else if (a === 'plug') { close(); openSheet('plugSheet'); } else if (a === 'qr') { close(); openSheet('qrSheet'); }
     else if (a === 'help') { close(); if (!guideOn) $('rHelp').onclick(); }
@@ -1847,6 +1871,7 @@ body.feedfs #feed > .dash{display:none}
     else if (a === 'theme') { const n = { dark: 'light', light: 'auto', auto: 'dark' }[LS.g('hbTheme', 'dark')] || 'dark'; LS.s('hbTheme', n); themeSync(); setFill(); }
     else if (a === 'out') { close(); outOpen(); }
     else if (a === 'team') { close(); openSheet('teamSheet'); }
+    else if (a === 'give') { close(); giveOpen(); }
     else $('stMsg').textContent = SETM[a] || ''; });
   $('avMenu').addEventListener('click', e => { const b = e.target.closest('[data-av]'); if (!b) return; $('avMenu').hidden = true; const a = b.dataset.av;
     if (a === 'guide') { guideSet(!guideOn); $('avMenu').hidden = false; return; }
@@ -1946,7 +1971,8 @@ body.feedfs #feed > .dash{display:none}
   $('cMenu2').addEventListener('click', e => { const b = e.target.closest('[data-cm]'); if (!b) return; $('cMenu2').hidden = true; const a = b.dataset.cm;
     if (a === 'talk') { go('talk'); note2t('トークの友だちを押すと、その人と話せます。'); }
     else if (a === 'friend') $('addFriend').click();
-    else if (a === 'group') note2t('グループのトークは、これから入ります（検証中）。');
+    else if (a === 'group') openSheet('teamSheet');
+    else if (a === 'give') giveOpen();
     else if (a === 'post') { go('feed'); $('newPost').click(); }
     else if (a === 'draft') { tab('chat'); const t = $('txt'); t.value = 'たたき台を作って：'; t.focus(); $('sendF').classList.add('typing'); }
     else if (a === 'aibo') $('mkBot').click(); });
