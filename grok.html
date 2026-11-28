@@ -327,6 +327,16 @@ body.offi #log .row.hb::before{background:#fff url(hathabo-emblem-w.webp) center
 .dtile .map.mini{width:64px !important;height:64px !important;min-height:0 !important;aspect-ratio:auto !important;flex:0 0 auto !important;border-radius:12px;overflow:hidden;margin:0}.dtile .map.mini svg{width:100%;height:100%}.dtile .dt-ic{font-style:normal;font-size:34px;line-height:64px;height:64px}
 .dt-egg{width:56px;height:56px;margin:4px 0;border-radius:50%;background:radial-gradient(circle at 30% 30%,#24d6c8,#3b6cf6 55%,#0b0d18 100%);filter:saturate(1.2);box-shadow:0 0 22px rgba(80,140,255,.4);animation:eggfloat 3.2s ease-in-out infinite}
 @media (max-width:899px){.dtiles{grid-template-columns:repeat(2,1fr)}}
+/* 11/28 ご縁ガチャの卵はバナーから下のタイルへ。4つのタイルにもバナーと同じにじんだ背景 */
+.dtile{position:relative;overflow:hidden;isolation:isolate;color:#fff;border-color:rgba(255,255,255,.08)}
+.dtile::before{content:'';position:absolute;inset:-30%;z-index:-2;background:radial-gradient(55% 70% at 20% 25%,var(--b0,#3b6cf6) 0,transparent 70%),radial-gradient(60% 80% at 80% 85%,var(--b1,#24d6c8) 0,transparent 70%),#05060c;filter:blur(14px) saturate(1.15);opacity:.85}
+.dtile::after{content:'';position:absolute;inset:0;z-index:-1;opacity:.18;mix-blend-mode:overlay;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
+.dtile b{color:#fff}.dtile small{color:rgba(255,255,255,.8) !important}.dtile:hover{border-color:rgba(255,255,255,.35)}
+.dtile.begg{position:relative;right:auto;top:auto;transform:none;z-index:auto;border:1px solid rgba(255,255,255,.08);padding:12px 8px;gap:4px;color:#fff}
+.dtile.begg .eggc{width:56px;height:56px;margin:4px 0;box-shadow:0 0 22px color-mix(in srgb,var(--ec) 45%,transparent)}
+.dtile.begg b{font-size:14px;margin-top:0}
+.dtile .map.mini{background:rgba(5,6,12,.35) !important;border:1px solid rgba(255,255,255,.12)}
+
 .legend{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;color:var(--sub);font-size:11px}
 .legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px}
 .gate{position:fixed;inset:0;z-index:80;background:radial-gradient(circle at 50% 30%,#141a2e,#07080d 70%);display:grid;place-items:center;padding:24px}
@@ -481,7 +491,7 @@ body.feedfs #feed > .dash{display:none}
 .bslide::after{content:'';position:absolute;inset:0;z-index:0;opacity:.18;mix-blend-mode:overlay;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
 .bslide > div{position:relative;z-index:1;text-align:center}.bslide small{color:rgba(255,255,255,.75) !important}.bslide h3{color:#fff}.bslide p{color:rgba(255,255,255,.82) !important}
 .bslide{overflow:hidden}
-.bslide{flex:0 0 100%;display:grid;grid-template-columns:1fr;padding-right:190px !important;align-items:center;gap:10px;padding:20px 26px;position:relative}
+.bslide{flex:0 0 100%;display:grid;grid-template-columns:1fr;align-items:center;gap:10px;padding:20px 26px;position:relative}
 .bslide small{color:var(--sub);font-size:12px;letter-spacing:.08em}
 .bslide h3{margin:4px 0 6px;font-size:22px;line-height:1.3}
 .bslide p{margin:0 0 12px;color:var(--sub);font-size:13px;line-height:1.6}
@@ -813,10 +823,10 @@ body.feedfs #feed > .dash{display:none}
     <button type="button" class="prz" id="przBtn" aria-label="プレゼン"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M12 16v4M8 20h8"/></svg><span>プレゼン</span></button>
     <div class="dash2" id="dash2">
       <div class="qacts" id="qActs"><button type="button" data-qa="talk"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 10v4M8 7v10M12 4v16M16 7v10M20 10v4"/></svg></i>話す</button><button type="button" data-qa="thread"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"/></svg></i>スレッド</button><button type="button" data-qa="mk"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></i>愛棒をつくる</button><button type="button" data-qa="photo"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/></svg></i>写真</button><button type="button" data-qa="minutes"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M6 3h9l4 4v14H6z"/><path d="M9 12h7M9 16h5"/></svg></i>議事録</button><button type="button" data-qa="post"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M12 8v8M8 12h8"/></svg></i>投稿</button><button type="button" data-qa="plug"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 7V3M15 7V3M7 7h10v4a5 5 0 0 1-10 0zM12 16v5"/></svg></i>アプリ</button><button type="button" data-qa="gacha"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M4 12h16"/></svg></i>ガチャ</button></div>
-      <div class="bnr" id="bnr"><div class="bslides" id="bSlides"></div><div class="bdots" id="bDots"></div><button type="button" class="begg" id="bEgg" aria-label="ご縁ガチャ"><i class="eggc"><img class="eggb" src="hataboy-face.webp" alt=""><i class="capt"></i><i class="capb"></i><i class="capl"></i></i><b>ご縁ガチャ</b><small>つながるほど、引ける</small></button></div>
+      <div class="bnr" id="bnr"><div class="bslides" id="bSlides"></div><div class="bdots" id="bDots"></div></div>
       <h2 id="dHi">こんばんは</h2><p class="note">愛棒に話しかけるか、愛棒を選んでください</p>
       <div class="kpis"><div><b id="kMemo">0</b><small>覚えたこと</small></div><div><b id="kPosts">0</b><small>投稿</small></div><div><b id="kFol">0</b><small>フォロワー</small></div><div><b id="kPts">0</b><small>ポイント</small></div><div><b id="kStage">はじめまして</b><small>育ち</small></div></div>
-      <div class="dtiles"><button type="button" class="dtile tomap"><div class="map mini" id="mapMini"></div><b>ご縁マップ</b><small id="mapSum">つながり 0人</small></button><button type="button" class="dtile" id="goenGacha"><i class="dt-egg"></i><b>ご縁ガチャ</b><small>つながるほど、引ける</small></button><button type="button" class="dtile" data-qa="market"><i class="dt-ic">🛍</i><b>マーケット</b><small>愛棒・アプリをさがす</small></button><button type="button" class="dtile" data-qa="grow"><i class="dt-ic">🌱</i><b>育てる</b><small>話すほど、育つ</small></button></div>
+      <div class="dtiles"><button type="button" class="dtile tomap" style="--b0:#3b6cf6;--b1:#24d6c8"><div class="map mini" id="mapMini"></div><b>ご縁マップ</b><small id="mapSum">つながり 0人</small></button><button type="button" class="dtile begg" id="bEgg" aria-label="ご縁ガチャ" style="--b0:#e0517f;--b1:#e8a23a"><i class="eggc"><img class="eggb" src="hataboy-face.webp" alt=""><i class="capt"></i><i class="capb"></i><i class="capl"></i></i><b>ご縁ガチャ</b><small>つながるほど、引ける</small></button><button type="button" class="dtile" data-qa="market" style="--b0:#7c5cf0;--b1:#24a7e0"><i class="dt-ic">🛍</i><b>マーケット</b><small>愛棒・アプリをさがす</small></button><button type="button" class="dtile" data-qa="grow" style="--b0:#1fa77a;--b1:#c8f06a"><i class="dt-ic">🌱</i><b>育てる</b><small>話すほど、育つ</small></button></div>
       <p class="h">プリインストールの愛棒</p><div class="pre"><button type="button" data-say="お店の予約の段取りを手伝って"><i style="background:#3b6cf6">••</i><span><b>予約愛棒</b><small>お店・宿を予約</small></span></button><button type="button" data-say="英語で話す練習がしたい"><i style="background:#3fb37f">••</i><span><b>翻訳愛棒</b><small>多言語・方言</small></span></button><button type="button" data-say="今週の予定を整理したい"><i style="background:#e8a23a">••</i><span><b>スケジュール愛棒</b><small>予定を調整</small></span></button><button type="button" data-say="議事録をとってほしい"><i style="background:#7c5cf0">••</i><span><b>議事録愛棒</b><small>会議をまとめる</small></span></button></div></div>
     <div class="vcol">
     <div class="chip"><div class="me" id="meDot">あ</div><span class="pill" id="who">あなた</span></div>
@@ -1718,7 +1728,6 @@ body.feedfs #feed > .dash{display:none}
   function outOpen() { const n = $('name').value.trim() || 'あなた'; $('outName').textContent = n; $('outAv').textContent = n.slice(0, 1); $('outMail').textContent = $('pEmail').textContent || ''; document.querySelectorAll('.sheet').forEach(x => x.hidden = true); openSheet('outSheet'); }
   function themeSync() { const t = LS.g('hbTheme', 'dark'), on = t === 'light' || (t === 'auto' && matchMedia('(prefers-color-scheme: light)').matches); document.documentElement.classList.toggle('light', on); const e = $('avTheme'); if (e) e.textContent = '表示：' + ({ dark: 'ダーク', light: 'ライト', auto: '端末に合わせる' }[t] || 'ダーク'); }
   themeSync(); try { matchMedia('(prefers-color-scheme: light)').addEventListener('change', themeSync); } catch (e) {}
-  $('goenGacha').onclick = () => openSheet('growSheet');   // パソコン：ご縁マップのとなりから、ガチャ
   // 愛棒の画面：プレゼン＝愛棒だけを画面いっぱいに（もう一度押すか Esc でもどる）
   $('sideAibo').appendChild($('przM'));
   $('przBtn').onclick = e => { e.stopPropagation(); if (document.fullscreenElement) { document.exitFullscreen(); return; } $('przM').hidden = !$('przM').hidden; };
@@ -2000,7 +2009,7 @@ body.feedfs #feed > .dash{display:none}
     // 引いたら：色がくるくる変わって、卵が割れて、愛棒が生まれる → ガチャの画面へ
     egg.onclick = () => { if (egg.classList.contains('rolling') || egg.classList.contains('open')) return; egg.classList.add('rolling'); let n = 0;
       const iv = setInterval(() => { ei = (ei + 1) % EGG.length; paint(ei); if (++n > 14) { clearInterval(iv); egg.classList.remove('rolling'); egg.classList.add('open'); const g = EGGV[ei]; LS.s('hbEgg', { c: g[0], v: g[1], at: Date.now() }); egg.querySelector('small').textContent = g[2] + 'の愛棒が生まれた！'; speak('こんにちは！' + g[2] + 'で話すよ。よろしくね', g[1], () => {}); setTimeout(() => { egg.querySelector('small').textContent = 'つながるほど、引ける'; }, 5000);
-        setTimeout(() => { $('goenGacha').click(); setTimeout(() => egg.classList.remove('open'), 600); }, 1100); } }, 110); }; }
+        setTimeout(() => { openSheet('growSheet'); setTimeout(() => egg.classList.remove('open'), 600); }, 1100); } }, 110); }; }
   // すぐ使うボタン・バナーのボタン
   document.addEventListener('click', e => { const b = e.target.closest('[data-qa]'); if (!b) return; const a = b.dataset.qa;
     if (a === 'talk') $('talk').click(); else if (a === 'thread') tab('chat'); else if (a === 'mk') $('mkBot').click(); else if (a === 'photo') $('attImg').click(); else if (a === 'minutes') { const t = $('txt'); t.value = '議事録とって'; t.focus(); $('sendF').classList.add('typing'); }
