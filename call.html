@@ -145,6 +145,9 @@ main{min-height:100%;max-width:480px;margin:0 auto;padding:max(16px,env(safe-are
   function wakeOff() { try { if (wake) wake.release(); } catch (e) {} wake = null; }
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && ws && !ended) wakeOn(); });
   /** 通話が終わった（自分が切った・相手が切った・出られなかった）。切符が1回だけのことがあるので、かけなおしはアプリから */
+  let noAns = 0;
+  /** 11/28 出なかった：電話を切って、アプリ（親の画面）に「相手の愛棒につないで」と知らせる */
+  function noAnswer(msg) { clearTimeout(noAns); try { send({ type: 'bye' }); } catch (e) {} finish(msg); try { parent.postMessage({ type: 'hb-noanswer' }, '*'); } catch (e) {} }
   function finish(msg) {
     ended = true; stopAll(); state(msg); diag('');
     if (T) { $('callBtn').hidden = true; $('declineBtn').hidden = true; $('note').hidden = true; $('volHint').hidden = true; $('time').textContent = '通話終了'; }
@@ -220,9 +223,11 @@ main{min-height:100%;max-width:480px;margin:0 auto;padding:max(16px,env(safe-are
   async function flush() { for (const c of pend.splice(0)) await pc.addIceCandidate(c).catch(() => {}); }
 
   async function onMsg(m) {
-    if (m.type === 'joined') { $('face').classList.add('ring'); state(m.peers > 1 ? 'つないでいます…' : T ? '呼び出しています…（相手が出るのを待っています）' : '相手を待っています（リンクを送ってね）'); }
+    if (m.type === 'joined') { $('face').classList.add('ring'); state(m.peers > 1 ? 'つないでいます…' : T ? '呼び出しています…（相手が出るのを待っています）' : '相手を待っています（リンクを送ってね）');
+      if (T && ROLE !== 'in' && m.peers <= 1) { clearTimeout(noAns); noAns = setTimeout(() => { if (ended || pc) return; noAnswer('出られないようです。' + (peerName || '相手') + 'さんの愛棒につなぎます'); }, 30000); } }   // 11/28 30秒出なければ、相手の愛棒がお留守番で出る
     else if (m.type === 'hello') { peerName = String(m.name || '相手').slice(0, 20); $('peerName').textContent = peerName; setFace(peerName); }
     else if (m.type === 'peer') {   // 相手が入ってきた → こちらからかける
+      clearTimeout(noAns);
       send({ type: 'hello', name: $('me').value.trim() });
       if (pc) { pc.close(); pc = null; }
       makePc(); state('呼び出しています…');
@@ -239,7 +244,7 @@ main{min-height:100%;max-width:480px;margin:0 auto;padding:max(16px,env(safe-are
     else if (m.type === 'ice') { if (pc && pc.remoteDescription) await pc.addIceCandidate(m.c).catch(() => {}); else pend.push(m.c); }
     else if (m.type === 'mute') state(m.on ? (peerName || '相手') + 'さんがミュートにしました' : '通話中');
     else if (m.type === 'bye') finish((peerName || '相手') + 'さんが切りました。通話が終わりました');   // 11/23：切ったら相手にも終わりが伝わる
-    else if (m.type === 'declined') finish((m.name || peerName || '相手') + 'さんは出られませんでした');
+    else if (m.type === 'declined') { if (T && ROLE !== 'in') noAnswer((m.name || peerName || '相手') + 'さんは出られませんでした。愛棒につなぎます'); else finish((m.name || peerName || '相手') + 'さんは出られませんでした'); }
     else if (m.type === 'left') {   // 電波が切れたなど（「切る」ではない）
       if (pc) { pc.close(); pc = null; } clearInterval(tick); $('time').textContent = '';
       $('face').classList.add('ring'); state('相手の電波が切れました。少し待つと、またつながることがあります'); diag('');
