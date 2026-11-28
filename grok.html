@@ -368,7 +368,7 @@ body.offi #log .row.hb::before{background:#fff url(hathabo-emblem-w.webp) center
 #pane-chat .lcol{display:flex;flex-direction:column;height:calc(100dvh - 170px);margin-top:0}
 @media (max-width:899px){ #pane-chat .vv{display:none} }
 #cTabs{margin:0 auto 6px}
-.orb.vhide{display:none}
+.orb.vhide{display:none}.orb.guide{outline:2px solid #7fa8ff;outline-offset:5px}
 .navihl{outline:3px solid #3b6cf6 !important;outline-offset:3px;border-radius:12px;animation:navip 1.1s ease-in-out infinite;position:relative;z-index:5}@keyframes navip{0%,100%{box-shadow:0 0 0 0 rgba(59,108,246,.55)}50%{box-shadow:0 0 0 10px rgba(59,108,246,0)}}.orb.idle{transform:scale(.86);opacity:.9;box-shadow:0 0 18px rgba(70,140,255,.45),0 0 6px rgba(46,230,166,.35)}.orb.idle i{animation-duration:4s !important}
 #pane-chat .lh{display:none}
 #pane-chat .log{flex:1;max-height:none;min-height:0;background:transparent;border:0;padding:4px 2px}
@@ -1110,7 +1110,7 @@ body.feedfs #feed > .dash{display:none}
   const HB = (s, lv) => { try { if (lv !== undefined) bars.forEach((b, i) => { b.style.height = (6 + lv * 22 * (0.45 + 0.55 * Math.abs(Math.sin(i * 1.7 + Date.now() / 140)))) + 'px'; }); if (lv !== undefined) $('orb').style.setProperty('--lv', Math.min(1, lv).toFixed(3)); if (window.HB) { if (s) window.HB.setState(s); if (lv !== undefined) window.HB.setLevel(lv); } } catch (e) {} };   // 3Dのハタボーイ（読みこめなくても会話は続ける）
   function say(who, t) {
     if (!t) return;
-    if (who === 'あなた') deckVoice(t);   // 11/28 声だけでプレゼンを動かす（はじめて・次・もどって・止めて・おわり）
+    if (who === 'あなた') { deckVoice(t); naviVoice(t); }   // 11/28 声だけでプレゼンを動かす（はじめて・次・もどって・止めて・おわり）
     const k = who === 'あなた' ? 'me' : 'hb';
     if (!rows[k]) { const d = document.createElement('div'); d.className = 'row ' + k; d.innerHTML = '<b></b><span></span>'; d.firstChild.textContent = who; $('log').appendChild(d); rows[k] = d; rows[k === 'me' ? 'hb' : 'me'] = null; const o = { who, text: '', at: new Date().toTimeString().slice(0, 5) }; turns.push(o); all.push(o); if (turns.length > 30) turns.shift(); if (all.length > 3000) all.shift(); }
     rows[k].lastChild.textContent += t; turns[turns.length - 1].text += t; if (k === 'hb') { $('cap').textContent = rows[k].lastChild.textContent; $('tlLast').textContent = rows[k].lastChild.textContent.slice(0, 60); } $('log').scrollTop = 1e9;
@@ -1227,7 +1227,7 @@ body.feedfs #feed > .dash{display:none}
       return; }
     if (t === 'response.output_audio_transcript.delta' || t === 'response.audio_transcript.delta' || t === 'response.output_text.delta') { if (ev.delta) respShown = true; say(spkName(), ev.delta || ''); return; }
     if (t === 'response.function_call_arguments.done') { if (ev.name === 'ask_brain') brain(ev.call_id, ev.arguments); else if (ev.name === 'remember') remember(ev.call_id, ev.arguments); else if (ev.name === 'quiet') hold(ev.call_id, 'quiet'); else if (ev.name === 'set_name') rename(ev.call_id, ev.arguments); else if (ev.name === 'feedback') feedback(ev.call_id, ev.arguments); else if (ev.name === 'minutes') minutes(ev.call_id, ev.arguments); else if (ev.name === 'connect_card') connectCard(ev.call_id, ev.arguments); else if (ev.name === 'ui' || ev.name === 'navi') uiAct(ev.call_id, ev.arguments); return; }
-    if (t === 'session.updated') { ready = true; state('話しかけてください'); if (!uiAdded) { uiAdded = true; send({ type: 'session.update', session: { tools: baseTools.concat(UI_TOOL) } }); }   // 11/28 画面を動かす道具は、声の設定が通ったあとに別で足す（受けつけられなくても声は止まらない）
+    if (t === 'session.updated') { ready = true; state('話しかけてください'); /* 11/28 画面のナビは声のAIの道具にしない（道具の更新で切れることがあった）。話した言葉をこのページで聞きとって動かす（naviVoice） */
       if (curBot || myHogen()) sendRole(); return; }
     if (t === 'error') { const em = (ev.error && ev.error.message) || ev.message || '';
       if (!uiOff && /tool|function|schema|param|enum|invalid/i.test(em)) { uiOff = true; send({ type: 'session.update', session: { tools: baseTools } }); console.warn('ui tool off', em); return; }   // 11/28 画面を動かす道具が受けつけられなかったら、道具なしで話しつづける
@@ -1350,7 +1350,7 @@ body.feedfs #feed > .dash{display:none}
   requestAnimationFrame(() => { renderFeed(); if (wide()) loadFeed(); });   // パソコンは Feed も最初から見える
   let nameT = 0; $('name').addEventListener('input', () => { clearTimeout(nameT); nameT = setTimeout(() => { feedData = null; if (wide()) loadFeed(true); profFill(); }, 800); });
   addEventListener('resize', () => { if (!wide()) { const a = dotBtns.find(b => b.classList.contains('on')); go(a ? a.dataset.p : 'chat', false); } });
-  function sub(v) { if (v === 'aibo') { sideShow('aibo'); go('side'); } else { go('chat'); $('log').scrollTop = 1e9; } orbSync(); }   // 愛棒＝となりの面へ
+  function sub(v) { if (v === 'aibo') { sideShow('aibo'); go('side'); } else if (v === 'panel') { if (!$('artBody').dataset.id) artFolder(); else sideShow('panel'); } else { go('chat'); $('log').scrollTop = 1e9; } orbSync(); }   // 愛棒＝となりの面へ
   let sideMode = 'aibo';
   // 11/28 スマホ：パネルはとなりの面（#pane-pnl）に置く。パソコンは右の列（#pane-side）の中
   function panelPlace() { const sp = $('sidePanel'); if (!wide()) { if (sp.parentNode !== $('pane-pnl')) $('pane-pnl').appendChild(sp); sp.hidden = false; }
@@ -1372,7 +1372,7 @@ body.feedfs #feed > .dash{display:none}
     if (v === 'panel' && !$('artBody').dataset.id) artFolder(); else sideShow(v); });
   // 11/28 スマホ：玉はつながる前から出しておく（押すと話しはじめる）。話しているあいだは光って動き、押すと愛棒の画面へ
   const orbIdle = () => !wide();
-  function orbSync() { const o = $('orb'), live = !!ws; if (!live) o.hidden = !orbIdle(); o.classList.toggle('idle', !live); o.setAttribute('aria-label', live ? '愛棒と話しています' : '押すと愛棒と話せます'); o.classList.toggle('vhide', !wide() && curPane !== 'chat'); }   // 愛棒の画面が見えているときは出さない
+  function orbSync() { const o = $('orb'), live = !!ws; if (!live) o.hidden = !orbIdle(); o.classList.toggle('idle', !live); o.classList.toggle('guide', (() => { try { return !!guideOn; } catch (e) { return false; } })()); o.setAttribute('aria-label', live ? '愛棒と話しています' : '押すと愛棒と話せます'); o.classList.toggle('vhide', !wide() && curPane !== 'chat'); }   // 愛棒の画面が見えているときは出さない
   function tab(t) { if (t === 'voice' || t === 'aibo') return sub('aibo'); go(t === 'talk' ? 'talk' : 'chat'); if (t !== 'talk') sub('thread'); }
   function openSheet(id) { $(id).hidden = false; if (id === 'prof') { loadFeed(true); profFill(); } if (id === 'qrSheet') { $('qrName').textContent = ($('name').value.trim() || 'あなた') + 'さんのQR'; qrFill(); } }
   document.querySelectorAll('[data-close]').forEach(b => b.onclick = () => { $(b.dataset.close).hidden = true; });
@@ -1788,7 +1788,7 @@ body.feedfs #feed > .dash{display:none}
   function naviShow(el) { if (!el) return; document.querySelectorAll('.navihl').forEach(x => x.classList.remove('navihl')); el.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); el.classList.add('navihl'); setTimeout(() => el.classList.remove('navihl'), 6000); }
   function naviScroll(d) { const el = [$('pHome'), $('log'), $('feed'), $('sideAibo'), $('vv'), $('tlBody')].find(e => e && visEl(e) && e.scrollHeight > e.clientHeight + 10); if (el) el.scrollBy({ top: d * el.clientHeight * .7, behavior: 'smooth' }); return !!el; }
   function uiAct(callId, args) { let a = {}; try { a = JSON.parse(args || '{}'); } catch (e) {}
-    const R = out => reply(callId, out), act = String(a.action || ''), tg = String(a.target || '').toLowerCase(), deckOn = $('deck') && !$('deck').hidden, sheet = id => { openSheet(id); };
+    const R = out => { if (callId) reply(callId, out); }, act = String(a.action || ''), tg = String(a.target || '').toLowerCase(), deckOn = $('deck') && !$('deck').hidden, sheet = id => { openSheet(id); };
     if (act === 'scroll') { const ok = naviScroll(tg === 'up' ? -1 : 1); return R(ok ? (tg === 'up' ? '上へもどしました' : '下へ進めました') : 'スクロールできるところがありません'); }
     if (act === 'back') { const c = [...document.querySelectorAll('.sheet:not([hidden]) [data-close]')].pop(); if (c) { c.click(); return R('閉じました'); } if (document.body.classList.contains('phome')) { phomeToggle(false); return R('ホームを閉じました'); } if (deckOn) { dkClose(); return R('プレゼンを閉じました'); } return R('閉じるものはありません'); }
     if (act === 'show') { const el = naviFind(a.target || a.text); if (!el) return R('「' + (a.target || '') + '」は、いまの画面に見つかりませんでした。どの画面にあるか考えて、open してから show してください'); naviShow(el); return R('「' + (el.textContent || el.getAttribute('aria-label') || '').trim().slice(0, 24) + '」を光らせました。ここを押してくださいと伝えて'); }
@@ -1817,6 +1817,17 @@ body.feedfs #feed > .dash{display:none}
       case 'friend': { const nm = String(a.name || a.text || '').replace(/\s|さん|くん|ちゃん/g, ''); const r = nm && [...document.querySelectorAll('#tlPeople .tl, #tlTeams .tl')].find(e => e.textContent.replace(/\s/g, '').includes(nm)); if (!r) return R('「' + (a.name || '') + '」さんは、トークの友だちに見つかりませんでした'); note('（' + (a.name || nm) + 'さんとつなぎました）'); setTimeout(() => r.click(), 600); return R((a.name || nm) + 'さんのトークを開きました'); }
     }
     R('その画面はまだ開けません。show で近いボタンを光らせて案内して'); }
+  // 11/28 声のナビ（このページで聞きとる）：「フィード開いて」「下にスクロール」「閉じて」「〇〇はどこ？」。送る・電話・購入・削除はしない（光らせるだけ）
+  let nvAt = 0;
+  const NV_OPEN = [[/トーク/, 'talk'], [/スレッド|チャット/, 'chat'], [/フィード/, 'feed'], [/パネル/, 'panel'], [/ホーム/, 'home'], [/ガチャ/, 'gacha'], [/マップ|地図/, 'map'], [/育て/, 'grow'], [/マーケット/, 'market'], [/設定/, 'settings'], [/公式/, 'official'], [/愛棒|相棒|あいぼう/, 'aibo']];
+  function naviVoice(t) { if (Date.now() - nvAt < 1200 || (!$('deck').hidden)) return; const x = String(t).replace(/[\s。、！？!?「」]/g, ''); if (x.length > 30) return;
+    const act = (o) => { nvAt = Date.now(); uiAct('', JSON.stringify(o)); };
+    if (/(下|した)(に|へ)?(スクロール|さげ|下げ|すすめ|進め)|スクロールして/.test(x)) return act({ action: 'scroll', target: 'down' });
+    if (/(上|うえ)(に|へ)?(スクロール|あげ|上げ|もど|戻)/.test(x)) return act({ action: 'scroll', target: 'up' });
+    if (/^(閉じて|とじて|もどって|戻って|キャンセル)/.test(x)) return act({ action: 'back' });
+    const w = x.match(/^(.{1,12}?)(は|って)?(どこ|どれ)/); if (w) { const h = NV_OPEN.find(([re]) => re.test(w[1])); return act(h ? { action: 'open', target: h[1] } : { action: 'show', target: w[1] }); }
+    if (/投稿(したい|して|する)/.test(x)) return act({ action: 'open', target: 'post' });
+    if (/(開いて|ひらいて|見せて|みせて|出して|だして|にして|に行って|にいって|へ行って|に移動|を表示)/.test(x)) { const hit = NV_OPEN.find(([re]) => re.test(x)); if (hit) return act({ action: 'open', target: hit[1] }); } }
   // 11/28 声でプレゼンを動かす：準備の画面で「はじめて・いいよ・OK」→ はじめる。プレゼン中は「次・もどって・止めて・つづけて・おわり」
   let dvAt = 0;
   function deckVoice(t) { if (!$('deck') || $('deck').hidden || Date.now() - dvAt < 1500) return; const x = String(t).replace(/[\s。、！？!?]/g, '');
@@ -1874,14 +1885,14 @@ body.feedfs #feed > .dash{display:none}
   //  ・はじめて開いた面は、1回だけ使い方を案内。静かモード・声で話しているとき・プレゼン中は話さない
   let guideOn = (() => { try { return localStorage.getItem('hbGuide2') === '1'; } catch (e) { return false; } })(),   // 11/28 はじめはオフ。「使い方」ボタンでオン・オフ
   guideAt = 0, guideDone = new Set();
-  function guideSet(on) { guideOn = on; setTimeout(() => { try { qsetSync(); } catch (e) {} }, 0); LS.s('hbGuide2', on ? 1 : 0); $('avGuide').textContent = '声の案内：' + (on ? 'オン' : 'オフ'); if (!on && guideAt && !(ws && ready)) sayStop(); $('gPill').hidden = !on; const h = $('rHelp'); h.classList.toggle('gon', on);  const hs = $('hgTog'); if (hs) hs.classList.toggle('on', on); }
+  function guideSet(on) { guideOn = on; setTimeout(() => { try { qsetSync(); } catch (e) {} }, 0); LS.s('hbGuide2', on ? 1 : 0); $('avGuide').textContent = '声の案内：' + (on ? 'オン' : 'オフ'); if (!on && guideAt && !(ws && ready)) sayStop(); $('gPill').hidden = true; try { orbSync(); } catch (e) {} const h = $('rHelp'); h.classList.toggle('gon', on);  const hs = $('hgTog'); if (hs) hs.classList.toggle('on', on); }
   guideSet(guideOn);
   const gBusy = () => !guideOn || nameOnly || !$('deck').hidden || (sayEl && !sayEl.paused) || document.hidden;
   function guideSay(t, key, force) { if (!WT && !tok && !$('key').value.trim()) return false;   // ログインしていないときは案内しない（声が出せないので）
     if (!t || gBusy() || (key && guideDone.has(key))) return false; if (!force && Date.now() - guideAt < 8000) return false;
     if (key) guideDone.add(key); guideAt = Date.now();   // 文字は出さない（声で案内する）
     if (ws && ready) { tellAibo('（画面の案内メモ：' + t + '。これを、あなたの言葉でひとことだけ伝えて。ほかの話はしない）'); return true; }   // 声で話しているときは、愛棒が自分の声で案内する
-    speak(t, (curBot && curBot.voice) || 'ara', () => {}); return true; }
+    return false; }   // 11/28 愛棒と声で話していないときは、別の声では案内しない（案内は愛棒だけ）
   const HELP = [['#cPlus', '左の＋を押していますね。写真や資料を送ったり、議事録やスタンプを作れます'], ['#txt', 'いま文字を書くところを触っていますね。書いて右の丸を押すと、わたしに送れます'], ['#cAv', '右の丸いわたしを押すと、声で話せます'],
     ['.csub', '上のボタンで、スレッド、愛棒、パネルを切りかえられます。左右にスワイプしても動きます'], ['#dots', 'いちばん上で、トーク、チャット、フィードを切りかえます'], ['#przBtn', 'プレゼンを押すと、資料を全画面で見せて、わたしが1枚ずつ説明します'],
     ['#sidePanel', 'ここはパネル、作業スペースです。作った下書きや議事録がここに開きます'], ['#tHead', 'いま話している愛棒です。声で話すを押すと、声で話せます'], ['.hsug', 'おすすめの話題を押すと、すぐに話しかけられます'],
@@ -1924,7 +1935,7 @@ body.feedfs #feed > .dash{display:none}
     // 11/28 使い方は文字で読ませない：押すと点灯して、愛棒がいまの画面を声で案内する。もう一度押すと消える
     if (on) { guideAt = 0; LS.s('hbGuideSeen', []); gIntroAfter = Date.now() + 9000;
       const v = wide() ? (sideMode === 'feed' ? 'feed' : 'chat') : curPane === 'side' ? 'aibo' : curPane === 'pnl' ? 'panel' : curPane, x = INTRO[v] || INTRO.chat;
-      setTimeout(() => guideSay('案内しますね。' + x[1] + '。わからないところを触ると、説明します', '', true), 200); }
+      guideAt = Date.now(); setTimeout(() => tellAibo('（使い方の案内がオンになりました。いまの画面：' + x[1] + '。これをあなたの言葉で短く伝えて、「わからないところを触るか、聞いてください。画面も動かします」と添えて）'), 200); }   // 11/28 案内は愛棒だけ（別の声は出さない）。話していなければ、愛棒とつないでから
     else { $('helpSheet').hidden = true; sayStop(); } };
   $('gPill').onclick = () => { if (guideOn) $('rHelp').onclick(); };   // どの画面からでも、案内をとめられる
   const helpOpen = async () => { openSheet('helpSheet'); const j = await api('/grok/keys', {}).catch(() => ({})); const b = $('keysBox');   // 事務局のアカウントのときだけ、つなぎ先の鍵が入っているかを出す
@@ -1940,7 +1951,7 @@ body.feedfs #feed > .dash{display:none}
     if (x.imgs) h += '<div class="stg">' + x.imgs.map(u => '<a href="' + esc(u) + '" target="_blank" rel="noopener"><img alt="" src="' + esc(u) + '"></a>').join('') + '</div><p class="note">長押しで保存できます（30日で消えます）</p>';
     if (x.text != null) h += '<textarea class="arttx" id="artTx">' + esc(x.text) + '</textarea>';
     h += '<div class="pbtns">' + (x.kind === 'draft' && x.to ? '<button type="button" id="artSend">この文面で送る</button>' : '') + (x.kind === 'memo' ? '<button type="button" id="artToHb">ハタボーイに渡す</button>' : '') + (x.text != null ? '<button type="button" id="artCopy">コピー</button>' : '') + '<button type="button" id="artDel">フォルダ愛棒から消す</button></div>';
-    b.innerHTML = h; b.dataset.id = id; sideShow('panel'); if (!wide()) go('side');
+    b.innerHTML = h; b.dataset.id = id; sideShow('panel');
     const tx = $('artTx'); if (tx) tx.oninput = () => { const A = LS.g('hbArts', []), y = A.find(z => z.id === id); if (y) { y.text = tx.value; LS.s('hbArts', A); } };
     if ($('artCopy')) $('artCopy').onclick = () => { try { navigator.clipboard.writeText($('artTx').value); $('artCopy').textContent = 'コピーしました'; } catch (e) {} };
     if ($('artSend')) $('artSend').onclick = () => { const t = $('artTx').value.trim(); if (!t) return; if (dmWith !== x.to) openDm(x.to, x.toName || ''); setTimeout(() => dmLoad(t, true), dmWith === x.to ? 0 : 600); sideShow('aibo'); };
@@ -1948,7 +1959,7 @@ body.feedfs #feed > .dash{display:none}
     $('artDel').onclick = () => { LS.s('hbArts', LS.g('hbArts', []).filter(z => z.id !== id)); artFolder(); }; }
   function artFolder() { const A = LS.g('hbArts', []); $('artT').textContent = 'フォルダ愛棒'; const b = $('artBody'); b.dataset.id = '';
     b.innerHTML = '<p class="note">フォルダ愛棒です。トークや愛棒との会話で作ったものを、ここにためておきます（この端末の中）。</p>' + (A.length ? Object.keys(ART_K).map(k => { const L = A.filter(x => x.kind === k); return L.length ? '<p class="h">' + ART_K[k][0] + ' ' + ART_K[k][1] + '</p>' + L.map(x => '<button type="button" class="artrow" data-art="' + x.id + '"><span>' + esc(x.title) + '</span><small>' + new Date(x.at).toLocaleDateString('ja-JP', { month: 'numeric', day: 'numeric' }) + '</small></button>').join('') : ''; }).join('') : '<p class="note" style="margin-top:20px">まだありません。議事録をとる・スタンプを作る・返信の下書きを作ると、ここに入ります。</p>');
-    b.dataset.id = 'folder'; sideShow('panel'); if (!wide()) go('side'); }
+    b.dataset.id = 'folder'; sideShow('panel'); }
   $('artBody').addEventListener('click', e => { const r = e.target.closest('[data-art]'); if (r) artOpen(r.dataset.art); });
   $('artWide').onclick = () => { document.body.classList.toggle('sidewide'); colsSync(); }; $('artClose').onclick = () => sideShow('aibo'); $('artFold').onclick = () => artFolder();
   $('rFolder').onclick = artFolder;
@@ -1992,7 +2003,7 @@ body.feedfs #feed > .dash{display:none}
       $('gvCopy').onclick = () => { try { navigator.clipboard.writeText(u); $('gvCopy').textContent = 'コピーしました'; } catch (e) {} };
       $('gvSend').onclick = () => { const d = { title: x.name, text: x.name + 'を渡します。開くと話せます', url: u }; if (navigator.share) navigator.share(d).catch(() => {}); else $('gvCopy').click(); };
       $('gvStop').onclick = async () => { const r = await api('/grok/shareoff', { a: j.a }).catch(() => ({})); $('gvStop').textContent = r.ok ? '止めました' : '止められませんでした'; }; };
-    sideShow('panel'); if (!wide()) go('side'); }
+    sideShow('panel'); }
   // 公式アカウント：お知らせ・新しい機能・使い方を、公式の愛棒が話す
   $('offAcc').onclick = () => openBot({ off: 1, name: 'HATHABO 公式', role: 'ハタボ公式アカウント', desc: 'ハタボの公式アカウント。新しい機能・お知らせ・キャンペーン・使い方を、短くわかりやすく案内する。売りこみすぎない。', s: 0, c: 3, voice: 'sal', temp: true });
   // 渡された愛棒のURL（?a=）を開いたとき
@@ -2044,7 +2055,7 @@ body.feedfs #feed > .dash{display:none}
   $('cMenu').querySelectorAll('[data-att]').forEach(b => b.onclick = e => { e.stopPropagation(); $('cMenu').hidden = true; $(ATT[b.dataset.att]).click(); });
   function meRow(html) { const d = document.createElement('div'); d.className = 'row me'; d.innerHTML = '<b></b><span></span>'; d.lastChild.innerHTML = html; $('log').appendChild(d); rows = { me: null, hb: null }; $('log').scrollTop = 1e9; }
   async function shrinkImg(f, max) { const bmp = await createImageBitmap(f), r = Math.min(1, max / Math.max(bmp.width, bmp.height)), c = document.createElement('canvas'); c.width = Math.round(bmp.width * r); c.height = Math.round(bmp.height * r); c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height); let q = 0.8, d = c.toDataURL('image/jpeg', q); while (d.length > 360000 && q > 0.35) { q -= 0.1; d = c.toDataURL('image/jpeg', q); } return d; }
-  function whenReady(fn) { if (ws && ready) return fn(); $('talk').click(); let n = 0; const iv = setInterval(() => { if (ws && ready) { clearInterval(iv); fn(); } else if (++n > 60) { clearInterval(iv); note('（つながらなかったので、愛棒にわたせませんでした）'); } }, 300); }
+  function whenReady(fn) { if (ws && ready) return fn(); if (!ws && !starting) $('talk').click();   /* 11/28 つないでいる途中に押すと切れてしまい、つなぎなおしがくり返されていた */ let n = 0; const iv = setInterval(() => { if (ws && ready) { clearInterval(iv); fn(); } else if (++n > 60) { clearInterval(iv); note('（つながらなかったので、愛棒にわたせませんでした）'); } }, 300); }
   const tellAibo = text => whenReady(() => { rows = { me: null, hb: null }; send({ type: 'conversation.item.create', item: { type: 'message', role: 'user', content: [{ type: 'input_text', text }] } }); send({ type: 'response.create' }); });
   const TEXT_RE = /\.(txt|md|csv|tsv|json|html?|xml|ya?ml|js|ts|py|css|log|ini|srt|vtt)$/i;
   // 11/28 チャットに PDF を入れたら：愛棒が枚数を見て、1枚ずつ原稿を作り、「これでいいですか？」と聞いてから、プレゼンの準備（原稿と秒数を直せる）を開く
