@@ -96,7 +96,7 @@ html.light .cug button.on{background:var(--card2) !important;color:var(--ink)}
   #pane-chat .thead{position:absolute;top:var(--hh,118px);left:-16px;right:-16px;z-index:4;padding:6px 18px;background:rgba(7,8,13,.62);background:color-mix(in srgb,var(--bg) 62%,transparent);-webkit-backdrop-filter:blur(18px) saturate(1.4);backdrop-filter:blur(18px) saturate(1.4)}
   #pane-chat .log{padding-top:calc(var(--hh,118px) + 48px);padding-bottom:calc(84px + env(safe-area-inset-bottom));scroll-padding-top:calc(var(--hh,118px) + 48px)}
   #pane-chat .hello{padding-top:calc(var(--hh,118px) + 12px)}
-  #pane-chat .cbar{position:absolute;left:0;right:0;bottom:calc(6px + env(safe-area-inset-bottom));z-index:4;background:rgba(18,20,28,.78);background:color-mix(in srgb,var(--card) 78%,transparent);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px)}
+  #pane-chat .cbar{position:absolute;left:0;right:0;bottom:max(6px, calc(env(safe-area-inset-bottom) - 14px));z-index:4;background:rgba(18,20,28,.78);background:color-mix(in srgb,var(--card) 78%,transparent);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px)}
 }
 .dkprep{position:absolute;inset:0;z-index:5;background:rgba(5,6,12,.94);overflow:auto;display:flex;justify-content:center;padding:4vh 4vw}.dkprep[hidden]{display:none}
 .dkpin{width:min(860px,100%);color:#eef}.dkpin b{font-size:20px}.dkpin p{color:#aab;font-size:13px;margin:6px 0 10px}
@@ -1229,14 +1229,16 @@ body.feedfs #feed > .dash{display:none}
     if (t === 'response.output_audio_transcript.delta' || t === 'response.audio_transcript.delta' || t === 'response.output_text.delta') { if (ev.delta) respShown = true; say(spkName(), ev.delta || ''); return; }
     if (t === 'response.function_call_arguments.done') { if (ev.name === 'ask_brain') brain(ev.call_id, ev.arguments); else if (ev.name === 'remember') remember(ev.call_id, ev.arguments); else if (ev.name === 'quiet') hold(ev.call_id, 'quiet'); else if (ev.name === 'set_name') rename(ev.call_id, ev.arguments); else if (ev.name === 'feedback') feedback(ev.call_id, ev.arguments); else if (ev.name === 'minutes') minutes(ev.call_id, ev.arguments); else if (ev.name === 'connect_card') connectCard(ev.call_id, ev.arguments); else if (ev.name === 'ui') uiAct(ev.call_id, ev.arguments); return; }
     if (t === 'session.updated') { ready = true; state('話しかけてください'); if (curBot || myHogen()) sendRole(); return; }
-    if (t === 'error') { note('エラー：' + ((ev.error && ev.error.message) || ev.message || '')); return; }
+    if (t === 'error') { const em = (ev.error && ev.error.message) || ev.message || '';
+      if (!uiOff && /tool|function|schema|param|enum|invalid/i.test(em)) { uiOff = true; send({ type: 'session.update', session: { tools: baseTools } }); console.warn('ui tool off', em); return; }   // 11/28 画面を動かす道具が受けつけられなかったら、道具なしで話しつづける
+      note('エラー：' + em); return; }
   }
   async function start() {
     key = tok || WT ? '' : $('key').value.trim(); if (!key && !tok && !WT) { state('先にGoogleでログインしてください'); return; }
     if (!$('name').value.trim()) { state('先に、呼び名を教えてください'); try { obStart(); } catch (e) {} return; }   // 名前の欄はかくれているので、スレッドで愛棒が聞く
     if (key) put('liveKey', key); put('liveName', $('name').value.trim());
     sayStop();   // 案内や読みあげの声が鳴っていたら止める（マイクが拾って愛棒の話をさえぎらないように）
-    $('talk').disabled = true; state('つないでいます…'); turns = []; ready = false; quiet = false; quietAfter = 0; minFrom = -1;
+    $('talk').disabled = true; state('つないでいます…'); uiOff = false; turns = []; ready = false; quiet = false; quietAfter = 0; minFrom = -1;
     try {
       // iPhone はマナーモードだと Web Audio の音が消えるので、音は <audio> から鳴らす（<audio> はマナーモードでも鳴る）。押した直後に play しておく
       try { if (navigator.audioSession) navigator.audioSession.type = 'play-and-record'; } catch (e) {}
@@ -1255,7 +1257,7 @@ body.feedfs #feed > .dash{display:none}
       ws.onclose = () => { if (ws) stop('おわりました'); };
       ws.onerror = () => { rtDown = !ready; noteOnce(ready ? 'つながりが切れました。もう一度「話しはじめる」を押すと、つなぎなおします' : '声の係（xAI）につながりませんでした。少しして、もう一度押してください。文字なら、このまま書いて送れます'); };
       await new Promise((ok, ng) => { ws.onopen = ok; setTimeout(() => ng(new Error('xAI につながりませんでした')), 10000); });
-      send({ type: 'session.update', session: { instructions: j.instructions, voice: j.voice, turn_detection: { type: 'server_vad' }, tools: (j.tools || []).concat(UI_TOOL), ...(j.reasoning ? { reasoning: j.reasoning } : {}),
+      send({ type: 'session.update', session: { instructions: j.instructions, voice: j.voice, turn_detection: { type: 'server_vad' }, tools: (baseTools = j.tools || []).concat(UI_TOOL), ...(j.reasoning ? { reasoning: j.reasoning } : {}),
         audio: { input: { format: { type: 'audio/pcm', rate: RATE }, ...(j.transcription ? { transcription: j.transcription } : {}) }, output: { format: { type: 'audio/pcm', rate: RATE } } } } });
       // マイク → 小分けにして送る
       const code = 'class C extends AudioWorkletProcessor{constructor(){super();this.b=[];this.n=0}process(i){const c=i[0]&&i[0][0];if(c){this.b.push(new Float32Array(c));this.n+=c.length;if(this.n>=sampleRate/10){const o=new Float32Array(this.n);let p=0;for(const x of this.b){o.set(x,p);p+=x.length}this.port.postMessage(o,[o.buffer]);this.b=[];this.n=0}}return true}}registerProcessor("mic-chunks",C)';
@@ -1273,6 +1275,7 @@ body.feedfs #feed > .dash{display:none}
       rtDown = false; setTimeout(() => { if (!ready && ws) { ready = true; state('話しかけてください'); } }, 1500);   // session.updated が来ないときも、少し待ってから送りはじめる
     } catch (e) { rtDown = true; stop(String(e.message || e)); }
   }
+  let baseTools = [], uiOff = false;
   function stop(why) {
     const w = ws; ws = null; clearTimeout(endTimer);
     try { w && w.close(); } catch (e) {}
