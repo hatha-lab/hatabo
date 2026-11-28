@@ -83,6 +83,8 @@ html.light .cug button.on{background:var(--card2) !important;color:var(--ink)}
 #sidePanel{flex:1;min-height:0;overflow-y:auto}
 #sideAibo .ring{width:min(62vw,240px)}
 @media (min-width:900px){ #pane-side{border-left:1px solid var(--line)} body.nS #pane-chat #cTabs{display:flex !important;margin:0 auto 8px} body:not(.nC) #sideTabs [data-cs=thread]{display:none} #sideTabs{width:min(240px,80%) !important} }
+@media (min-width:900px){ #dots [data-p=feed]{display:none} body.sfeed #pane-side{display:none !important} body:not(.sfeed) #pane-feed{display:none !important} #pane-feed #sideTabs{margin:0 auto 8px;display:flex} #pane-feed{border-left:1px solid var(--line)} }
+@media (max-width:899px){ .csub [data-cs=feed]{display:none} #sideAibo .bnr{display:none} }
 @media (max-width:899px){ #sideTabs{display:none !important} #cTabs.inhead{display:flex;margin:0 auto 6px;width:min(300px,86%)} body:not(.onchat) #cTabs.inhead{display:none} }
 .csub{display:flex}#cTabs{align-self:center;width:min(300px,86%);flex:0 0 auto}.csub button{flex:1;white-space:nowrap}
 /* 11/28 パソコンで縦の動画・写真を大きく見るとき：スマホと同じ 9:16 の枠をまんなかに（横に引きのばさない）。まわりは黒 */
@@ -261,6 +263,8 @@ main{max-width:none;padding:0;height:100dvh;display:flex;flex-direction:column}
 [hidden]{display:none !important}
 .kpis b#kStage{font-size:13px;line-height:1.6}
 .plugb{margin-top:auto}
+.gpill{position:fixed;left:14px;bottom:calc(96px + env(safe-area-inset-bottom));z-index:30;width:46px;height:46px;border-radius:50%;border:0;background:#2f6cff;color:#fff;display:grid;place-items:center;cursor:pointer;box-shadow:0 0 0 6px rgba(47,108,255,.25),0 6px 20px rgba(0,0,0,.4);animation:gpl 1.8s ease-in-out infinite}.gpill[hidden]{display:none}@keyframes gpl{50%{box-shadow:0 0 0 11px rgba(47,108,255,.12),0 6px 20px rgba(0,0,0,.4)}}
+@media (min-width:900px){.gpill{display:none !important}}   /* パソコンは左の列の「使い方」がいつも見えるので、それが点灯するだけ */
 #rHelp.gon i{background:#2f6cff !important;color:#fff}#rHelp.gon{color:#7fa8ff}.hgrow{border:1px solid var(--line);border-radius:16px;background:var(--card);margin:4px 0 12px}
 @media (max-width:899px){ .rail #rPlug,.rail #rHelp{position:sticky;background:var(--bg);padding:4px 0;z-index:2} .rail #rPlug{bottom:70px} .rail #rHelp{bottom:0;margin-top:0} }
 .rail .rp{margin-top:6px}
@@ -739,7 +743,7 @@ body.feedfs #feed > .dash{display:none}
     </div>
   </section>
   <section class="pane" id="pane-chat">
-    <div class="seg2 csub" id="cTabs"><button type="button" data-cs="thread">スレッド</button><button type="button" data-cs="aibo">愛棒</button><button type="button" data-cs="panel">パネル</button></div>
+    <div class="seg2 csub" id="cTabs"><button type="button" data-cs="thread">スレッド</button><button type="button" data-cs="aibo">愛棒</button><button type="button" data-cs="panel">パネル</button><button type="button" data-cs="feed">フィード</button></div>
     <div class="vv" id="vv">
     <button type="button" class="prz" id="przBtn" aria-label="プレゼン"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M12 16v4M8 20h8"/></svg><span>プレゼン</span></button>
     <div class="dash2" id="dash2">
@@ -794,7 +798,7 @@ body.feedfs #feed > .dash{display:none}
   <input type="file" id="dkFile" accept="image/*,application/pdf" multiple hidden>
   <div class="przm" id="przM" hidden><button type="button" id="przDoc">資料でプレゼン（写真・PDF）</button><button type="button" id="przFs">愛棒だけ大きく</button></div>
   <section class="pane" id="pane-side">
-    <div class="seg2 csub sidetabs" id="sideTabs"><button type="button" data-cs="thread">スレッド</button><button type="button" data-cs="aibo">愛棒</button><button type="button" data-cs="panel">パネル</button></div>
+    <div class="seg2 csub sidetabs" id="sideTabs"><button type="button" data-cs="thread">スレッド</button><button type="button" data-cs="aibo">愛棒</button><button type="button" data-cs="panel">パネル</button><button type="button" data-cs="feed">フィード</button></div>
     <div class="sidev" id="sideAibo"></div>
     <div class="sidev" id="sidePanel" hidden>
       <div class="sh"><img src="folder-aibo.webp" alt="" style="border-radius:50%"><b id="artT">パネル</b><button type="button" class="close" id="artFold" aria-label="フォルダ愛棒">📁</button><button type="button" class="close" id="artWide" aria-label="大きくする">⤢</button><button type="button" class="close" id="artClose">閉じる</button></div>
@@ -816,6 +820,7 @@ body.feedfs #feed > .dash{display:none}
     <div id="dmDraft" hidden><p class="note">愛棒がこのトークを読んで、返信の下書きを作ります。送る前に、かならず自分で確かめてください。</p><button type="button" class="postbtn" id="dmMake">返信の下書きを作ってもらう</button><textarea id="dmDraftTxt" placeholder="ここに下書きが出ます"></textarea><div class="pbtns"><button type="button" id="dmDraftSend">この文面で送る</button><button type="button" id="dmDraftClear">やめる</button></div></div>
   </div>
   <div class="cmenu2 avmenu" id="avMenu" hidden><p id="avWho">アカウント</p><button type="button" data-av="me"><i>👤</i>マイページ</button><button type="button" data-av="area"><i>🗾</i>地域・話し方（方言）</button><button type="button" data-av="guide"><i>🗣</i><span id="avGuide">声の案内：オン</span></button><button type="button" data-av="theme"><i>🌓</i><span id="avTheme">表示：ダーク</span></button><button type="button" data-av="plan"><i>💳</i>料金・トッピング</button><button type="button" data-av="out" class="danger"><i>⏻</i>ログアウト</button></div>
+  <button type="button" class="gpill" id="gPill" hidden aria-label="案内をとめる"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.3a2.6 2.6 0 0 1 5 .9c0 1.7-2.5 2.2-2.5 3.8M12 17h.01"/></svg></button>
   <div class="sheet setx" id="setSheet" hidden>
     <div class="sh"><b>設定</b><button type="button" class="close" data-close="setSheet">閉じる</button></div>
     <div class="sgrp plan"><div class="srow0"><b id="stPlan">Free プラン</b><small id="stUse"></small></div><div class="sbar"><i id="stBar"></i></div><button type="button" class="slink" data-st="plan">アップグレード・トッピング</button></div>
@@ -845,7 +850,6 @@ body.feedfs #feed > .dash{display:none}
   </div>
   <div class="sheet" id="helpSheet" hidden>
     <div class="sh"><img src="hathabo-logo.webp" alt=""><b>使い方</b><button type="button" class="close" data-close="helpSheet">閉じる</button></div>
-    <button type="button" class="srow hgrow" id="hgRow"><em>🗣</em><span class="st"><b>愛棒の声の案内</b><small>オンのあいだ、触ったところや見ているところを、愛棒が声で案内します。左下の「使い方」でもオン・オフできます</small></span><span class="tog" id="hgTog"></span></button>
     <ol class="howto">
       <li><b>3つの画面</b>Talk＝友だちとのトーク、Chat＝愛棒との会話、Feed＝みんなの投稿。スマホは左右にスワイプ、パソコンは上のボタンで出す／しまう。</li>
       <li><b>愛棒と話す</b>Chat の「愛棒」で、話しはじめるを押すと声で話せます。「スレッド」では文字でも。パソコンは「プレゼン」で愛棒だけを大きく出せます。</li>
@@ -1211,19 +1215,19 @@ body.feedfs #feed > .dash{display:none}
   // 画面の並び：トーク ← Chat → Feed。スマホは横にスワイプ（指を右へ＝トーク、左へ＝Feed）、パソコンは3列で全部見える
   const PANES = ['talk', 'chat', 'side', 'feed'], panesEl = $('panes'), dotBtns = [...document.querySelectorAll('#dots button')];
   const wide = () => matchMedia('(min-width:900px)').matches;
-  function go(p, smooth) { const i = PANES.indexOf(p); if (i < 0) return; if (!wide()) panesEl.scrollTo({ left: i * panesEl.clientWidth, behavior: smooth === false ? 'auto' : 'smooth' }); dotOn(p); if (p === 'feed' || p === 'talk') loadFeed(); }
+  function go(p, smooth) { const i = PANES.indexOf(p); if (i < 0) return; if (wide() && p === 'feed' && sideMode !== 'feed') return sideShow('feed'); if (!wide()) panesEl.scrollTo({ left: i * panesEl.clientWidth, behavior: smooth === false ? 'auto' : 'smooth' }); dotOn(p); if (p === 'feed' || p === 'talk') loadFeed(); }
   var curPane = 'chat';
   function dotOn(p) { document.body.classList.toggle('onchat', p === 'chat' || p === 'side'); if (p === 'talk') { const d = document.querySelector('.dots [data-p="talk"]'); if (d) d.classList.remove('newdot'); } try { if (p !== 'feed' && sayPost) { sayPost = null; sayStop(); } } catch (e) {} if (!wide()) dotBtns.forEach(b => b.classList.toggle('on', b.dataset.p === (p === 'side' ? 'chat' : p))); curPane = p; try { csubSync(); } catch (e) {} if (typeof orbSync === 'function') try { orbSync(); } catch (e) {} }
   panesEl.addEventListener('scroll', () => { if (document.body.classList.contains('feedfs')) return dotOn('feed');   // フィードを大きく見ているあいだは、上のタブは Feed のまま
     const i = Math.round(panesEl.scrollLeft / Math.max(1, panesEl.clientWidth)); const p = PANES.at(Math.max(0, Math.min(PANES.length - 1, i))); dotOn(p); if (p !== 'chat') loadFeed(); }, { passive: true });
   // パソコン：Talk・Chat・Feed を押すと、その列を出す／しまう（2つだけ・1つだけ＝全画面にもできる。少なくとも1つは出す）
   const colKey = { talk: 'nT', chat: 'nC', side: 'nS', feed: 'nF' };
-  function colsSync() { const h = LS.g('hbHideCols', []); Object.values(colKey).forEach(c => document.body.classList.toggle(c, wide() && h.includes(c)));
-    if (wide()) { const W = { talk: 'var(--wl,300px)', chat: 'minmax(340px,1fr)', side: document.body.classList.contains('sidewide') ? 'minmax(420px,1.2fr)' : 'var(--ws,360px)', feed: 'var(--wr,340px)' }, vis = PANES.filter(p => !h.includes(colKey[p]));
+  function colsSync() { const h = LS.g('hbHideCols', []).filter(x => !wide() || (x !== 'nS' && x !== 'nF'));   // パソコンの右の列（愛棒・パネル・フィード）は、しまわない Object.values(colKey).forEach(c => document.body.classList.toggle(c, wide() && h.includes(c)));
+    if (wide()) { const W = { talk: 'var(--wl,300px)', chat: 'minmax(340px,1fr)', side: document.body.classList.contains('sidewide') ? 'minmax(420px,1.2fr)' : 'var(--ws,380px)', feed: 'var(--ws,380px)' }, vis = ['talk', 'chat', sideMode === 'feed' ? 'feed' : 'side'].filter(p => !h.includes(colKey[p]) || p === 'side' || p === 'feed');
       let t = vis.map(p => W[p]); if (!vis.includes('chat')) t[t.length - 1] = 'minmax(0,1fr)'; panesEl.style.setProperty('grid-template-columns', t.join(' '), 'important'); } else panesEl.style.removeProperty('grid-template-columns');
     if (wide()) dotBtns.forEach(b => b.classList.toggle('on', !h.includes(colKey[b.dataset.p]))); }
   dotBtns.forEach(b => b.onclick = () => { if (!wide()) return go(b.dataset.p);
-    const c = colKey[b.dataset.p], cs = b.dataset.p === 'chat' ? ['nC', 'nS'] : [c], h = LS.g('hbHideCols', []), nh = h.includes(c) ? h.filter(x => !cs.includes(x)) : h.concat(cs);
+    const c = colKey[b.dataset.p], cs = [c], h = LS.g('hbHideCols', []), nh = h.includes(c) ? h.filter(x => !cs.includes(x)) : h.concat(cs);
     if (PANES.every(p => nh.includes(colKey[p]))) return; LS.s('hbHideCols', nh); colsSync(); window.dispatchEvent(new Event('resize')); if (b.dataset.p === 'feed' || b.dataset.p === 'talk') loadFeed(); });
   setTimeout(colsSync, 0); window.addEventListener('resize', () => { clearTimeout(window.__cs); window.__cs = setTimeout(colsSync, 150); });
   requestAnimationFrame(() => go('chat', false));   // 最初は真ん中の Chat
@@ -1232,7 +1236,11 @@ body.feedfs #feed > .dash{display:none}
   addEventListener('resize', () => { if (!wide()) { const a = dotBtns.find(b => b.classList.contains('on')); go(a ? a.dataset.p : 'chat', false); } });
   function sub(v) { if (v === 'aibo') { sideShow('aibo'); go('side'); } else { go('chat'); $('log').scrollTop = 1e9; } orbSync(); }   // 愛棒＝となりの面へ
   let sideMode = 'aibo';
-  function sideShow(m) { sideMode = m; $('sideAibo').hidden = m !== 'aibo'; $('sidePanel').hidden = m !== 'panel'; csubSync(); }
+  function sideShow(m) { if (m === 'feed' && !wide()) return go('feed');
+    sideMode = m; $('sideAibo').hidden = m !== 'aibo'; $('sidePanel').hidden = m !== 'panel';
+    // 11/28 パソコン：右の列＝愛棒｜パネル｜フィード。フィードのときは、右の列にフィードを出す（スマホくらいの縦長の幅なので、縦の動画も崩れない）
+    const t = $('sideTabs'), host = m === 'feed' && wide() ? $('pane-feed') : $('pane-side'); if (t.parentNode !== host) host.insertBefore(t, host.firstChild);
+    document.body.classList.toggle('sfeed', m === 'feed'); if (m === 'feed') { loadFeed(); } try { colsSync(); } catch (e) {} csubSync(); }
   function csubSync() { const v = !wide() && curPane !== 'side' ? 'thread' : sideMode;
     document.querySelectorAll('.csub').forEach(g => { const w = wide() ? (g.id === 'cTabs' ? 'thread' : sideMode) : v; g.querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.cs === w)); }); }
   // 11/28 Chat の中：スレッド｜愛棒｜パネル（スワイプでもとなりへ）
@@ -1656,12 +1664,12 @@ body.feedfs #feed > .dash{display:none}
   //  ・はじめて開いた面は、1回だけ使い方を案内。静かモード・声で話しているとき・プレゼン中は話さない
   let guideOn = (() => { try { return localStorage.getItem('hbGuide2') === '1'; } catch (e) { return false; } })(),   // 11/28 はじめはオフ。「使い方」ボタンでオン・オフ
   guideAt = 0, guideDone = new Set();
-  function guideSet(on) { guideOn = on; LS.s('hbGuide2', on ? 1 : 0); $('avGuide').textContent = '声の案内：' + (on ? 'オン' : 'オフ'); if (!on && guideAt && !(ws && ready)) sayStop(); const h = $('rHelp'); h.classList.toggle('gon', on); h.lastChild.textContent = on ? '案内中' : '使い方'; const hs = $('hgTog'); if (hs) hs.classList.toggle('on', on); }
+  function guideSet(on) { guideOn = on; LS.s('hbGuide2', on ? 1 : 0); $('avGuide').textContent = '声の案内：' + (on ? 'オン' : 'オフ'); if (!on && guideAt && !(ws && ready)) sayStop(); $('gPill').hidden = !on; const h = $('rHelp'); h.classList.toggle('gon', on);  const hs = $('hgTog'); if (hs) hs.classList.toggle('on', on); }
   guideSet(guideOn);
   const gBusy = () => !guideOn || nameOnly || !$('deck').hidden || (sayEl && !sayEl.paused) || document.hidden;
   function guideSay(t, key, force) { if (!WT && !tok && !$('key').value.trim()) return false;   // ログインしていないときは案内しない（声が出せないので）
     if (!t || gBusy() || (key && guideDone.has(key))) return false; if (!force && Date.now() - guideAt < 8000) return false;
-    if (key) guideDone.add(key); guideAt = Date.now(); tip(t);
+    if (key) guideDone.add(key); guideAt = Date.now();   // 文字は出さない（声で案内する）
     if (ws && ready) { tellAibo('（画面の案内メモ：' + t + '。これを、あなたの言葉でひとことだけ伝えて。ほかの話はしない）'); return true; }   // 声で話しているときは、愛棒が自分の声で案内する
     speak(t, (curBot && curBot.voice) || 'ara', () => {}); return true; }
   const HELP = [['#cPlus', '左の＋を押していますね。写真や資料を送ったり、議事録やスタンプを作れます'], ['#txt', 'いま文字を書くところを触っていますね。書いて右の丸を押すと、わたしに送れます'], ['#cAv', '右の丸いわたしを押すと、声で話せます'],
@@ -1670,7 +1678,7 @@ body.feedfs #feed > .dash{display:none}
     ['#fAuto', '自動でめくるがオンだと、読み終わったら次の投稿へ進みます'], ['#fSnd', '音ありにすると、投稿をわたしが読みあげます'], ['#feed', 'ここはフィード、みんなの投稿です。右の話すボタンで読みあげて、愛棒と話すでその愛棒と話せます'],
     ['#rail', '左の列は、愛棒や機能へのショートカットです'], ['#sideAibo', 'ここは愛棒の画面です。話しはじめるを押すと、声で話せます'], ['#log', 'ここはわたしとの会話です。上にスクロールすると、前の話を読みあげます'], ['#pane-talk', 'トークは、つながっている友だちとのやりとりです。右上の＋で友だちを追加できます']];
   const helpOf = el => { for (const [q, t] of HELP) if (el && el.closest && el.closest(q)) return t; const b = el && el.closest && el.closest('button,[aria-label]'); const lb = b && (b.getAttribute('aria-label') || b.textContent || '').trim().slice(0, 20); return lb ? 'いま「' + lb + '」のあたりを触っていますね' : ''; };
-  const INTRO = { talk: ['g-talk', 'ここはトークです。友だちや、お店の愛棒とのやりとりが並びます'], feed: ['g-feed', 'ここはフィードです。上下にめくると、投稿をわたしが読みあげます'], aibo: ['g-aibo', 'ここは愛棒の画面です。話しはじめるを押すと、声で話せます。プレゼンもできます'], panel: ['g-panel', 'ここはパネル、作業スペースです。下書きや議事録がここに開きます'] };
+  const INTRO = { chat: ['g-chat', 'ここはチャット、わたしとの会話です。下の欄に書くか、右の丸を押すと声で話せます'], talk: ['g-talk', 'ここはトークです。友だちや、お店の愛棒とのやりとりが並びます'], feed: ['g-feed', 'ここはフィードです。上下にめくると、投稿をわたしが読みあげます'], aibo: ['g-aibo', 'ここは愛棒の画面です。話しはじめるを押すと、声で話せます。プレゼンもできます'], panel: ['g-panel', 'ここはパネル、作業スペースです。下書きや議事録がここに開きます'] };
   let gIntroAfter = 0;
   function guideIntro(k) { const x = INTRO[k]; if (!x) return; if (Date.now() < gIntroAfter) return setTimeout(() => guideIntro(k), gIntroAfter - Date.now() + 200); const seen = LS.g('hbGuideSeen', []); if (seen.includes(x[0])) return; setTimeout(() => { if (guideSay(x[1], x[0], true)) LS.s('hbGuideSeen', seen.concat(x[0])); }, 900); }
   // 面が変わったとき
@@ -1703,9 +1711,12 @@ body.feedfs #feed > .dash{display:none}
     setTimeout(() => { if (!document.hidden) tip('アプリが入っていないようです（テスト版は事務局から配っています）'); }, 1800); };
   // 11/28 使い方ボタン＝声の案内のオン・オフ。オンにすると使い方を開いて、愛棒が案内をはじめる。もう一度押すとやめる
   $('rHelp').onclick = () => { const on = !guideOn; guideSet(on);
-    if (on) { helpOpen(); guideAt = 0; gIntroAfter = Date.now() + 9000; setTimeout(() => guideSay('案内をはじめますね。わからないところを触ると、わたしが説明します。やめるときは、もう一度「案内中」を押してください', '', true), 300); }
-    else { $('helpSheet').hidden = true; tip('案内をやめました'); } };
-  $('hgRow').onclick = () => { $('rHelp').onclick(); if (guideOn) openSheet('helpSheet'); };
+    // 11/28 使い方は文字で読ませない：押すと点灯して、愛棒がいまの画面を声で案内する。もう一度押すと消える
+    if (on) { guideAt = 0; LS.s('hbGuideSeen', []); gIntroAfter = Date.now() + 9000;
+      const v = wide() ? (sideMode === 'feed' ? 'feed' : 'chat') : curPane === 'side' ? sideMode : curPane, x = INTRO[v] || INTRO.chat;
+      setTimeout(() => guideSay('案内しますね。' + x[1] + '。わからないところを触ると、説明します', '', true), 200); }
+    else { $('helpSheet').hidden = true; sayStop(); } };
+  $('gPill').onclick = () => { if (guideOn) $('rHelp').onclick(); };   // どの画面からでも、案内をとめられる
   const helpOpen = async () => { openSheet('helpSheet'); const j = await api('/grok/keys', {}).catch(() => ({})); const b = $('keysBox');   // 事務局のアカウントのときだけ、つなぎ先の鍵が入っているかを出す
     if (!j.keys) { b.hidden = true; return; } b.hidden = false; b.innerHTML = '<p class="h">事務局：つなぎ先の鍵</p>' + Object.entries(j.keys).map(([k, v]) => '<div class="krow"><span>' + esc(k) + '</span><b class="' + (v ? 'ok' : 'ng') + '">' + (v ? '入っている' : 'まだ') + '</b></div>').join(''); };   // 使い方：プラグインのとなり（スマホ・パソコンとも左下）
   // 11/28 作ったもの（右側の作業エリア＝アーティファクト）：議事録・スタンプ・下書きがここに開いて、フォルダにたまる（この端末に50件まで）
@@ -1752,7 +1763,8 @@ body.feedfs #feed > .dash{display:none}
   function setOpen() { setFill(); $('stMsg').textContent = ''; openSheet('setSheet'); }
   $('setSheet').addEventListener('click', e => { const b = e.target.closest('[data-st]'); if (!b) return; const a = b.dataset.st, close = () => { $('setSheet').hidden = true; };
     if (a === 'me') { close(); openSheet('prof'); } else if (a === 'plan') { close(); openSheet('planSheet'); } else if (a === 'plug') { close(); openSheet('plugSheet'); } else if (a === 'qr') { close(); openSheet('qrSheet'); }
-    else if (a === 'android' || a === 'help') { close(); helpOpen(); if (a === 'android') setTimeout(() => { const g = $('andG'); if (g) g.scrollIntoView({ block: 'start' }); }, 300); }
+    else if (a === 'help') { close(); if (!guideOn) $('rHelp').onclick(); }
+    else if (a === 'android') { close(); helpOpen(); if (a === 'android') setTimeout(() => { const g = $('andG'); if (g) g.scrollIntoView({ block: 'start' }); }, 300); }
     else if (a === 'tier') { const n = { X: 'G', G: 'Z', Z: 'X' }[TIER()] || 'Z'; try { localStorage.setItem('grokTier', n); } catch (x) {} try { tierFill(); } catch (x) {} setFill(); $('stMsg').textContent = n === 'Z' ? 'Z：むずかしい相談は Claude Opus が考えます。' : n === 'G' ? 'G：むずかしい相談は Claude Sonnet が考えます。' : 'X：ぜんぶ Grok で答えます（いちばん速い）。'; }
     else if (a === 'area') { close(); hjA = LS.g('hbArea', ''); hajimeOpen(null); }
     else if (a === 'guide') { guideSet(!guideOn); setFill(); }
