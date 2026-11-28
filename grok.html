@@ -76,6 +76,9 @@ html.light .cug button.on{background:var(--card2) !important;color:var(--ink)}
 .dkbar p{margin:0;color:#fff;font-size:clamp(15px,2.1vw,22px);line-height:1.6;flex:1}
 .dkctl{display:flex;align-items:center;justify-content:center;gap:10px;padding:8px 0 calc(12px + env(safe-area-inset-bottom))}.dkctl button{border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;border-radius:999px;min-width:44px;height:40px;padding:0 14px;font-size:15px;cursor:pointer}.dkctl span{color:#bbb;font-size:13px;min-width:60px;text-align:center}
 .przm{position:absolute;right:12px;top:56px;z-index:8;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:6px;display:flex;flex-direction:column;gap:4px;box-shadow:0 10px 30px rgba(0,0,0,.4)}.przm[hidden]{display:none}.przm button{border:0;background:transparent;color:var(--ink);text-align:left;padding:10px 12px;border-radius:10px;font-size:14px;cursor:pointer}.przm button:hover{background:var(--card2)}
+/* 11/28 スレッドの上は帯にしない：小さな顔と名前だけ（Claude のアプリの見出しのように） */
+.thead{padding:0 2px 6px;border-bottom:0;margin-bottom:2px;gap:8px}.thead .tav{width:26px;height:26px}.thead b{font-size:14px}.thead small{display:none}
+.thead .tvo{padding:0;width:32px;height:32px;border-radius:50%;font-size:0;display:grid;place-items:center}.thead .tvo::before{content:'';width:16px;height:16px;background:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='M4 10v4M8 7v10M12 4v16M16 7v10M20 10v4'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='M4 10v4M8 7v10M12 4v16M16 7v10M20 10v4'/%3E%3C/svg%3E") center/contain no-repeat}
 /* 11/28 4つめの面（愛棒・パネル）。パソコンは列、スマホは左右にスワイプ */
 #pane-side{display:flex;flex-direction:column;gap:6px}
 #pane-side .sidetabs{align-self:center;width:min(300px,86%);flex:0 0 auto;margin:2px 0 6px}#pane-side .sidetabs button{flex:1;white-space:nowrap}
@@ -782,7 +785,7 @@ body.feedfs #feed > .dash{display:none}
     <div class="tv" id="tv">
     <div class="lcol" id="lcol">
       <p class="h lh">愛棒との会話</p>
-    <div class="thead" id="tHead"><span class="tav" id="tHeadAv"><img src="hataboy-face.webp" alt=""></span><div class="tnm"><b id="tHeadN">ハタボーイ</b><small id="tHeadS">あなたの愛棒</small></div><button type="button" class="tvo" id="tHeadVo">声で話す</button></div>
+    <div class="thead" id="tHead"><span class="tav" id="tHeadAv"><img src="hataboy-face.webp" alt=""></span><div class="tnm"><b id="tHeadN">ハタボーイ</b><small id="tHeadS">あなたの愛棒</small></div><button type="button" class="tvo" id="tHeadVo" aria-label="声で話す" title="声で話す">声で話す</button></div>
     <div class="hello" id="hello"><div class="hav" id="helloAv"><img src="hataboy-face.webp" alt=""></div><b id="helloT">こんにちは</b><small id="helloS">ハタボーイに、なんでも話しかけてください</small>
       <div class="hsug" id="hsug"></div></div>
     <div class="log" id="log" aria-live="polite"></div>
@@ -1247,7 +1250,8 @@ body.feedfs #feed > .dash{display:none}
   document.querySelectorAll('.csub button').forEach(b => b.onclick = () => { const v = b.dataset.cs;
     if (wide()) { const h = LS.g('hbHideCols', []), need = v === 'thread' ? 'nC' : 'nS'; if (h.includes(need)) { LS.s('hbHideCols', h.filter(x => x !== need)); colsSync(); } }   // パソコン：その列がかくれていたら出す
     if (v === 'thread') { go('chat'); if (wide()) $('txt').focus(); return csubSync(); }
-    if (v === 'panel' && !$('artBody').dataset.id) artFolder(); else sideShow(v); if (!wide()) go('side'); });
+    if (!wide()) go('side');   // 先に面をうつす
+    if (v === 'panel' && !$('artBody').dataset.id) artFolder(); else sideShow(v); if (!wide() && curPane !== 'side') go('side', false); });
   function orbSync() { const cur = (dotBtns.find(b => b.classList.contains('on')) || {}).dataset; $('orb').classList.toggle('vhide', !wide() && curPane === 'side'); }   // 愛棒の画面が見えているときは出さない
   function tab(t) { if (t === 'voice' || t === 'aibo') return sub('aibo'); go(t === 'talk' ? 'talk' : 'chat'); if (t !== 'talk') sub('thread'); }
   function openSheet(id) { $(id).hidden = false; if (id === 'prof') { loadFeed(true); profFill(); } if (id === 'qrSheet') { $('qrName').textContent = ($('name').value.trim() || 'あなた') + 'さんのQR'; qrFill(); } }
