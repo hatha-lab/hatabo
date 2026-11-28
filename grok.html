@@ -277,7 +277,7 @@ main{max-width:none;padding:0;height:100dvh;display:flex;flex-direction:column}
 .seg2{display:flex;gap:4px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px;margin:2px auto 10px;max-width:260px}
 .seg2 button{flex:1;border:0;background:transparent;color:var(--sub);border-radius:999px;padding:6px 0;font-size:13px;font-weight:700;cursor:pointer}
 .seg2 button.on{background:var(--card2);color:var(--ink);box-shadow:0 0 0 1px var(--line)}
-.orb{--lv:0;position:fixed;left:50%;bottom:calc(86px + env(safe-area-inset-bottom));z-index:15;width:66px;height:66px;margin-left:-33px;border-radius:50%;border:0;padding:0;background:#04050b;cursor:pointer;transform:scale(calc(1 + var(--lv) * .28));transition:transform .08s linear;box-shadow:0 0 calc(16px + var(--lv) * 46px) rgba(70,140,255,.55),0 0 calc(4px + var(--lv) * 18px) rgba(46,230,166,.45)}   /* 11/28：下のまん中。青と緑がまざって、声に合わせてゆらぐ光 */
+.orb{--lv:0;position:fixed;left:50%;bottom:calc(100px + env(safe-area-inset-bottom));z-index:15;width:66px;height:66px;margin-left:-33px;border-radius:50%;border:0;padding:0;background:#04050b;cursor:pointer;transform:scale(calc(1 + var(--lv) * .28));transition:transform .08s linear;box-shadow:0 0 calc(16px + var(--lv) * 46px) rgba(70,140,255,.55),0 0 calc(4px + var(--lv) * 18px) rgba(46,230,166,.45)}   /* 11/28：下のまん中。青と緑がまざって、声に合わせてゆらぐ光 */
 .orb[hidden]{display:none}
 .orb i{position:absolute;inset:3px;border-radius:50%;mix-blend-mode:screen;filter:blur(5px);background:conic-gradient(from 0deg,#3b6cf6,#24d6c8,#7c5cf0,#2ee6a6,#3b6cf6);animation:orbspin 3.4s linear infinite}
 .orb i:nth-child(2){inset:9px;filter:blur(7px);background:radial-gradient(circle at 30% 28%,rgba(170,235,255,.95),transparent 55%),conic-gradient(from 140deg,#2ee6a6,transparent 30%,#5b8cff 55%,transparent 80%,#2ee6a6);animation-duration:5s;animation-direction:reverse}.orb i:nth-child(3){inset:20px;filter:blur(3px);background:radial-gradient(circle,#fff,rgba(255,255,255,0) 70%);animation:none;opacity:calc(.45 + var(--lv) * .55)}
@@ -371,7 +371,7 @@ body.offi #log .row.hb::before{background:#fff url(hathabo-emblem-w.webp) center
 #pane-chat .lcol{display:flex;flex-direction:column;height:calc(100dvh - 170px);margin-top:0}
 @media (max-width:899px){ #pane-chat .vv{display:none} }
 #cTabs{margin:0 auto 6px}
-.orb.vhide{display:none}
+.orb.vhide{display:none}.orb.idle{transform:scale(.86);opacity:.9;box-shadow:0 0 18px rgba(70,140,255,.45),0 0 6px rgba(46,230,166,.35)}.orb.idle i{animation-duration:4s !important}
 #pane-chat .lh{display:none}
 #pane-chat .log{flex:1;max-height:none;min-height:0;background:transparent;border:0;padding:4px 2px}
 @media (max-width:899px){.top .fs{display:none}.top .tr{grid-column:3}}   /* スマホは全画面ボタンを出さない */
@@ -1283,7 +1283,7 @@ body.feedfs #feed > .dash{display:none}
     out = null; clearTimeout(talkT);
     if (mic) mic.getTracks().forEach(t => t.stop()); mic = null; src = null; node = null;
     hush(); try { if (spk) { spk.pause(); spk.srcObject = null; } } catch (e) {} dest = null; try { ctx && ctx.close(); } catch (e) {} ctx = null; ready = false; HB('idle', 0);
-    $('talkL').textContent = '話しはじめる'; $('talk').classList.remove('on'); $('talk').disabled = false; $('endBtn').classList.remove('on'); $('setup').classList.remove('hide'); $('orb').hidden = true; $('mute').classList.toggle('off', muted); $('muteL').textContent = muted ? 'ミュート中' : 'マイク';
+    $('talkL').textContent = '話しはじめる'; $('talk').classList.remove('on'); $('talk').disabled = false; $('endBtn').classList.remove('on'); $('setup').classList.remove('hide'); $('orb').hidden = !orbIdle(); orbSync(); $('mute').classList.toggle('off', muted); $('muteL').textContent = muted ? 'ミュート中' : 'マイク';
     state(why || 'おわりました');
   }
   let starting = false, rtDown = false;   // 11/28 つなぎ中に何度も押されても、1回だけつなぐ。つながらなかったら、文字は「頭」で答える
@@ -1368,7 +1368,9 @@ body.feedfs #feed > .dash{display:none}
     if (v === 'thread') { go('chat'); if (wide()) $('txt').focus(); return csubSync(); }
     if (!wide()) go('side');   // 先に面をうつす
     if (v === 'panel' && !$('artBody').dataset.id) artFolder(); else sideShow(v); if (!wide() && curPane !== 'side') go('side', false); });
-  function orbSync() { const cur = (dotBtns.find(b => b.classList.contains('on')) || {}).dataset; $('orb').classList.toggle('vhide', !wide() && curPane === 'side'); }   // 愛棒の画面が見えているときは出さない
+  // 11/28 スマホ：玉はつながる前から出しておく（押すと話しはじめる）。話しているあいだは光って動き、押すと愛棒の画面へ
+  const orbIdle = () => !wide();
+  function orbSync() { const o = $('orb'), live = !!ws; if (!live) o.hidden = !orbIdle(); o.classList.toggle('idle', !live); o.setAttribute('aria-label', live ? '愛棒と話しています' : '押すと愛棒と話せます'); o.classList.toggle('vhide', !wide() && curPane !== 'chat'); }   // 愛棒の画面が見えているときは出さない
   function tab(t) { if (t === 'voice' || t === 'aibo') return sub('aibo'); go(t === 'talk' ? 'talk' : 'chat'); if (t !== 'talk') sub('thread'); }
   function openSheet(id) { $(id).hidden = false; if (id === 'prof') { loadFeed(true); profFill(); } if (id === 'qrSheet') { $('qrName').textContent = ($('name').value.trim() || 'あなた') + 'さんのQR'; qrFill(); } }
   document.querySelectorAll('[data-close]').forEach(b => b.onclick = () => { $(b.dataset.close).hidden = true; });
@@ -2145,7 +2147,8 @@ body.feedfs #feed > .dash{display:none}
     else if (a === 'aibo') $('mkBot').click(); });
   function note2t(t) { const d = document.createElement('div'); d.className = 'pcard'; d.textContent = t; $('tlPeople').prepend(d); setTimeout(() => d.remove(), 6000); }
   // 光る表示：声で話しているあいだ、どの面にいても右下についてくる。押すと Chat へ
-  $('orb').onclick = () => tab('aibo');
+  $('orb').onclick = () => { if (ws) tab('aibo'); else { const t = $('talk'); if (t && !t.disabled) t.click(); } };
+  setTimeout(orbSync, 0);
   $('hMic').onclick = () => $('mute').click();
   $('hSpk').onclick = () => { spkMuted = !spkMuted; $('hSpk').classList.toggle('off', spkMuted); $('spkBtn').classList.toggle('off', spkMuted); $('spkL').textContent = spkMuted ? '音を消し中' : 'スピーカー'; if (spkMuted) hush(); };
   $('spkBtn').onclick = () => $('hSpk').onclick();   // 11/28 愛棒の枠の中にもスピーカー（上のボタンと同じ）
