@@ -54,6 +54,14 @@ html.light .cug button.on{background:var(--card2) !important;color:var(--ink)}
   #pane-chat:not(.home):not(.vmode) .tv{flex:1 1 auto}
 }
 .logo{cursor:pointer}
+.sheet.art{z-index:26}
+@media (min-width:900px){ .sheet.art.wide{width:min(70vw,980px)} body:has(#dmSheet:not([hidden])) #artSheet{right:480px} }
+.arttx{width:100%;min-height:46vh;border-radius:14px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:14px;font:15px/1.7 inherit;font-family:inherit;margin-top:8px}
+.artrow{display:flex;justify-content:space-between;align-items:center;width:100%;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:12px;padding:12px 14px;margin-top:6px;cursor:pointer;font-size:14px;text-align:left}.artrow small{color:var(--sub)}
+.artcard{display:flex;align-items:center;gap:12px;width:min(100%,420px);margin:8px 0;border:1px solid #3b6cf6;background:var(--card);color:var(--ink);border-radius:16px;padding:12px 14px;cursor:pointer;text-align:left}
+.artcard i{font-style:normal;font-size:24px}.artcard span{display:flex;flex-direction:column;gap:2px}.artcard b{font-size:14px}.artcard small{color:var(--sub);font-size:11.5px}
+.rfold i{background:#f2f4fa !important;overflow:hidden}.rfold img{width:100%;height:100%;object-fit:cover}
+#dmSheet .seg2{display:none !important}
 html.light .vtoast{background:var(--card2) !important;color:var(--ink)}
 html.light .mkgo:disabled{background:var(--card2) !important;color:var(--ink)}
 html.light .post .pimg{background:var(--card2) !important;color:var(--ink)}
@@ -373,9 +381,9 @@ body.feedfs #feed > .dash{display:none}
 .arow small{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;color:var(--sub);font-size:13px;line-height:1.45}
 .abtn{flex:0 0 auto;border:0;border-radius:999px;background:#23283a;color:var(--ink);font-weight:700;font-size:14px;padding:9px 16px;cursor:pointer}
 .abtn.off,.abtn.done{opacity:.55}
-.asearch{position:sticky;bottom:calc(10px + env(safe-area-inset-bottom));z-index:4;display:flex;align-items:center;gap:8px;background:#f2f4fa;color:#111;border-radius:999px;padding:7px 14px;box-shadow:0 4px 14px rgba(0,0,0,.35);margin:-52px auto 0;max-width:420px}   /* 11/28 小さく */
+.asearch{position:sticky;bottom:calc(10px + env(safe-area-inset-bottom));z-index:4;display:flex;align-items:center;gap:8px;background:#f2f4fa;color:#111;border-radius:999px;padding:6px 14px;box-shadow:0 4px 14px rgba(0,0,0,.35);margin:-44px auto 0;max-width:360px;height:38px;flex:0 0 auto;align-self:center;width:100%}   /* 11/28 小さく */
 .asearch svg{width:17px;height:17px;flex:0 0 17px}
-.sheet.apps .asearch input{flex:1;border:0 !important;outline:0;background:transparent !important;font-size:16px;color:#111;padding:0;margin:0;box-shadow:none}
+.sheet.apps .asearch input{flex:1;border:0 !important;outline:0;background:transparent !important;font-size:16px;color:#111;padding:0 !important;margin:0;box-shadow:none;height:24px !important;min-height:0 !important;line-height:24px}
 .tierset{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0 12px;border-bottom:1px solid var(--line)}
 .tierset span{font-size:14px}
 #tierBtns{display:flex;gap:6px}
@@ -681,6 +689,7 @@ body.feedfs #feed > .dash{display:none}
     <button type="button" class="slot" data-mk="予定" data-col="#7c5cf0"><i style="background:#7c5cf0">＋</i>予定</button>
     <button type="button" class="slot" data-mk="議事録" data-col="#e0517f"><i style="background:#e0517f">＋</i>議事録</button>
     <button type="button" id="rGrow"><i style="background:#c9962b">育</i>育ち・<br>ガチャ</button>
+    <button type="button" id="rFolder" class="rfold"><i><img src="folder-aibo.webp" alt=""></i>フォルダ<br>愛棒</button>
     <div id="railBots"></div>
     <button type="button" id="mkBot"><i style="background:#2a2e3c">＋</i>愛棒を<br>つくる</button>
     <button type="button" id="rPlug" class="plugb"><i style="background:#1d2130"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 7V3M15 7V3M7 7h10v4a5 5 0 0 1-10 0zM12 16v5"/></svg></i>プラグイン</button>
@@ -690,7 +699,7 @@ body.feedfs #feed > .dash{display:none}
     <div class="tlist">
     <button class="tl" type="button" id="tlAibo" hidden><img src="hataboy-emblem.webp" alt=""><span><b>📌 マイ愛棒 <small>あなたの愛棒</small></b><small id="tlLast">声で話す・会話の記録を見る</small></span><em>いま</em></button>
     <div class="tlh top1"><b>トーク</b><small>つながっている友だち</small><button type="button" class="tladd" id="tlAdd" aria-label="友だちを追加">＋</button></div>
-    <div class="search">名前・メッセージを検索（アプリで使えます）</div>
+    <div class="search">名前・メッセージを検索</div>
     <div id="tlPeople"><p class="note">検証ページに来た人が、ここに友だちとして並びます。</p></div>
     <p class="sub2">追加</p>
     <button class="tl" type="button" id="addFriend"><i class="pl">＋</i><span><b>友だちを追加</b><small>QRを見せる・URLを送る。読んだ人とトークでつながります</small></span></button>
@@ -756,7 +765,7 @@ body.feedfs #feed > .dash{display:none}
   <div class="rz" id="rzL" aria-hidden="true"></div><div class="rz" id="rzR" aria-hidden="true"></div>
   <button type="button" class="orb" id="orb" hidden aria-label="愛棒と話しています"><i></i><i></i><i></i></button>
   <div class="sheet dmx" id="dmSheet" hidden>
-    <div class="dmh"><button type="button" class="dmback" data-close="dmSheet" aria-label="もどる"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><i class="pav" id="dmAv">?</i><span class="dmt"><b id="dmName">トーク</b><small id="dmSub">友だち</small></span><button type="button" class="dmi" id="dmGrp" aria-label="グループを作る"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 19c.6-3.2 3-5 6-5s5.4 1.8 6 5"/><path d="M19 8v6M16 11h6"/></svg></button><button type="button" class="dmi" id="dmVoice" aria-label="声を聴く"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 10v4h4l5 4V6L8 10z"/><path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11"/></svg><i class="pav" id="dmAv2" hidden></i><small id="dmVoiceL" hidden></small></button><button type="button" class="dmi call" id="dmCall" aria-label="電話する"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></svg></button></div>
+    <div class="dmh"><button type="button" class="dmback" data-close="dmSheet" aria-label="もどる"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><i class="pav" id="dmAv">?</i><span class="dmt"><b id="dmName">トーク</b><small id="dmSub">友だち</small></span><button type="button" class="dmi" id="dmDraftBtn" aria-label="返信の下書き"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg></button><button type="button" class="dmi" id="dmGrp" aria-label="グループを作る"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 19c.6-3.2 3-5 6-5s5.4 1.8 6 5"/><path d="M19 8v6M16 11h6"/></svg></button><button type="button" class="dmi" id="dmVoice" aria-label="声を聴く"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 10v4h4l5 4V6L8 10z"/><path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11"/></svg><i class="pav" id="dmAv2" hidden></i><small id="dmVoiceL" hidden></small></button><button type="button" class="dmi call" id="dmCall" aria-label="電話する"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></svg></button></div>
     <div class="seg2" id="dmTabs"><button type="button" class="on" data-dt="talk">トーク</button><button type="button" data-dt="draft">下書き</button></div>
     <div id="dmTalk"><div class="log dmlog" id="dmLog"></div><form class="cbar dmbar" id="dmF"><input id="dmTxt" autocomplete="off" placeholder="メッセージ"><button type="submit" class="dmsend" aria-label="送る"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 20.5 21 12 3 3.5 3 10l12 2-12 2z"/></svg></button></form></div>
     <div id="dmDraft" hidden><p class="note">愛棒がこのトークを読んで、返信の下書きを作ります。送る前に、かならず自分で確かめてください。</p><button type="button" class="postbtn" id="dmMake">返信の下書きを作ってもらう</button><textarea id="dmDraftTxt" placeholder="ここに下書きが出ます"></textarea><div class="pbtns"><button type="button" id="dmDraftSend">この文面で送る</button><button type="button" id="dmDraftClear">やめる</button></div></div>
@@ -891,6 +900,10 @@ body.feedfs #feed > .dash{display:none}
   g.innerHTML = h;
 })();
 </script>
+<div class="sheet art" id="artSheet" hidden>
+  <div class="sh"><img src="folder-aibo.webp" alt="" style="border-radius:50%"><b id="artT">作ったもの</b><button type="button" class="close" id="artWide" aria-label="大きくする">⤢</button><button type="button" class="close" data-close="artSheet">閉じる</button></div>
+  <div id="artBody"></div>
+</div>
 <script>
 (() => {
   const P = new URLSearchParams(location.search);
@@ -958,7 +971,7 @@ body.feedfs #feed > .dash{display:none}
     try {
       const r = await fetch(base + '/grok/minutes', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ k: key, t: tok, wt: WT, talk }) });
       const j = await r.json().catch(() => ({})); if (j.said) said = j.said;
-      if (j.minutes) { const d = document.createElement('div'); d.className = 'mins'; d.textContent = j.minutes; const b = document.createElement('button'); b.textContent = 'コピー'; b.onclick = () => { try { navigator.clipboard.writeText(j.minutes); b.textContent = 'コピーしました'; } catch (e) {} }; d.appendChild(document.createElement('br')); d.appendChild(b); $('mins').prepend(d); }
+      if (j.minutes) { artCard(artSave({ kind: 'minutes', title: '議事録 ' + new Date().toLocaleDateString('ja-JP', { month: 'numeric', day: 'numeric' }), text: j.minutes, src: aiboName + 'との会話' })); } if (false) { const d = document.createElement('div'); d.className = 'mins'; d.textContent = j.minutes; const b = document.createElement('button'); b.textContent = 'コピー'; b.onclick = () => { try { navigator.clipboard.writeText(j.minutes); b.textContent = 'コピーしました'; } catch (e) {} }; d.appendChild(document.createElement('br')); d.appendChild(b); $('mins').prepend(d); }
     } catch (e) {}
     reply(callId, said);
   }
@@ -1374,7 +1387,7 @@ body.feedfs #feed > .dash{display:none}
     if (!j.id) { out.innerHTML = '<p class="note">' + esc(j.error || 'いまは作れませんでした') + '</p>'; b.disabled = false; return; }
     out.innerHTML = '<p class="note">作っています…（1〜2分かかります。今日はあと' + j.left + '回）</p>';
     for (let k = 0; k < 45; k++) { await new Promise(r => setTimeout(r, 4000)); const g = await api('/grok/stampget', { id: j.id }).catch(() => ({}));
-      if (g.state === 'succeed' && g.images && g.images.length) { out.innerHTML = '<div class="stg">' + g.images.map(u => '<a href="' + esc(u) + '" target="_blank" rel="noopener"><img alt="スタンプの案" src="' + esc(u) + '"></a>').join('') + '</div><p class="note">押すと大きく開きます。長押しで保存できます（30日で消えるので、気に入ったものは保存してください）</p>'; b.disabled = false; b.textContent = 'もう一度つくる'; return; }
+      if (g.state === 'succeed' && g.images && g.images.length) { out.innerHTML = '<div class="stg">' + g.images.map(u => '<a href="' + esc(u) + '" target="_blank" rel="noopener"><img alt="スタンプの案" src="' + esc(u) + '"></a>').join('') + '</div><p class="note">押すと大きく開きます。長押しで保存できます（30日で消えるので、気に入ったものは保存してください）</p>'; b.disabled = false; b.textContent = 'もう一度つくる'; try { const x = artSave({ kind: 'stamp', title: 'スタンプ「' + t.slice(0, 16) + '」', imgs: g.images, src: (curBot ? curBot.name : aiboName) + 'との会話' }); out.insertAdjacentHTML('beforeend', '<button type="button" class="mapbtn artcard" data-art="' + x.id + '">フォルダ愛棒に入りました（開く）</button>'); if (wide()) artOpen(x.id); } catch (e) {} return; }
       if (g.state === 'failed') { out.innerHTML = '<p class="note">作れませんでした' + (g.msg ? '（' + esc(g.msg) + '）' : '') + '。言い方を変えて、もう一度どうぞ</p>'; b.disabled = false; return; } }
     out.innerHTML = '<p class="note">時間がかかっています。少したってから、もう一度ためしてください</p>'; b.disabled = false; });
   function openBot(x) { curBot = x; sendRole(); setPartner(bot(x.s, x.c), x.name); plugGuide(x.role, x.name); tab('chat'); rows = { me: null, hb: null }; const d = document.createElement('div'); d.className = 'row hb'; d.innerHTML = '<b></b><span></span>'; d.lastChild.textContent = 'はじめまして、' + x.name + 'です。' + x.role + 'のことなら、まかせてください。何からはじめましょう？'; $('log').appendChild(d); if (x.role === 'スタンプ工房' || (x.cu && x.cu.stamp)) stampCard(); $('log').scrollTop = 1e9; const t = $('txt'); if (t) { t.value = ''; t.placeholder = x.name + 'に文字でも話せます'; } }
@@ -1485,6 +1498,34 @@ body.feedfs #feed > .dash{display:none}
   document.addEventListener('fullscreenchange', () => { const on = document.fullscreenElement === $('vv'); $('przBtn').querySelector('span').textContent = on ? 'プレゼンをやめる' : 'プレゼン'; });
   $('rHelp').onclick = async () => { openSheet('helpSheet'); const j = await api('/grok/keys', {}).catch(() => ({})); const b = $('keysBox');   // 事務局のアカウントのときだけ、つなぎ先の鍵が入っているかを出す
     if (!j.keys) { b.hidden = true; return; } b.hidden = false; b.innerHTML = '<p class="h">事務局：つなぎ先の鍵</p>' + Object.entries(j.keys).map(([k, v]) => '<div class="krow"><span>' + esc(k) + '</span><b class="' + (v ? 'ok' : 'ng') + '">' + (v ? '入っている' : 'まだ') + '</b></div>').join(''); };   // 使い方：プラグインのとなり（スマホ・パソコンとも左下）
+  // 11/28 作ったもの（右側の作業エリア＝アーティファクト）：議事録・スタンプ・下書きがここに開いて、フォルダにたまる（この端末に50件まで）
+  const ART_K = { minutes: ['📄', '議事録'], stamp: ['🎨', 'スタンプ'], draft: ['✍️', '下書き'] };
+  function artSave(o) { const A = LS.g('hbArts', []), x = Object.assign({ id: 'a' + Date.now().toString(36), at: Date.now() }, o); A.unshift(x); LS.s('hbArts', A.slice(0, 50)); return x; }
+  function artGet(id) { return LS.g('hbArts', []).find(x => x.id === id); }
+  function artOpen(id) { const x = artGet(id); if (!x) return; $('artT').textContent = x.title; const b = $('artBody'); let h = '<p class="note">' + new Date(x.at).toLocaleString('ja-JP', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }) + (x.src ? '・' + esc(x.src) : '') + '</p>';
+    if (x.imgs) h += '<div class="stg">' + x.imgs.map(u => '<a href="' + esc(u) + '" target="_blank" rel="noopener"><img alt="" src="' + esc(u) + '"></a>').join('') + '</div><p class="note">長押しで保存できます（30日で消えます）</p>';
+    if (x.text != null) h += '<textarea class="arttx" id="artTx">' + esc(x.text) + '</textarea>';
+    h += '<div class="pbtns">' + (x.kind === 'draft' && x.to ? '<button type="button" id="artSend">この文面で送る</button>' : '') + (x.text != null ? '<button type="button" id="artCopy">コピー</button>' : '') + '<button type="button" id="artDel">フォルダ愛棒から消す</button></div>';
+    b.innerHTML = h; b.dataset.id = id; $('artSheet').hidden = false;
+    const tx = $('artTx'); if (tx) tx.oninput = () => { const A = LS.g('hbArts', []), y = A.find(z => z.id === id); if (y) { y.text = tx.value; LS.s('hbArts', A); } };
+    if ($('artCopy')) $('artCopy').onclick = () => { try { navigator.clipboard.writeText($('artTx').value); $('artCopy').textContent = 'コピーしました'; } catch (e) {} };
+    if ($('artSend')) $('artSend').onclick = () => { const t = $('artTx').value.trim(); if (!t) return; if (dmWith !== x.to) openDm(x.to, x.toName || ''); setTimeout(() => dmLoad(t, true), dmWith === x.to ? 0 : 600); $('artSheet').hidden = true; };
+    $('artDel').onclick = () => { LS.s('hbArts', LS.g('hbArts', []).filter(z => z.id !== id)); artFolder(); }; }
+  function artFolder() { const A = LS.g('hbArts', []); $('artT').textContent = 'フォルダ愛棒'; const b = $('artBody'); b.dataset.id = '';
+    b.innerHTML = '<p class="note">フォルダ愛棒です。トークや愛棒との会話で作ったものを、ここにためておきます（この端末の中）。</p>' + (A.length ? Object.keys(ART_K).map(k => { const L = A.filter(x => x.kind === k); return L.length ? '<p class="h">' + ART_K[k][0] + ' ' + ART_K[k][1] + '</p>' + L.map(x => '<button type="button" class="artrow" data-art="' + x.id + '"><span>' + esc(x.title) + '</span><small>' + new Date(x.at).toLocaleDateString('ja-JP', { month: 'numeric', day: 'numeric' }) + '</small></button>').join('') : ''; }).join('') : '<p class="note" style="margin-top:20px">まだありません。議事録をとる・スタンプを作る・返信の下書きを作ると、ここに入ります。</p>');
+    $('artSheet').hidden = false; }
+  $('artBody').addEventListener('click', e => { const r = e.target.closest('[data-art]'); if (r) artOpen(r.dataset.art); });
+  $('artWide').onclick = () => $('artSheet').classList.toggle('wide');
+  $('rFolder').onclick = artFolder;
+  // 会話の中のカード（スマホは押すと全画面で開く。パソコンは右に開いている）
+  function artCard(x, log) { const d = document.createElement('button'); d.type = 'button'; d.className = 'artcard'; d.dataset.art = x.id; d.innerHTML = '<i>' + ART_K[x.kind][0] + '</i><span><b>' + esc(x.title) + '</b><small>' + ART_K[x.kind][1] + '・押すと開く・フォルダ愛棒に入りました</small></span>'; (log || $('log')).appendChild(d); (log || $('log')).scrollTop = 1e9; if (wide()) artOpen(x.id); }
+  document.addEventListener('click', e => { const c = e.target.closest('.artcard'); if (c) artOpen(c.dataset.art); });
+  // トークの返信の下書き：右に開いて、直してから送る（前の「下書き」タブの代わり）
+  $('dmDraftBtn').onclick = async () => { const B = $('dmDraftBtn'); B.classList.add('on'); B.disabled = true;
+    const talk = dmMsgs.slice(-20).map(m => (m.mine ? 'わたし' : dmName + 'さん') + '：' + m.text).join('\n');
+    const j = await api('/grok/brain', { question: dmName + 'さんへの返信の下書きを1つ。トークで送る短い文面だけを書く（説明や前おきはなし）', talk }).catch(() => ({}));
+    B.classList.remove('on'); B.disabled = false; if (!j.answer) { note2('下書きを作れませんでした'); return; }
+    const x = artSave({ kind: 'draft', title: dmName + 'さんへの返信', text: j.answer, to: dmWith, toName: dmName, src: dmName + 'さんとのトーク' }); artCard(x, $('dmLog')); };
   $('pOut').onclick = outOpen; $('outGo').onclick = outNow;
   // 右上のアイコン：マイページ・料金・ログアウト
   $('avTop').onclick = e => { e.stopPropagation(); $('avWho').textContent = ($('name').value.trim() || 'アカウント') + ($('pEmail').textContent ? '・' + $('pEmail').textContent.replace(' でログイン中', '') : ''); $('cMenu2').hidden = true; $('avMenu').hidden = !$('avMenu').hidden; };
